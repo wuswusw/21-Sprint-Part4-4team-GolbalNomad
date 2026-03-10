@@ -1,0 +1,227 @@
+@import "tailwindcss";
+
+/* ===============================
+   Design Tokens
+================================ */
+@theme {
+
+  /* Font */
+  --font-pretendard: var(--font-pretendard), sans-serif;
+
+  /* Font Weights */
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* ===============================
+     Font Size
+  ================================= */
+
+  --font-size-32: 32px;
+  --font-size-24: 24px;
+  --font-size-20: 20px;
+  --font-size-18: 18px;
+  --font-size-16: 16px;
+  --font-size-14: 14px;
+  --font-size-13: 13px;
+  --font-size-12: 12px;
+  --font-size-10: 10px;
+
+  /* ===============================
+     Line Height
+  ================================= */
+
+  --line-height-auto: normal;
+  --line-height-180: 1.8;
+  --line-height-160: 1.6;
+  --line-height-140: 1.4;
+
+  /* ===============================
+     Colors
+  ================================= */
+
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  --color-gray-25: #F8F8F8;
+  --color-gray-50: #EDEEF2;
+  --color-gray-100: #E0E0E5;
+  --color-gray-200: #C6C8CF;
+  --color-gray-300: #B3B4BC;
+  --color-gray-400: #9FA0A7;
+  --color-gray-500: #84858C;
+  --color-gray-600: #707177;
+  --color-gray-700: #5D5D61;
+  --color-gray-800: #49494C;
+  --color-gray-900: #323236;
+  --color-gray-950: #1F1F22;
+
+  --color-primary-100: #E5F3FF;
+  --color-primary-500: #3D9EF2;
+
+  --color-red-500: #FF2727;
+
+  /* ===============================
+     Breakpoints
+  ================================= */
+
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+}
+
+/* ===============================
+   Base Style
+================================ */
+@layer base {
+
+  body {
+    font-family: var(--font-pretendard);
+    @apply bg-white text-gray-900 antialiased;
+  }
+
+  * {
+    font-family: inherit;
+  }
+
+  button:not(:disabled) {
+    @apply cursor-pointer;
+  }
+
+  button:disabled {
+    @apply cursor-not-allowed;
+  }
+}
+
+/* ===============================
+   Typography System
+================================ */
+@layer utilities {
+
+  /* 기본 텍스트 */
+
+  .text-10 {
+    font-size: var(--font-size-10);
+    line-height: var(--line-height-auto);
+  }
+
+  .text-12 {
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-auto);
+  }
+
+  .text-13 {
+    font-size: var(--font-size-13);
+    line-height: var(--line-height-auto);
+  }
+
+  .text-14 {
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-auto);
+  }
+
+  .text-16 {
+    font-size: var(--font-size-16);
+    line-height: var(--line-height-auto);
+  }
+
+  .text-18 {
+    font-size: var(--font-size-18);
+    line-height: var(--line-height-auto);
+  }
+
+  .text-20 {
+    font-size: var(--font-size-20);
+    line-height: var(--line-height-auto);
+  }
+
+  .text-24 {
+    font-size: var(--font-size-24);
+    line-height: var(--line-height-auto);
+  }
+
+  .text-32 {
+    font-size: var(--font-size-32);
+    line-height: var(--line-height-auto);
+  }
+
+  /* ===============================
+     Body Typography
+  ================================= */
+
+  .text-body-14 {
+    font-size: var(--font-size-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-180);
+  }
+
+  .text-body-16 {
+    font-size: var(--font-size-16);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-180);
+  }
+
+  .text-body-18 {
+    font-size: var(--font-size-18);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-140);
+  }
+
+  .text-body-20 {
+    font-size: var(--font-size-20);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-160);
+  }
+}
+
+/* ===============================
+   Tablet
+================================ */
+
+@media (min-width: 768px) {
+
+  .tablet\:text-32 {
+    font-size: var(--font-size-32);
+  }
+
+  .tablet\:text-24 {
+    font-size: var(--font-size-24);
+  }
+
+  .tablet\:text-20 {
+    font-size: var(--font-size-20);
+  }
+
+  .tablet\:text-18 {
+    font-size: var(--font-size-18);
+  }
+
+  .tablet\:text-16 {
+    font-size: var(--font-size-16);
+  }
+}
+
+/* ===============================
+   Desktop
+================================ */
+
+@media (min-width: 1024px) {
+
+  .desktop\:text-32 {
+    font-size: var(--font-size-32);
+  }
+
+  .desktop\:text-24 {
+    font-size: var(--font-size-24);
+  }
+
+  .desktop\:text-20 {
+    font-size: var(--font-size-20);
+  }
+
+  .desktop\:text-18 {
+    font-size: var(--font-size-18);
+  }
+
+  .desktop\:text-16 {
+    font-size: var(--font-size-16);
+  }
+}
