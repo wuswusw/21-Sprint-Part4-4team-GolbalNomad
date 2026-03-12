@@ -43,7 +43,7 @@ function GNB({ nickname, profileImage }: GNBProps) {
             <button onClick={() => setIsLogin(!isLogin)} className="fixed bottom-4 right-4 z-50 bg-primary-500 text-white px-3 py-1 rounded text-12">
                 임시 로그인 토글 (전역 로그인 상태 관리 적용 후 삭제해야함) 
             </button> 
-            <div className="flex justify-between items-center w-full h-[80px] desktop:px-50 tablet:px-[30px] px-6 tablet:py-6 py-2">
+            <div className="flex justify-between items-center w-full h-12 tablet:h-[80px] desktop:px-50 tablet:px-[30px] px-6 tablet:py-6 py-2">
                 <Link href="/" >
                 <img src={logo.src} alt="logo" className="hidden tablet:block" />
                 <img src={symbolLogo.src} alt="logo" className="block tablet:hidden" />
@@ -59,7 +59,7 @@ function GNB({ nickname, profileImage }: GNBProps) {
                     </div>
                 )}
                 {isLogin && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center">
                         <div className="relative" ref={notificationRef}>
                             <img src={isNotificationOpen? bellBlue.src : bell.src} alt="bell" onClick={handleBellClick} className="w-[24px] h-[24px] cursor-pointer" />
                             <img src={statusDot.src} alt="stateDot" className="absolute top-0 right-0" />
