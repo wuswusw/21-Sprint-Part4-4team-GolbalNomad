@@ -16,26 +16,33 @@ interface GNBProps {
 }
 
 function GNB({ nickname, profileImage }: GNBProps) {
-    const [isLogin, setIsLogin] = useState(false);
+    const [isLogin, setIsLogin] = useState(false); // api 연결 후 상태 관리 변경해야함
     const [isNotificationOpen, setIsNotificationOpen] = useState(false); 
     const [isProfileOpen, setIsProfileOpen] = useState(false);  
     const notificationRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null)
+    
+    useClickOutside(notificationRef, () => setIsNotificationOpen(false), isNotificationOpen);
+    useClickOutside(profileRef, () => setIsProfileOpen(false), isProfileOpen);
+    
     const handleBellClick = () => {
         setIsNotificationOpen(!isNotificationOpen)
     }
     const handleProfileClick = () => {
         setIsProfileOpen(!isProfileOpen)
     }
-    useClickOutside(notificationRef, () => setIsNotificationOpen(false), isNotificationOpen);
-    useClickOutside(profileRef, () => setIsProfileOpen(false), isProfileOpen);
-    
+    const handleLogoutClick = () => {
+        setIsLogin(false);
+        // 로그아웃 로직 추가 필요
+    }
+
+
+
     return (
         <div>
-            {/* TODO: API 연결 후 삭제 */}
             <button onClick={() => setIsLogin(!isLogin)} className="fixed bottom-4 right-4 z-50 bg-primary-500 text-white px-3 py-1 rounded text-12">
-                로그인 토글 (임시)
-            </button>
+                임시 로그인 토글 (전역 로그인 상태 관리 적용 후 삭제해야함) 
+            </button> 
             <div className="flex justify-between items-center w-full h-[80px] desktop:px-50 tablet:px-[30px] px-6 tablet:py-6 py-2">
                 <Link href="/" >
                 <img src={logo.src} alt="logo" className="hidden tablet:block" />
@@ -70,7 +77,7 @@ function GNB({ nickname, profileImage }: GNBProps) {
                                         <div className="flex flex-col items-center justify-center w-32 px-[14px] py-4 rounded-xl shadow-[0px_2px_8px_0px_#78748640] absolute top-9 right-0">
                                         <ul className="w-full flex flex-col gap-[14px] justify-center text-16 text-gray-600">
                                             <li>
-                                                <Link href="/main/profile" className="flex items-center justify-center text-14 py-[15px] hover:ring-primary-100 hover:ring-2 hover:text-gray-950 rounded-xl ">로그아웃</Link>
+                                                <button className=" w-full flex items-center justify-center text-14 py-[15px] hover:ring-primary-100 hover:ring-2 hover:text-gray-950 rounded-xl " onClick={handleLogoutClick}>로그아웃</button>
                                             </li>
                                             <li>
                                                 <Link href="/main/profile" className="flex items-center justify-center text-14 py-[15px] hover:ring-primary-100 hover:ring-2 hover:text-gray-950 rounded-xl">마이페이지</Link>
