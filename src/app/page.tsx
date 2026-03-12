@@ -1,13 +1,8 @@
-import GNB from "@/components/common/GNB";
-import Sidemenu from "@/components/common/Sidemenu";
-import Footer from "@/components/common/Footer";
+import MainLayout from "@/components/layout/MainLayout";
 export default function Page() {
   return (
-    <main>
+    <MainLayout>
       <h1>Home</h1>
-      <GNB />
-      <Sidemenu />
-      <Footer />
-    </main>
+    </MainLayout>
   );
 }

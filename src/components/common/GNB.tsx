@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import logo from "@/assets/images/textLogo.png";
 import symbolLogo from "@/assets/images/symbolLogo.png";
 import profile from "@/assets/images/default profile.png";
 import bell from "@/assets/icons/bell.svg";
 import bellBlue from "@/assets/icons/bellBlue.svg";
 import statusDot from "@/assets/icons/statusDot.svg";
+import useClickOutside from "@/hooks/useClickOutside";
 
 interface GNBProps {
     nickname?: string;
@@ -17,13 +18,18 @@ interface GNBProps {
 function GNB({ nickname, profileImage }: GNBProps) {
     const [isLogin, setIsLogin] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false); 
-    const [isProfileOpen, setIsProfileOpen] = useState(false);   
+    const [isProfileOpen, setIsProfileOpen] = useState(false);  
+    const notificationRef = useRef<HTMLDivElement>(null);
+    const profileRef = useRef<HTMLDivElement>(null)
     const handleBellClick = () => {
         setIsNotificationOpen(!isNotificationOpen)
     }
     const handleProfileClick = () => {
         setIsProfileOpen(!isProfileOpen)
     }
+    useClickOutside(notificationRef, () => setIsNotificationOpen(false), isNotificationOpen);
+    useClickOutside(profileRef, () => setIsProfileOpen(false), isProfileOpen);
+    
     return (
         <div>
             {/* TODO: API 연결 후 삭제 */}
@@ -47,7 +53,7 @@ function GNB({ nickname, profileImage }: GNBProps) {
                 )}
                 {isLogin && (
                     <div className="flex items-center gap-2">
-                        <div className="relative">
+                        <div className="relative" ref={notificationRef}>
                             <img src={isNotificationOpen? bellBlue.src : bell.src} alt="bell" onClick={handleBellClick} className="w-[24px] h-[24px] cursor-pointer" />
                             <img src={statusDot.src} alt="stateDot" className="absolute top-0 right-0" />
                             {isNotificationOpen && (
@@ -58,7 +64,7 @@ function GNB({ nickname, profileImage }: GNBProps) {
                         </div>
                         <span className="mx-5 text-gray-100">|</span>
                         <img src={profileImage ?? profile.src} alt="profile" className="w-[30px] h-[30px] rounded-full" />
-                        <div className="relative">
+                        <div className="relative" ref={profileRef}>
                             <span className="text-14 text-gray-950 ml-[10px] cursor-pointer" onClick={handleProfileClick}>{nickname ?? "이름 없음"}</span>
                             {isProfileOpen && (
                                         <div className="flex flex-col items-center justify-center w-32 px-[14px] py-4 rounded-xl shadow-[0px_2px_8px_0px_#78748640] absolute top-9 right-0">
