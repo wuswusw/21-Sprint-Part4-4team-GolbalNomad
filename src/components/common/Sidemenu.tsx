@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import BasicPofile from "@/assets/images/default profile.png";
-import editProfileIcon from "@/assets/icons/edit_button.svg";
+import editProfileIcon from "@/assets/icons/editButton.svg";
 import userIcon from "@/assets/icons/user.svg";
 import listIcon from "@/assets/icons/list.svg";
 import settingIcon from "@/assets/icons/setting.svg";
@@ -42,7 +42,7 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
         }
     }
     return (
-        <div className="flex flex-col items-center justify-center desktop:w-[291px] w-[178px] px-[14px] desktop:py-6 py-4 rounded-xl border border-gray-100 hidden tablet:flex">
+        <div className="flex flex-col items-center justify-center desktop:w-[291px] w-[178px] px-[14px] desktop:py-6 py-4 rounded-xl hidden tablet:flex shadow-[0px_4px_24px_0px_#9CB4CA33]">
             <div className="mb-6 relative">
                 <img src={profileImg} alt="BasicPofile" className="rounded-full w-[70px] h-[70px] desktop:w-[120px] desktop:h-[120px]"/>
                 <img src={editProfileIcon.src} alt="editProfileIcon" onClick={handleEditProfileIconClick} className="absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] cursor-pointer" />
