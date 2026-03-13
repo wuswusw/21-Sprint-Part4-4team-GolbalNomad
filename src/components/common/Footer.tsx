@@ -1,8 +1,4 @@
 import Link from "next/link";
-import facebookIcon from "@/assets/icons/facebook.svg";
-import instagramIcon from "@/assets/icons/instagram.svg";
-import twitterIcon from "@/assets/icons/X_twitter.svg";
-import youtubeIcon from "@/assets/icons/youtube.svg";
 
 function Footer() {
   return (
@@ -15,10 +11,10 @@ function Footer() {
             <Link href="/">FAQ</Link>
         </div>
         <div className="flex items-center gap-4">
-            <Link href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer"><img src={facebookIcon.src} alt="facebook" /></Link>
-            <Link href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"><img src={instagramIcon.src} alt="instagram" /></Link>
-            <Link href="https://x.com/" target="_blank" rel="noopener noreferrer"><img src={twitterIcon.src} alt="twitter" /></Link>
-            <Link href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer"><img src={youtubeIcon.src} alt="youtube" /></Link>
+            <Link href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer"><img src="/assets/icons/facebook.svg" alt="facebook" /></Link>
+            <Link href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"><img src="/assets/icons/instagram.svg" alt="instagram" /></Link>
+            <Link href="https://x.com/" target="_blank" rel="noopener noreferrer"><img src="/assets/icons/X_twitter.svg" alt="twitter" /></Link>
+            <Link href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer"><img src="/assets/icons/youtube.svg" alt="youtube" /></Link>
         </div>
       </div>
     </div> 

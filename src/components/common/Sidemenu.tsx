@@ -3,16 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import BasicPofile from "@/assets/images/default profile.png";
-import editProfileIcon from "@/assets/icons/editButton.svg";
-import userIcon from "@/assets/icons/user.svg";
-import userBlueIcon from "@/assets/icons/userBlue.svg";
-import listIcon from "@/assets/icons/list.svg";
-import listBlueIcon from "@/assets/icons/listBlue.svg";
-import settingIcon from "@/assets/icons/setting.svg";
-import settingBlueIcon from "@/assets/icons/settingBlue.svg";
-import calendarIcon from "@/assets/icons/calendar.svg";
-import calendarBlueIcon from "@/assets/icons/calendarBlue.svg";
 
 /**
  * @example
@@ -33,7 +23,7 @@ interface SidemenuProps {
 
 function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
     const imgInputRef = useRef<HTMLInputElement>(null);
-    const [profileImg, setProfileImg] = useState(externalImg ?? BasicPofile.src);
+    const [profileImg, setProfileImg] = useState(externalImg ?? "/assets/images/default profile.png");
     const pathname = usePathname();
 
     const handleEditProfileIconClick = () => {
@@ -56,35 +46,35 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
         <div className="flex flex-col items-center justify-center desktop:w-[291px] w-[178px] px-[14px] desktop:py-6 py-4 rounded-xl hidden tablet:flex shadow-[0px_4px_24px_0px_#9CB4CA33]">
             <div className="mb-6 relative">
                 <img src={profileImg} alt="BasicPofile" className="rounded-full w-[70px] h-[70px] desktop:w-[120px] desktop:h-[120px]"/>
-                <img src={editProfileIcon.src} alt="editProfileIcon" onClick={handleEditProfileIconClick} className="absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] cursor-pointer" />
+                <img src="/assets/icons/editButton.svg" alt="editProfileIcon" onClick={handleEditProfileIconClick} className="absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] cursor-pointer" />
                 <input type="file" ref={imgInputRef} onChange={handleProfileImgChange} accept="image/*" className="hidden" />
             </div>
             <ul className="w-full flex flex-col gap-[14px] justify-center text-16 text-gray-600">
                 <li>
                     <Link href="/main/profile" className={linkClassName("/main/profile")}>
-                        <img src={userIcon.src} alt="userIcon" className={defaultIconClass("/main/profile")} />
-                        <img src={userBlueIcon.src} alt="userIcon" className={blueIconClass("/main/profile")} />
+                        <img src="/assets/icons/user.svg" alt="userIcon" className={defaultIconClass("/main/profile")} />
+                        <img src="/assets/icons/userBlue.svg" alt="userIcon" className={blueIconClass("/main/profile")} />
                         내 정보
                     </Link>
                 </li>
                 <li>
                     <Link href="/main/reservations" className={linkClassName("/main/reservations")}>
-                        <img src={listIcon.src} alt="listIcon" className={defaultIconClass("/main/reservations")} />
-                        <img src={listBlueIcon.src} alt="listIcon" className={blueIconClass("/main/reservations")} />
+                        <img src="/assets/icons/list.svg" alt="listIcon" className={defaultIconClass("/main/reservations")} />
+                        <img src="/assets/icons/listBlue.svg" alt="listIcon" className={blueIconClass("/main/reservations")} />
                         예약내역
                     </Link>
                 </li>
                 <li>
                     <Link href="/main/my-experiences" className={linkClassName("/main/my-experiences")}>
-                        <img src={calendarIcon.src} alt="calendarIcon" className={defaultIconClass("/main/my-experiences")} />
-                        <img src={calendarBlueIcon.src} alt="calendarIcon" className={blueIconClass("/main/my-experiences")} />
+                        <img src="/assets/icons/calendar.svg" alt="calendarIcon" className={defaultIconClass("/main/my-experiences")} />
+                        <img src="/assets/icons/calendarBlue.svg" alt="calendarIcon" className={blueIconClass("/main/my-experiences")} />
                         내 체험 관리
                     </Link>
                 </li>
                 <li>
                     <Link href="/main/reservations-status" className={linkClassName("/main/reservations-status")}>
-                        <img src={settingIcon.src} alt="settingIcon" className={defaultIconClass("/main/reservations-status")} />
-                        <img src={settingBlueIcon.src} alt="settingIcon" className={blueIconClass("/main/reservations-status")} />
+                        <img src="/assets/icons/setting.svg" alt="settingIcon" className={defaultIconClass("/main/reservations-status")} />
+                        <img src="/assets/icons/settingBlue.svg" alt="settingIcon" className={blueIconClass("/main/reservations-status")} />
                         예약 현황
                     </Link>
                 </li>

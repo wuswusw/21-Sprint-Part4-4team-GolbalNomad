@@ -2,12 +2,6 @@
 
 import Link from "next/link";
 import { useState, useRef } from "react";
-import logo from "@/assets/images/textLogo.png";
-import symbolLogo from "@/assets/images/symbolLogo.png";
-import profile from "@/assets/images/default profile.png";
-import bell from "@/assets/icons/bell.svg";
-import bellBlue from "@/assets/icons/bellBlue.svg";
-import statusDot from "@/assets/icons/statusDot.svg";
 import useClickOutside from "@/hooks/useClickOutside";
 
 interface GNBProps {
@@ -45,8 +39,8 @@ function GNB({ nickname, profileImage }: GNBProps) {
             </button> 
             <div className="flex justify-between items-center w-full h-12 tablet:h-[80px] desktop:px-50 tablet:px-[30px] px-6 tablet:py-6 py-2">
                 <Link href="/" >
-                <img src={logo.src} alt="logo" className="hidden tablet:block" />
-                <img src={symbolLogo.src} alt="logo" className="block tablet:hidden" />
+                <img src="/assets/images/textLogo.png" alt="logo" className="hidden tablet:block" />
+                <img src="/assets/images/symbolLogo.png" alt="logo" className="block tablet:hidden" />
                 </Link>
                 {!isLogin && (
                     <div className="flex items-center gap-2 text-14 text-gray-950">
@@ -61,8 +55,8 @@ function GNB({ nickname, profileImage }: GNBProps) {
                 {isLogin && (
                     <div className="flex items-center">
                         <div className="relative" ref={notificationRef}>
-                            <img src={isNotificationOpen? bellBlue.src : bell.src} alt="bell" onClick={handleBellClick} className="w-[24px] h-[24px] cursor-pointer" />
-                            <img src={statusDot.src} alt="stateDot" className="absolute top-0 right-0" />
+                            <img src={isNotificationOpen ? "/assets/icons/bellBlue.svg" : "/assets/icons/bell.svg"} alt="bell" onClick={handleBellClick} className="w-[24px] h-[24px] cursor-pointer" />
+                            <img src="/assets/icons/statusDot.svg" alt="stateDot" className="absolute top-0 right-0" />
                             {isNotificationOpen && (
                                 <div className="absolute w-60 h-60 top-9 right-0 bg-white rounded-lg shadow-[0px_2px_8px_0px_#78748640]">
                                     <h1>알림</h1>
@@ -70,7 +64,7 @@ function GNB({ nickname, profileImage }: GNBProps) {
                             )}
                         </div>
                         <span className="mx-5 text-gray-100">|</span>
-                        <img src={profileImage ?? profile.src} alt="profile" className="w-[30px] h-[30px] rounded-full" />
+                        <img src={profileImage ?? "/assets/images/default profile.png"} alt="profile" className="w-[30px] h-[30px] rounded-full" />
                         <div className="relative" ref={profileRef}>
                             <span className="text-14 text-gray-950 ml-[10px] cursor-pointer" onClick={handleProfileClick}>{nickname ?? "이름 없음"}</span>
                             {isProfileOpen && (
