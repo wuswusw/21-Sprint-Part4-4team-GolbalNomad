@@ -1,6 +1,9 @@
 // 예약내역
 'use client';
 
+import CardHorizontal1 from '@/components/common/card/card-horizontal-1';
+import CardHorizontal2 from '@/components/common/card/card-horizontal-2';
+import CardVertical from '@/components/common/card/card-vertical';
 import { useModal } from '@/hooks/use-modal';
 
 export default function ReservationPage() {
@@ -47,17 +50,37 @@ export default function ReservationPage() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-start gap-4">
       <button onClick={handleOpenModal1}>알림 팝업</button>
-      <br />
       <button onClick={handleOpenModal2}>이미지 있는 알림 팝업</button>
-      <br />
       <button onClick={handleOpenModal3}>리뷰 팝업</button>
-      <br />
       <button onClick={handleOpenModal4}>슬라이드 팝업</button>
-      <br />
-      <br />
-      <br />
+      <CardHorizontal1
+        imageUrl="https://cdn-icons-png.flaticon.com/512/1628/1628767.png"
+        status="approval"
+        title="함께 배우면 즐거운 스트릿 댄스"
+        scheduledDate="2023. 02. 14"
+        price={10000}
+        people={10}
+        onEdit={() => {}}
+        onCancel={() => {}}
+      />
+      <CardHorizontal2
+        imageUrl="https://cdn-icons-png.flaticon.com/512/1628/1628767.png"
+        title="함께 배우면 즐거운 스트릿 댄스"
+        rating={4.5}
+        reviewCount={10}
+        price={100000}
+        onEdit={() => {}}
+        onDelete={() => {}}
+      />
+      <CardVertical
+        imageUrl="https://cdn-icons-png.flaticon.com/512/1628/1628767.png"
+        title="함께 배우면 즐거운 스트릿 댄스"
+        rating={4.5}
+        reviewCount={10}
+        price={100000}
+      />
       <p>※ 버튼 공용컴포넌트 완료시 적용 예정.</p>
     </div>
   );

@@ -10,7 +10,7 @@ export default function ReservationsLayout({ children }: { children: React.React
         <div className="w-72.5">
           <Sidemenu />
         </div>
-        <div>{children}</div>
+        <div className="w-full">{children}</div>
       </div>
       <Footer />
     </>
