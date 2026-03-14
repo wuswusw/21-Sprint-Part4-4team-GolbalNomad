@@ -6,7 +6,7 @@ function Footer() {
       <div className="flex flex-wrap tablet:flex-nowrap items-center justify-between w-full">
         <span className="text-gray-400">©codeit - 2023</span>
         <div className="order-first tablet:order-none w-full tablet:w-auto text-center pb-5 tablet:pb-0 text-gray-600" >
-            <Link href="/">Pirvacy Policy</Link>
+            <Link href="/">Privacy Policy</Link>
             <span className="mx-6">∙</span>
             <Link href="/">FAQ</Link>
         </div>
