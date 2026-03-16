@@ -1,15 +1,15 @@
 import { useRouter } from 'next/navigation';
-import { CardHorizontal2Props } from '@/types/card';
+import { CardExperiencesProps } from '@/types/card';
 import { useModal } from '@/hooks/use-modal';
 
-export default function CardHorizontal2({
+export default function CardExperiences({
   id,
   imageUrl,
   title,
   rating,
   reviewCount,
   price,
-}: CardHorizontal2Props) {
+}: CardExperiencesProps) {
   const router = useRouter();
   const { openModal } = useModal();
 

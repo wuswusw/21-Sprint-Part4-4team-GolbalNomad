@@ -1,9 +1,9 @@
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/hooks/use-modal';
-import { CardHorizontal1Props } from '@/types/card';
+import { CardReservationProps } from '@/types/card';
 import Badge from './badge';
 
-export default function CardHorizontal1({
+export default function CardReservation({
   id,
   imageUrl,
   status,
@@ -12,7 +12,7 @@ export default function CardHorizontal1({
   headCount,
   price,
   people,
-}: CardHorizontal1Props) {
+}: CardReservationProps) {
   const router = useRouter();
   const { openModal } = useModal();
   const showEdit = status === 'confirmed';
