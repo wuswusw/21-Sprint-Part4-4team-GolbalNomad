@@ -1,3 +1,5 @@
+// 예약내역 내에 있는 상태 뱃지
+
 import { BadgeStatus } from '@/types/card';
 
 const statusConfig: Record<BadgeStatus, { label: string; className: string }> = {

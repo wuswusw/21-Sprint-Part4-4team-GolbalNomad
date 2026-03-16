@@ -56,25 +56,24 @@ export default function ReservationPage() {
       <button onClick={handleOpenModal3}>리뷰 팝업</button>
       <button onClick={handleOpenModal4}>슬라이드 팝업</button>
       <CardHorizontal1
+        id={1}
         imageUrl="https://cdn-icons-png.flaticon.com/512/1628/1628767.png"
         status="approval"
         title="함께 배우면 즐거운 스트릿 댄스"
         scheduledDate="2023. 02. 14"
         price={10000}
         people={10}
-        onEdit={() => {}}
-        onCancel={() => {}}
       />
       <CardHorizontal2
+        id={1}
         imageUrl="https://cdn-icons-png.flaticon.com/512/1628/1628767.png"
         title="함께 배우면 즐거운 스트릿 댄스"
         rating={4.5}
         reviewCount={10}
         price={100000}
-        onEdit={() => {}}
-        onDelete={() => {}}
       />
       <CardVertical
+        id={1}
         imageUrl="https://cdn-icons-png.flaticon.com/512/1628/1628767.png"
         title="함께 배우면 즐거운 스트릿 댄스"
         rating={4.5}

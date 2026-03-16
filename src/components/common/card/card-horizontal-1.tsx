@@ -1,7 +1,10 @@
+import { useRouter } from 'next/navigation';
+import { useModal } from '@/hooks/use-modal';
 import { CardHorizontal1Props } from '@/types/card';
 import Badge from './badge';
 
 export default function CardHorizontal1({
+  id,
   imageUrl,
   status,
   title,
@@ -9,31 +12,41 @@ export default function CardHorizontal1({
   headCount,
   price,
   people,
-  onEdit,
-  onCancel,
-  onWriteReview,
 }: CardHorizontal1Props) {
+  const router = useRouter();
+  const { openModal } = useModal();
+  const showEdit = status === 'confirmed';
+  const showCancel = status === 'confirmed';
+  const showWriteReview = status === 'completed';
+
   const buttons = (
     <div className="flex gap-2">
-      {onEdit && (
+      {showEdit && (
         <button
-          onClick={onEdit}
+          onClick={() => router.push(`/main/reservations/${id}/edit`)}
           className="text-14 rounded-sm border border-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
         >
           예약 변경
         </button>
       )}
-      {onCancel && (
+
+      {showCancel && (
         <button
-          onClick={onCancel}
+          onClick={() => router.push(`/main/reservations/${id}/cancel`)}
           className="text-14 rounded-sm bg-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
         >
           예약 취소
         </button>
       )}
-      {onWriteReview && (
+      {showWriteReview && (
         <button
-          onClick={onWriteReview}
+          onClick={() => {
+            openModal('review', {
+              reservationId: id.toString(),
+              activityTitle: title,
+              reservationDate: scheduledDate,
+            });
+          }}
           className="text-14 rounded-sm bg-[var(--color-primary-500)] px-[10px] py-[6px] text-white"
         >
           후기 작성
