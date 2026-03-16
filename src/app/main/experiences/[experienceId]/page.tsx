@@ -25,7 +25,7 @@ function ExperienceDetailPage() {
                 </div>
             </div>
         </MainLayout>
-        <div className="w-full desktop:hidden sticky bottom-0 px-6 py-[18px] bg-white border-t border-[#e6e6e6]">
+        <div className="w-full desktop:hidden sticky bottom-0 z-49 px-6 py-[18px] bg-white border-t border-[#e6e6e6]">
             <div className="flex items-center justify-between mb-3">
             <div className="flex justify-center items-center gap-1">
                 <h2 className="text-18 font-bold">₩ 1,000</h2>
