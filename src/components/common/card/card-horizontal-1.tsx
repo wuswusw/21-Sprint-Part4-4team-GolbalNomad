@@ -11,6 +11,7 @@ export default function CardHorizontal1({
   people,
   onEdit,
   onCancel,
+  onWriteReview,
 }: CardHorizontal1Props) {
   const buttons = (
     <div className="flex gap-2">
@@ -28,6 +29,14 @@ export default function CardHorizontal1({
           className="text-14 rounded-sm bg-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
         >
           예약 취소
+        </button>
+      )}
+      {onWriteReview && (
+        <button
+          onClick={onWriteReview}
+          className="text-14 rounded-sm bg-[var(--color-primary-500)] px-[10px] py-[6px] text-white"
+        >
+          후기 작성
         </button>
       )}
     </div>
@@ -60,7 +69,7 @@ export default function CardHorizontal1({
         </div>
 
         {/* 이미지 */}
-        <div className="w-[180px] shrink-0 overflow-hidden rounded-xl">
+        <div className="h-[180px] w-[180px] shrink-0 overflow-hidden rounded-xl">
           <img src={imageUrl} alt={title} className="h-full w-full object-cover" />
         </div>
       </div>
