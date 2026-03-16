@@ -1,7 +1,7 @@
 // 예약 내역
 'use client';
 import { useState } from 'react';
-import CardHorizontal1 from '@/components/common/card/card-horizontal-1';
+import CardReservation from '@/components/common/card/card-reservation';
 import type { BadgeStatus } from '@/types/card';
 import PageHeader from '@/components/common/PageHeader';
 
@@ -43,7 +43,7 @@ export default function ReservationPage() {
 
       {/* 예약 리스트 */}
       <div className="flex w-full flex-col gap-6">
-        <CardHorizontal1
+        <CardReservation
           id={1}
           imageUrl="https://cdn.dailyvet.co.kr/wp-content/uploads/2024/05/15231647/20240515ceva_experts4.jpg"
           status="confirmed"
@@ -53,7 +53,7 @@ export default function ReservationPage() {
           people={10}
         />
 
-        <CardHorizontal1
+        <CardReservation
           id={2}
           imageUrl="https://lh3.googleusercontent.com/proxy/DNVIwWacFoW3Za-pUNm8BiFDjLDOUAaq6y3dVk0TVXZSvlRvLGAqznzidRc1c7d-TqVhTxP8-h2D14HNgDEwfWvD0td6hQK1okNte93oCTs"
           status="cancel"
@@ -63,7 +63,7 @@ export default function ReservationPage() {
           people={10}
         />
 
-        <CardHorizontal1
+        <CardReservation
           id={3}
           imageUrl="https://i.pinimg.com/736x/d8/a6/cb/d8a6cbb02bc2c5c27ae238db2e89425d.jpg"
           status="rejected"
@@ -73,7 +73,7 @@ export default function ReservationPage() {
           people={10}
         />
 
-        <CardHorizontal1
+        <CardReservation
           id={4}
           imageUrl="https://i.pinimg.com/736x/d8/a6/cb/d8a6cbb02bc2c5c27ae238db2e89425d.jpg"
           status="completed"
@@ -83,7 +83,7 @@ export default function ReservationPage() {
           people={10}
         />
 
-        <CardHorizontal1
+        <CardReservation
           id={5}
           imageUrl="https://i.pinimg.com/736x/d8/a6/cb/d8a6cbb02bc2c5c27ae238db2e89425d.jpg"
           status="approval"

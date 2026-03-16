@@ -1,8 +1,8 @@
 // 예약내역
 'use client';
 
-import CardHorizontal1 from '@/components/common/card/card-horizontal-1';
-import CardHorizontal2 from '@/components/common/card/card-horizontal-2';
+import CardReservation from '@/components/common/card/card-reservation';
+import CardExperiences from '@/components/common/card/card-experiences';
 import CardVertical from '@/components/common/card/card-vertical';
 import { useModal } from '@/hooks/use-modal';
 
@@ -55,7 +55,7 @@ export default function ReservationPage() {
       <button onClick={handleOpenModal2}>이미지 있는 알림 팝업</button>
       <button onClick={handleOpenModal3}>리뷰 팝업</button>
       <button onClick={handleOpenModal4}>슬라이드 팝업</button>
-      <CardHorizontal1
+      <CardReservation
         id={1}
         imageUrl="https://cdn-icons-png.flaticon.com/512/1628/1628767.png"
         status="approval"
@@ -64,7 +64,7 @@ export default function ReservationPage() {
         price={10000}
         people={10}
       />
-      <CardHorizontal2
+      <CardExperiences
         id={1}
         imageUrl="https://cdn-icons-png.flaticon.com/512/1628/1628767.png"
         title="함께 배우면 즐거운 스트릿 댄스"

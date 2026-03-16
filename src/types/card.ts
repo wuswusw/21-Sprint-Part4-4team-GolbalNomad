@@ -10,7 +10,7 @@ export interface CardVerticalProps {
   onClick?: () => void;
 }
 
-export interface CardHorizontal1Props {
+export interface CardReservationProps {
   id: number | string;
   imageUrl: string;
   status: BadgeStatus;
@@ -21,7 +21,7 @@ export interface CardHorizontal1Props {
   people: number;
 }
 
-export interface CardHorizontal2Props {
+export interface CardExperiencesProps {
   id: number | string;
   imageUrl: string;
   title: string;
