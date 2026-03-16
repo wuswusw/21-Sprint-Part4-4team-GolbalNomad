@@ -73,7 +73,7 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
 
     
     return (
-        <div className="flex flex-col items-center justify-center desktop:w-[291px] w-[178px] px-[14px] desktop:py-6 py-4 rounded-xl hidden tablet:flex shadow-[0px_4px_24px_0px_#9CB4CA33]">
+        <div className="flex flex-col items-center justify-center desktop:w-[291px] w-[178px] desktop:h-[450px] h-[342px] px-[14px] desktop:py-6 py-4 rounded-xl hidden tablet:flex shadow-[0px_4px_24px_0px_#9CB4CA33]">
             <div className="mb-6 relative">
                 <img src={profileImg} alt="BasicPofile" className="rounded-full w-[70px] h-[70px] desktop:w-[120px] desktop:h-[120px]"/>
                 <img src="/assets/icons/editButton.svg" alt="editProfileIcon" onClick={handleEditProfileIconClick} className="absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] cursor-pointer" />
