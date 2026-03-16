@@ -1,5 +1,5 @@
 import MainLayout from "@/components/layout/MainLayout";
-import MyDayPicker from "./components/ReactDayPicker";
+import Calender from "./components/Calender";
 
 
 function ExperienceDetailPage() {
@@ -83,7 +83,7 @@ function ExperienceDetailPage() {
                         <div className="flex justify-start gap-[2px] items-center mb-[17px]">
                             <img src="/assets/icons/location.svg" alt="location" className="w-4 h-4" />
                             <span className="text-body-14 text-gray-700">서울 중구 청계천로 100 10F</span>
-                        </div>
+                        </div> 
                         <p className="text-body-16 text-[#4B4B4B] mb-[30px]">초보자부터 전문가까지 춤추는 즐거움을 함께 느껴보세요.</p>
                     </div>
                     <div className="p-[30px] rounded-3xl shadow-[0px_4px_24px_0px_#9CB4CA33]">
@@ -93,7 +93,7 @@ function ExperienceDetailPage() {
                         </div>
                         <h3 className="text-16 font-bold mb-2">날짜</h3>
                         <div>
-                            <MyDayPicker/>
+                            <Calender/>
                         </div>
                         <div className="flex justify-between my-6">
                             <h3 className="text-16 font-bold">참여 인원수</h3>

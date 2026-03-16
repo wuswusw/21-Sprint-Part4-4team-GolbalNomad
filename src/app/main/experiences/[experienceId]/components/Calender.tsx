@@ -57,12 +57,6 @@ const MyDayPicker = () => {
           }}
         />
       </div>
-      
-      {/* {selected && (
-        <p className="mt-4 text-gray-600 text-sm">
-          선택된 날짜: {selected.toLocaleDateString()}
-        </p>
-      )} */}
     </div>
   );
 };
