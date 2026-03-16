@@ -14,7 +14,7 @@ const SOCIAL_LINKS = [
 
 function Footer() {
   return (
-    <div className="flex items-center justify-center desktop:px-50 tablet:px-10 px-6 tablet:py-15 py-[30px] text-13">
+    <div className="flex items-center justify-center desktop:px-50 tablet:px-10 px-6 tablet:py-15 py-[30px] text-13 border-t border-[#E0E0E5]">
       <div className="flex flex-wrap tablet:flex-nowrap items-center justify-between w-full">
         <span className="text-gray-400">©codeit - 2023</span>
         <div className="order-first tablet:order-none w-full tablet:w-auto text-center pb-5 tablet:pb-0 text-gray-600">
