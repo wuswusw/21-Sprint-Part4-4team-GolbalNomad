@@ -21,6 +21,33 @@ interface SidemenuProps {
     onImageChange?: (file: File) => void;
 }
 
+const menuLists = [
+    {
+        href: "/main/profile",
+        icon: "/assets/icons/user.svg",
+        blueIcon: "/assets/icons/userBlue.svg",
+        label: "내 정보",
+    },
+    {
+        href: "/main/reservations",
+        icon: "/assets/icons/list.svg",
+        blueIcon: "/assets/icons/listBlue.svg",
+        label: "예약내역",
+    },
+    {
+        href: "/main/my-experiences",
+        icon: "/assets/icons/calendar.svg",
+        blueIcon: "/assets/icons/calendarBlue.svg",
+        label: "내 체험 관리",
+    },
+    {
+        href: "/main/reservations-status",
+        icon: "/assets/icons/setting.svg",
+        blueIcon: "/assets/icons/settingBlue.svg",
+        label: "예약 현황",
+    },
+]
+
 function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
     const imgInputRef = useRef<HTMLInputElement>(null);
     const [profileImg, setProfileImg] = useState(externalImg ?? "/assets/images/default profile.png");
@@ -33,7 +60,10 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
         const imgFile = e.target.files?.[0];
         if (imgFile){
             const url = URL.createObjectURL(imgFile);
-            setProfileImg(url);
+            setProfileImg((prevUrl) => {
+                if (prevUrl.startsWith("blob:")) URL.revokeObjectURL(prevUrl);
+                return url;
+            });
             onImageChange?.(imgFile); // API 연결 시 부모에서 업로드 처리
         }
     }
@@ -50,34 +80,17 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
                 <input type="file" ref={imgInputRef} onChange={handleProfileImgChange} accept="image/*" className="hidden" />
             </div>
             <ul className="w-full flex flex-col gap-[14px] justify-center text-16 text-gray-600">
-                <li>
-                    <Link href="/main/profile" className={linkClassName("/main/profile")}>
-                        <img src="/assets/icons/user.svg" alt="userIcon" className={defaultIconClass("/main/profile")} />
-                        <img src="/assets/icons/userBlue.svg" alt="userIcon" className={blueIconClass("/main/profile")} />
-                        내 정보
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/main/reservations" className={linkClassName("/main/reservations")}>
-                        <img src="/assets/icons/list.svg" alt="listIcon" className={defaultIconClass("/main/reservations")} />
-                        <img src="/assets/icons/listBlue.svg" alt="listIcon" className={blueIconClass("/main/reservations")} />
-                        예약내역
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/main/my-experiences" className={linkClassName("/main/my-experiences")}>
-                        <img src="/assets/icons/calendar.svg" alt="calendarIcon" className={defaultIconClass("/main/my-experiences")} />
-                        <img src="/assets/icons/calendarBlue.svg" alt="calendarIcon" className={blueIconClass("/main/my-experiences")} />
-                        내 체험 관리
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/main/reservations-status" className={linkClassName("/main/reservations-status")}>
-                        <img src="/assets/icons/setting.svg" alt="settingIcon" className={defaultIconClass("/main/reservations-status")} />
-                        <img src="/assets/icons/settingBlue.svg" alt="settingIcon" className={blueIconClass("/main/reservations-status")} />
-                        예약 현황
-                    </Link>
-                </li>
+                {menuLists.map((list) => {
+                    return (
+                        <li key={list.href}>
+                            <Link href={list.href} className={linkClassName(list.href)}>
+                                <img src={list.icon} alt={list.label} className={defaultIconClass(list.href)} />
+                                <img src={list.blueIcon} alt={list.label} className={blueIconClass(list.href)} />
+                                {list.label}
+                            </Link>
+                        </li>
+                    )
+                })}
             </ul>
         </div>
     )
