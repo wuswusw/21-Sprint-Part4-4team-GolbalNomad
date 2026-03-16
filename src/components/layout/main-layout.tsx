@@ -1,4 +1,4 @@
-import GNB from "@/components/common/GNB";
+import Gnb from "@/components/common/gnb/gnb";
 import Footer from "@/components/common/Footer";
 
 /**
@@ -12,7 +12,7 @@ import Footer from "@/components/common/Footer";
 function MainLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex flex-col min-h-screen">
-            <GNB />
+            <Gnb />
             <main className="flex-1">
                 {children}
             </main>
