@@ -1,32 +1,42 @@
+import { useRouter } from 'next/navigation';
 import { CardHorizontal2Props } from '@/types/card';
+import { useModal } from '@/hooks/use-modal';
 
 export default function CardHorizontal2({
+  id,
   imageUrl,
   title,
   rating,
   reviewCount,
   price,
-  onEdit,
-  onDelete,
 }: CardHorizontal2Props) {
+  const router = useRouter();
+  const { openModal } = useModal();
+
   const buttons = (
     <div className="flex gap-2">
-      {onEdit && (
-        <button
-          onClick={onEdit}
-          className="text-14 rounded-sm border border-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
-        >
-          수정하기
-        </button>
-      )}
-      {onDelete && (
-        <button
-          onClick={onDelete}
-          className="text-14 rounded-sm bg-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
-        >
-          삭제하기
-        </button>
-      )}
+      <button
+        onClick={() => router.push(`/main/my-experiences/${id}/edit`)}
+        className="text-14 rounded-sm border border-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
+      >
+        수정하기
+      </button>
+      <button
+        onClick={() => {
+          openModal('alert', {
+            imageSrc: 'https://cdn-icons-png.flaticon.com/512/5610/5610967.png',
+            description: '체험을 삭제하시겠어요?',
+            confirmText: '삭제하기',
+            cancelText: '아니오',
+            onConfirm: () => {
+              console.log('삭제');
+            },
+          });
+        }}
+        className="text-14 rounded-sm bg-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
+      >
+        삭제하기
+      </button>
     </div>
   );
 

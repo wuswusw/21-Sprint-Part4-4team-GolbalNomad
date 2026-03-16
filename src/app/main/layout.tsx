@@ -10,7 +10,7 @@ export default function ReservationsLayout({ children }: { children: React.React
         <div className="w-72.5">
           <Sidemenu />
         </div>
-        <div className="w-full">{children}</div>
+        <div className="flex w-full flex-col items-start gap-7.5">{children}</div>
       </div>
       <Footer />
     </>
