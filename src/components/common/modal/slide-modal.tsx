@@ -19,13 +19,17 @@ export default function SlideModal({
 
   const handleClose = () => {
     setIsClosing(true);
-    setTimeout(onClose, 300);
+  };
+
+  const handleAnimationEnd = () => {
+    if (isClosing) onClose();
   };
 
   return (
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={handleClose} />
       <div
+        onAnimationEnd={handleAnimationEnd}
         className={`fixed right-0 bottom-0 left-0 z-50 flex flex-col rounded-t-2xl bg-white ${padding} ${isClosing ? 'animate-slide-down' : 'animate-slide-up'}`}
       >
         {title && <h2 className="mb-4 text-lg font-bold text-[var(--color-gray-950)]">{title}</h2>}
