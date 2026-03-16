@@ -1,7 +1,7 @@
 "use client";
 
 import {useState} from "react";
-import Calender from "./Calender";
+import Calender from "./reservation-calender";
 
 function ReservationCard() {
     const [count, setCount] = useState(1);

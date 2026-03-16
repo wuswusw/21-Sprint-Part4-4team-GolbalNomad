@@ -1,4 +1,4 @@
-import MainLayout from "@/components/layout/MainLayout";
+import MainLayout from "@/components/layout/main-layout";
 
 export default function Page() {
   return (

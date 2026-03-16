@@ -1,21 +1,25 @@
-import MainLayout from "@/components/layout/MainLayout";
-import ImageGallery from "./components/ImageGallery";
-import ExperienceDesc from "./components/ExperienceDesc";
-import Map from "./components/Map";
-import ReviewSection from "./components/ReviewSection";
-import ExperienceInfo from "./components/ExperienceInfo";
-import ReservationCard from "./components/ReservationCard";
+import MainLayout from "@/components/layout/main-layout";
+import ImageGallery from "./components/image-gallery";
+import ExperienceDesc from "./components/experience-desc";
+import Map from "./components/kakao-map";
+import ReviewSection from "./components/review-section";
+import ExperienceInfo from "./components/experience-info";
+import ReservationCard from "./components/reservation-card";
 
 function ExperienceDetailPage() {
   return (
     <div>
         <MainLayout>
-            <div className="w-full mx-auto mt-22 mb-45 flex justify-center">
+            <div className="w-full mx-auto desktop:mt-22 tablet:mt-[34px] mt-[30px] desktop:mb-45 mb-[75px] mb-[30px] flex justify-center">
                 <div className="w-full desktop:max-w-[1200px] px-10 grid grid-cols-1 desktop:grid-cols-[1fr_410px] gap-10">
-                    <section className="w-full flex flex-col gap-10 text-gray-950">
+                    <section className="w-full flex flex-col gap-6 tablet:gap-[30px] desktop:gap-10 text-gray-950">
                         <ImageGallery />
+                        <ExperienceInfo className="desktop:hidden" />
+                        <hr className="w-full border-[#E0E0E5] desktop:hidden" />
                         <ExperienceDesc />
+                        <hr className="w-full border-[#E0E0E5]" />
                         <Map />
+                        <hr className="w-full border-[#E0E0E5]" />
                         <ReviewSection />
                     </section>
                     <section className="hidden desktop:block text-gray-950">

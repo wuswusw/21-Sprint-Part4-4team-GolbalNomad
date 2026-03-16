@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useCallback } from "react";
-import useClickOutside from "@/hooks/useClickOutside";
+import useClickOutside from "@/hooks/use-click-outside";
 
 interface GNBProps {
     nickname?: string;
