@@ -53,7 +53,7 @@ export default function CardHorizontal2({
       </div>
 
       {/* 이미지 */}
-      <div className="flex w-[142px] shrink-0 items-center justify-center rounded-xl">
+      <div className="flex h-[142px] w-[142px] shrink-0 items-center justify-center overflow-hidden rounded-xl">
         <img src={imageUrl} alt={title} className="h-full w-full object-cover" />
       </div>
     </div>
