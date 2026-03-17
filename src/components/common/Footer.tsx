@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const NAV_LINKS = [
@@ -28,7 +29,7 @@ function Footer() {
         <div className="flex items-center gap-4">
           {SOCIAL_LINKS.map((link) => (
             <Link key={link.alt} href={link.href} target="_blank" rel="noopener noreferrer">
-              <img src={link.icon} alt={link.alt} />
+              <Image src={link.icon} alt={link.alt} width={24} height={24} />
             </Link>
           ))}
         </div>

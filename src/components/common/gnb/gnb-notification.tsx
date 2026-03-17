@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRef, useCallback } from "react";
 import useClickOutside from "@/hooks/useClickOutside";
 
@@ -18,15 +19,19 @@ function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
 
   return (
     <div className="relative" ref={notificationRef}>
-      <img
+      <Image
         src={isOpen ? "/assets/icons/bellBlue.svg" : "/assets/icons/bell.svg"}
         alt="bell"
+        width={24}
+        height={24}
         onClick={onToggle}
         className="w-[24px] h-[24px] cursor-pointer"
       />
-      <img
+      <Image
         src="/assets/icons/statusDot.svg"
         alt="stateDot"
+        width={8}
+        height={8}
         className="absolute top-0 right-0"
       />
       {isOpen && (

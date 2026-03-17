@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRef, useCallback } from "react";
 import useClickOutside from "@/hooks/useClickOutside";
@@ -22,9 +23,12 @@ function GnbProfile({ nickname, profileImage, isOpen, onToggle, onLogout }: GnbP
 
   return (
     <div className="flex items-center">
-      <img
+      <Image
         src={profileImage ?? "/assets/images/default profile.png"}
         alt="profile"
+        width={30}
+        height={30}
+        unoptimized
         className="w-[30px] h-[30px] rounded-full"
       />
       <div className="relative" ref={profileRef}>
