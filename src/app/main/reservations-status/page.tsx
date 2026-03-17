@@ -1,5 +1,5 @@
-import ReservationsStatusCalendar from "./components/reservations-status-calendar";
-import ReservationsStatusDetail from "./components/reservations-status-detail";
+import ReservationsStatusCalendar from "@/features/reservation/components/reservations-status-calendar";
+import ReservationsStatusDetail from "@/features/reservation/components/reservations-status-detail";
 
 function ReservationsStatusPage() {
     return (
@@ -16,6 +16,7 @@ function ReservationsStatusPage() {
                     </div>
                     <ReservationsStatusCalendar />
                     <ReservationsStatusDetail />
+
                 </div>
             </div>
     )
