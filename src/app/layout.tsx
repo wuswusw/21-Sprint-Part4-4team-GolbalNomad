@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
+import { pretendard } from "@/lib/fonts";
+import { ModalProvider } from "@/components/common/modal/modal-provider";
 import QueryProvider from "./providers";
 
 export const metadata: Metadata = {
@@ -13,9 +15,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={pretendard.variable}>
       <body>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </QueryProvider>
       </body>
     </html>
   );
