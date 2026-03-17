@@ -1,15 +1,9 @@
-import MainLayout from "@/components/layout/MainLayout";
-import Sidemenu from "@/components/common/Sidemenu";
 import ReservationsStatusCalendar from "./components/reservations-status-calendar";
-import ReservationsStatusModal from "./components/reservations-status-modal";
+import ReservationsStatusDetail from "./components/reservations-status-detail";
 
 function ReservationsStatusPage() {
     return (
-        <MainLayout>
-            <div className="tablet:pt-10 pt-[30px] desktop:pt-10 pb-22 tablet:pb-25 pb-[14px] max-w-[980px] desktop:mx-auto tablet:mx-[30px] px-0 grid tablet:grid-cols-[178px_1fr] grid-cols-[1fr] desktop:grid-cols-[291px_1fr] gap-0 tablet:gap-[50px] gap-[20px]">
-                <div className="h-fit">
-                    <Sidemenu />
-                </div>
+            <div className="desktop:w-160 tablet:w-[476px] w-full">
                 <div className="flex flex-col desktop:gap-[30px] tablet:gap-6 gap-[18px] text-gray-950">
                     <div className="flex flex-col gap-[10px] tablet:px-0 px-6">
                         <h2 className="text-18 font-bold">예약 현황</h2>
@@ -21,10 +15,9 @@ function ReservationsStatusPage() {
                         </div>
                     </div>
                     <ReservationsStatusCalendar />
-                    <ReservationsStatusModal />
+                    <ReservationsStatusDetail />
                 </div>
             </div>
-        </MainLayout>
     )
 }
 

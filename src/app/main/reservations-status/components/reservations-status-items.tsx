@@ -29,7 +29,7 @@ const MOCK_RESERVATIONS: Reservation[] = [
 
 function ReservationsStatusItems({ activeTab }: { activeTab: Tab }) {
     return (
-        <div className="w-full flex flex-col gap-[30px]">
+        <div className="w-full flex desktop:flex-col tablet:flex-row flex-col gap-[30px]">
             <div className="w-full flex flex-col gap-3">
                 <p className="text-18 font-bold">예약 시간</p>
                 <div className="w-full h-[54px] ring ring-[#E0E0E5] rounded-xl flex items-center justify-center">2026-03-17 10:00</div>
