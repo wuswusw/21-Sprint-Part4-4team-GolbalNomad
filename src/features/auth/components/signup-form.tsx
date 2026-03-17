@@ -13,7 +13,6 @@ import {
   validatePassword,
   validatePasswordConfirm,
 } from "../schemas/auth.schema";
-import type { SignupResponse } from "../types/auth.type";
 
 export default function SignupForm() {
   const router = useRouter();
@@ -75,7 +74,7 @@ export default function SignupForm() {
     mutate(
       { email, nickname, password },
       {
-        onSuccess: (_data: SignupResponse) => {
+        onSuccess: () => {
           alert("회원가입이 완료되었습니다.");
           router.push("/auth/login");
         },
