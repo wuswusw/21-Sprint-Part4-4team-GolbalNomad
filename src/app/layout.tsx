@@ -1,10 +1,6 @@
 import "@/styles/globals.css";
 import { pretendard } from "@/lib/fonts";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
+import { ModalProvider } from "@/components/common/modal/modal-provider";
 
 export default function RootLayout({
   children,
@@ -12,8 +8,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={cn("font-sans", geist.variable)}>
-      <body>{children}</body>
+    <html lang="ko" className={pretendard.variable}>
+      <body>
+        <ModalProvider>{children}</ModalProvider>
+      </body>
+
     </html>
   );
 }
