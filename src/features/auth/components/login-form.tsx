@@ -45,6 +45,9 @@ export default function LoginForm() {
         onSuccess: (data: LoginResponse) => {
           localStorage.setItem("accessToken", data.accessToken);
           localStorage.setItem("refreshToken", data.refreshToken);
+          localStorage.setItem("nickname", data.user.nickname);
+          localStorage.setItem("profileImage", data.user.profileImageUrl ?? "");
+          window.dispatchEvent(new Event("auth-change"));
           router.push("/");
         },
         onError: (error: Error) => {
