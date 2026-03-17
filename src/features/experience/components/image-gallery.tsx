@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   Carousel,
   CarouselContent,
@@ -21,11 +22,13 @@ function ImageGallery() {
         <CarouselContent className="h-full">
           {images.map((src, index) => (
             <CarouselItem key={index} className="h-full">
-              <div className="w-full h-full">
-                <img
+              <div className="relative w-full h-full">
+                <Image
                   src={src}
                   alt={`체험 이미지 ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 744px) 327px, (max-width: 1199px) 684px, 670px"
                 />
               </div>
             </CarouselItem>
