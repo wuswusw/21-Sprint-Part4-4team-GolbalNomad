@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
@@ -75,8 +76,8 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
     return (
         <div className="flex flex-col items-center justify-center desktop:w-[291px] w-[178px] desktop:h-[450px] h-[342px] px-[14px] desktop:py-6 py-4 rounded-xl hidden tablet:flex shadow-[0px_4px_24px_0px_#9CB4CA33]">
             <div className="mb-6 relative">
-                <img src={profileImg} alt="BasicPofile" className="rounded-full w-[70px] h-[70px] desktop:w-[120px] desktop:h-[120px]"/>
-                <img src="/assets/icons/editButton.svg" alt="editProfileIcon" onClick={handleEditProfileIconClick} className="absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] cursor-pointer" />
+                <Image src={profileImg} alt="BasicProfile" width={70} height={70} unoptimized className="rounded-full w-[70px] h-[70px] desktop:w-[120px] desktop:h-[120px]"/>
+                <Image src="/assets/icons/editButton.svg" alt="editProfileIcon" width={24} height={24} onClick={handleEditProfileIconClick} className="absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] cursor-pointer" />
                 <input type="file" ref={imgInputRef} onChange={handleProfileImgChange} accept="image/*" className="hidden" />
             </div>
             <ul className="w-full flex flex-col gap-[14px] justify-center text-16 text-gray-600">
@@ -84,8 +85,8 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
                     return (
                         <li key={list.href}>
                             <Link href={list.href} className={linkClassName(list.href)}>
-                                <img src={list.icon} alt={list.label} className={defaultIconClass(list.href)} />
-                                <img src={list.blueIcon} alt={list.label} className={blueIconClass(list.href)} />
+                                <Image src={list.icon} alt={list.label} width={24} height={24} className={defaultIconClass(list.href)} />
+                                <Image src={list.blueIcon} alt={list.label} width={24} height={24} className={blueIconClass(list.href)} />
                                 {list.label}
                             </Link>
                         </li>
