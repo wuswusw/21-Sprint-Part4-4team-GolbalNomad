@@ -1,6 +1,7 @@
 export type BadgeStatus = 'cancel' | 'confirmed' | 'rejected' | 'approval' | 'completed';
 
 export interface CardVerticalProps {
+  id: number | string;
   imageUrl: string;
   title: string;
   rating: number;
@@ -9,7 +10,8 @@ export interface CardVerticalProps {
   onClick?: () => void;
 }
 
-export interface CardHorizontal1Props {
+export interface CardReservationProps {
+  id: number | string;
   imageUrl: string;
   status: BadgeStatus;
   title: string;
@@ -17,12 +19,10 @@ export interface CardHorizontal1Props {
   headCount?: number;
   price: number;
   people: number;
-  onEdit?: () => void;
-  onCancel?: () => void;
-  onWriteReview?: () => void;
 }
 
-export interface CardHorizontal2Props {
+export interface CardExperiencesProps {
+  id: number | string;
   imageUrl: string;
   title: string;
   rating: number;
