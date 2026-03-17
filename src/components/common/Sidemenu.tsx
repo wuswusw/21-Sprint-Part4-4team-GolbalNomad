@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
@@ -21,6 +22,33 @@ interface SidemenuProps {
     onImageChange?: (file: File) => void;
 }
 
+const menuLists = [
+    {
+        href: "/main/profile",
+        icon: "/assets/icons/user.svg",
+        blueIcon: "/assets/icons/userBlue.svg",
+        label: "내 정보",
+    },
+    {
+        href: "/main/reservations",
+        icon: "/assets/icons/list.svg",
+        blueIcon: "/assets/icons/listBlue.svg",
+        label: "예약내역",
+    },
+    {
+        href: "/main/my-experiences",
+        icon: "/assets/icons/calendar.svg",
+        blueIcon: "/assets/icons/calendarBlue.svg",
+        label: "내 체험 관리",
+    },
+    {
+        href: "/main/reservations-status",
+        icon: "/assets/icons/setting.svg",
+        blueIcon: "/assets/icons/settingBlue.svg",
+        label: "예약 현황",
+    },
+]
+
 function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
     const imgInputRef = useRef<HTMLInputElement>(null);
     const [profileImg, setProfileImg] = useState(externalImg ?? "/assets/images/default profile.png");
@@ -33,7 +61,10 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
         const imgFile = e.target.files?.[0];
         if (imgFile){
             const url = URL.createObjectURL(imgFile);
-            setProfileImg(url);
+            setProfileImg((prevUrl) => {
+                if (prevUrl.startsWith("blob:")) URL.revokeObjectURL(prevUrl);
+                return url;
+            });
             onImageChange?.(imgFile); // API 연결 시 부모에서 업로드 처리
         }
     }
@@ -43,41 +74,24 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
 
     
     return (
-        <div className="flex flex-col items-center justify-center desktop:w-[291px] w-[178px] px-[14px] desktop:py-6 py-4 rounded-xl hidden tablet:flex shadow-[0px_4px_24px_0px_#9CB4CA33]">
+        <div className="flex flex-col items-center justify-center desktop:w-[291px] w-[178px] desktop:h-[450px] h-[342px] px-[14px] desktop:py-6 py-4 rounded-xl hidden tablet:flex shadow-[0px_4px_24px_0px_#9CB4CA33]">
             <div className="mb-6 relative">
-                <img src={profileImg} alt="BasicPofile" className="rounded-full w-[70px] h-[70px] desktop:w-[120px] desktop:h-[120px]"/>
-                <img src="/assets/icons/editButton.svg" alt="editProfileIcon" onClick={handleEditProfileIconClick} className="absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] cursor-pointer" />
+                <Image src={profileImg} alt="BasicProfile" width={70} height={70} unoptimized className="rounded-full w-[70px] h-[70px] desktop:w-[120px] desktop:h-[120px]"/>
+                <Image src="/assets/icons/editButton.svg" alt="editProfileIcon" width={24} height={24} onClick={handleEditProfileIconClick} className="absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] cursor-pointer" />
                 <input type="file" ref={imgInputRef} onChange={handleProfileImgChange} accept="image/*" className="hidden" />
             </div>
             <ul className="w-full flex flex-col gap-[14px] justify-center text-16 text-gray-600">
-                <li>
-                    <Link href="/main/profile" className={linkClassName("/main/profile")}>
-                        <img src="/assets/icons/user.svg" alt="userIcon" className={defaultIconClass("/main/profile")} />
-                        <img src="/assets/icons/userBlue.svg" alt="userIcon" className={blueIconClass("/main/profile")} />
-                        내 정보
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/main/reservations" className={linkClassName("/main/reservations")}>
-                        <img src="/assets/icons/list.svg" alt="listIcon" className={defaultIconClass("/main/reservations")} />
-                        <img src="/assets/icons/listBlue.svg" alt="listIcon" className={blueIconClass("/main/reservations")} />
-                        예약내역
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/main/my-experiences" className={linkClassName("/main/my-experiences")}>
-                        <img src="/assets/icons/calendar.svg" alt="calendarIcon" className={defaultIconClass("/main/my-experiences")} />
-                        <img src="/assets/icons/calendarBlue.svg" alt="calendarIcon" className={blueIconClass("/main/my-experiences")} />
-                        내 체험 관리
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/main/reservations-status" className={linkClassName("/main/reservations-status")}>
-                        <img src="/assets/icons/setting.svg" alt="settingIcon" className={defaultIconClass("/main/reservations-status")} />
-                        <img src="/assets/icons/settingBlue.svg" alt="settingIcon" className={blueIconClass("/main/reservations-status")} />
-                        예약 현황
-                    </Link>
-                </li>
+                {menuLists.map((list) => {
+                    return (
+                        <li key={list.href}>
+                            <Link href={list.href} className={linkClassName(list.href)}>
+                                <Image src={list.icon} alt={list.label} width={24} height={24} className={defaultIconClass(list.href)} />
+                                <Image src={list.blueIcon} alt={list.label} width={24} height={24} className={blueIconClass(list.href)} />
+                                {list.label}
+                            </Link>
+                        </li>
+                    )
+                })}
             </ul>
         </div>
     )
