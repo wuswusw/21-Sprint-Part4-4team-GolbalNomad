@@ -34,7 +34,7 @@ export default function KakaoOAuthPage() {
         return;
       }
 
-      const tokenResponse = await fetch("/api/oauth/kakao/token", {
+      const tokenResponse = await fetch("/api", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
