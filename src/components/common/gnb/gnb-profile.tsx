@@ -13,8 +13,15 @@ interface GnbProfileProps {
   onLogout: () => void;
 }
 
-function GnbProfile({ nickname, profileImage, isOpen, onToggle, onLogout }: GnbProfileProps) {
+function GnbProfile({
+  nickname,
+  profileImage,
+  isOpen,
+  onToggle,
+  onLogout,
+}: GnbProfileProps) {
   const profileRef = useRef<HTMLDivElement>(null);
+
   const close = useCallback(() => {
     if (isOpen) onToggle();
   }, [isOpen, onToggle]);
@@ -24,7 +31,7 @@ function GnbProfile({ nickname, profileImage, isOpen, onToggle, onLogout }: GnbP
   return (
     <div className="flex items-center">
       <Image
-        src={profileImage ?? "/assets/images/default profile.png"}
+        src={profileImage || "/assets/images/default profile.png"}
         alt="profile"
         width={30}
         height={30}
@@ -36,7 +43,7 @@ function GnbProfile({ nickname, profileImage, isOpen, onToggle, onLogout }: GnbP
           className="text-14 text-gray-950 ml-[10px] cursor-pointer"
           onClick={onToggle}
         >
-          {nickname ?? "이름 없음"}
+          {nickname || "이름 없음"}
         </span>
         {isOpen && (
           <div className="flex flex-col items-center justify-center w-32 px-[14px] py-4 rounded-xl shadow-[0px_2px_8px_0px_#78748640] absolute top-9 right-0">
