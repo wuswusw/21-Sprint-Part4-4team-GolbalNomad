@@ -1,15 +1,13 @@
-import GNB from '@/components/common/GNB';
+import Gnb from '@/components/common/gnb/gnb';
 import Footer from '@/components/common/Footer';
-import Sidemenu from '@/components/common/Sidemenu';
+import ConditionalSidebar from '@/components/layout/ConditionalSidebar';
 
-export default function ReservationsLayout({ children }: { children: React.ReactNode }) {
+export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <GNB />
+      <Gnb />
       <div className="mx-auto flex w-[980px] gap-12.5">
-        <div className="w-72.5">
-          <Sidemenu />
-        </div>
+        <ConditionalSidebar />
         <div className="flex w-full flex-col items-start gap-7.5">{children}</div>
       </div>
       <Footer />
