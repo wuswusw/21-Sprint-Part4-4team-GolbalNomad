@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { pretendard } from "@/lib/fonts";
 import { ModalProvider } from "@/components/common/modal/modal-provider";
+import QueryProvider from "./providers";
+
+export const metadata: Metadata = {
+  title: "GlobalNomad",
+  description: "GlobalNomad",
+};
 
 export default function RootLayout({
   children,
@@ -10,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="ko" className={pretendard.variable}>
       <body>
-        <ModalProvider>{children}</ModalProvider>
+        <QueryProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </QueryProvider>
       </body>
     </html>
   );
