@@ -3,8 +3,15 @@
 import {useState} from "react";
 import Calender from "./reservation-calender";
 
+
+const AVAILABLE_TIMES = [
+    "12:00 ~ 15:00",
+    "15:00 ~ 18:00",
+]
+
 function ReservationCard() {
     const [count, setCount] = useState(1);
+    const [isSelected, setIsSelected] = useState<string | null>(null);
     const price = 1000;
     const total = price * count;
 
@@ -15,6 +22,15 @@ function ReservationCard() {
 
     const handlePlusBtnClick = () => {
         setCount(count + 1);
+    }
+
+    const handleTimeBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const time = e.currentTarget.textContent;
+        if(isSelected === time) {
+            setIsSelected(null);
+        } else {
+            setIsSelected(time);
+        }
     }
 
   return (
@@ -36,8 +52,10 @@ function ReservationCard() {
         </div>
         <div className="flex flex-col items-start gap-3 mb-6">
             <h3 className="text-16 font-bold mb-[2px]">예약 가능한 시간</h3>
-            <button className="w-full px-3 py-4 rounded-[11px] ring ring-gray-300 text-15 font-medium hover:ring-primary-500 hover:text-primary-500 hover:bg-primary-100">12:00 ~ 15:00</button>
-            <button className="w-full px-3 py-4 rounded-[11px] ring ring-gray-300 text-15 font-medium hover:ring-primary-500 hover:text-primary-500 hover:bg-primary-100">12:00 ~ 15:00</button>
+            {AVAILABLE_TIMES.map((time) => (
+                <button key={time} onClick={handleTimeBtnClick}
+                        className={`w-full px-3 py-4 rounded-[11px] ring ring-gray-300 text-15 font-medium hover:ring-primary-500 hover:text-primary-500 hover:bg-primary-100 ${isSelected === time ? "ring-primary-500 text-primary-500 bg-primary-100" : "text-gray-950 bg-white"}`}>{time}</button>
+            ))}
         </div>
         <div className="flex justify-between items-center pt-5 pb-[10px] border-t border-[#ddd]">
             <div className="flex items-start gap-[6px]">
