@@ -3,74 +3,33 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "@/components/ui/input";
 import { useSignup } from "../hooks/use-signup";
 import { startKakaoAuth } from "../lib/kakao";
-import {
-  validateEmail,
-  validateNickname,
-  validatePassword,
-  validatePasswordConfirm,
-} from "../schemas/auth.schema";
+import { signupSchema, type SignupFormValues } from "../schemas/auth.schema";
 
 export default function SignupForm() {
   const router = useRouter();
   const { mutate, isPending } = useSignup();
 
-  const [email, setEmail] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    mode: "onBlur",
+  });
 
-  const [emailError, setEmailError] = useState("");
-  const [nicknameError, setNicknameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [passwordConfirmError, setPasswordConfirmError] = useState("");
+  const nickname = useWatch({
+    control,
+    name: "nickname",
+  });
 
-  const handleEmailBlur = () => {
-    setEmailError(validateEmail(email));
-  };
-
-  const handleNicknameBlur = () => {
-    setNicknameError(validateNickname(nickname));
-  };
-
-  const handlePasswordBlur = () => {
-    setPasswordError(validatePassword(password));
-  };
-
-  const handlePasswordConfirmBlur = () => {
-    setPasswordConfirmError(
-      validatePasswordConfirm(password, passwordConfirm)
-    );
-  };
-
-  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-
-    const nextEmailError = validateEmail(email);
-    const nextNicknameError = validateNickname(nickname);
-    const nextPasswordError = validatePassword(password);
-    const nextPasswordConfirmError = validatePasswordConfirm(
-      password,
-      passwordConfirm
-    );
-
-    setEmailError(nextEmailError);
-    setNicknameError(nextNicknameError);
-    setPasswordError(nextPasswordError);
-    setPasswordConfirmError(nextPasswordConfirmError);
-
-    if (
-      nextEmailError ||
-      nextNicknameError ||
-      nextPasswordError ||
-      nextPasswordConfirmError
-    ) {
-      return;
-    }
-
+  const onSubmit = ({ email, nickname, password }: SignupFormValues) => {
     mutate(
       { email, nickname, password },
       {
@@ -86,7 +45,7 @@ export default function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-[62px] flex w-full flex-col">
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-[62px] flex w-full flex-col">
       <div className="flex flex-col">
         <label
           htmlFor="signup-email"
@@ -97,15 +56,13 @@ export default function SignupForm() {
         <Input
           id="signup-email"
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onBlur={handleEmailBlur}
-          error={emailError}
+          {...register("email")}
+          error={errors.email?.message ?? ""}
           placeholder="이메일을 입력해 주세요"
           containerClassName="gap-0"
           errorClassName="m-0 mt-[6px] pl-1 text-12 font-medium leading-none text-red-500"
           className={`h-[54px] w-full rounded-2xl bg-white px-5 text-16 font-medium text-gray-950 shadow-[0_6px_6px_rgba(0,0,0,0.02)] placeholder:text-16 placeholder:font-medium placeholder:text-gray-400 ${
-            emailError ? "border border-red-500" : "border border-gray-100"
+            errors.email ? "border border-red-500" : "border border-gray-100"
           }`}
         />
       </div>
@@ -120,15 +77,13 @@ export default function SignupForm() {
         <Input
           id="signup-nickname"
           type="text"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-          onBlur={handleNicknameBlur}
-          error={nicknameError}
+          {...register("nickname")}
+          error={errors.nickname?.message ?? ""}
           placeholder="닉네임을 입력해 주세요"
           containerClassName="gap-0"
           errorClassName="m-0 mt-[6px] pl-1 text-12 font-medium leading-none text-red-500"
           className={`h-[54px] w-full rounded-2xl bg-white px-5 text-16 font-medium text-gray-950 shadow-[0_6px_6px_rgba(0,0,0,0.02)] placeholder:text-16 placeholder:font-medium placeholder:text-gray-400 ${
-            nicknameError ? "border border-red-500" : "border border-gray-100"
+            errors.nickname ? "border border-red-500" : "border border-gray-100"
           }`}
         />
       </div>
@@ -144,15 +99,13 @@ export default function SignupForm() {
           id="signup-password"
           type="password"
           isPassword
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onBlur={handlePasswordBlur}
-          error={passwordError}
+          {...register("password")}
+          error={errors.password?.message ?? ""}
           placeholder="8자 이상 입력해 주세요"
           containerClassName="gap-0"
           errorClassName="m-0 mt-[6px] pl-1 text-12 font-medium leading-none text-red-500"
           className={`h-[54px] w-full rounded-2xl bg-white px-5 text-16 font-medium text-gray-950 shadow-[0_6px_6px_rgba(0,0,0,0.02)] placeholder:text-16 placeholder:font-medium placeholder:text-gray-400 ${
-            passwordError ? "border border-red-500" : "border border-gray-100"
+            errors.password ? "border border-red-500" : "border border-gray-100"
           }`}
         />
       </div>
@@ -168,17 +121,13 @@ export default function SignupForm() {
           id="signup-password-confirm"
           type="password"
           isPassword
-          value={passwordConfirm}
-          onChange={(e) => setPasswordConfirm(e.target.value)}
-          onBlur={handlePasswordConfirmBlur}
-          error={passwordConfirmError}
+          {...register("passwordConfirm")}
+          error={errors.passwordConfirm?.message ?? ""}
           placeholder="비밀번호를 한 번 더 입력해 주세요"
           containerClassName="gap-0"
           errorClassName="m-0 mt-[6px] pl-1 text-12 font-medium leading-none text-red-500"
           className={`h-[54px] w-full rounded-2xl bg-white px-5 text-16 font-medium text-gray-950 shadow-[0_6px_6px_rgba(0,0,0,0.02)] placeholder:text-16 placeholder:font-medium placeholder:text-gray-400 ${
-            passwordConfirmError
-              ? "border border-red-500"
-              : "border border-gray-100"
+            errors.passwordConfirm ? "border border-red-500" : "border border-gray-100"
           }`}
         />
       </div>
@@ -202,7 +151,7 @@ export default function SignupForm() {
       <button
         type="button"
         onClick={() => {
-          if (!nickname.trim()) {
+          if (!nickname?.trim()) {
             alert("카카오 회원가입 전에 닉네임을 입력해 주세요.");
             return;
           }

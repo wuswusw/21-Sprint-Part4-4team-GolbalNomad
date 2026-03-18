@@ -3,62 +3,45 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "@/components/ui/input";
 import { useLogin } from "../hooks/use-login";
 import { startKakaoAuth } from "../lib/kakao";
-import { validateEmail, validatePassword } from "../schemas/auth.schema";
+import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import type { LoginResponse } from "../types/auth.type";
 
 export default function LoginForm() {
   const router = useRouter();
   const { mutate, isPending } = useLogin();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    mode: "onBlur",
+  });
 
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  const handleEmailBlur = () => {
-    setEmailError(validateEmail(email));
-  };
-
-  const handlePasswordBlur = () => {
-    setPasswordError(validatePassword(password));
-  };
-
-  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-
-    const nextEmailError = validateEmail(email);
-    const nextPasswordError = validatePassword(password);
-
-    setEmailError(nextEmailError);
-    setPasswordError(nextPasswordError);
-
-    if (nextEmailError || nextPasswordError) return;
-
-    mutate(
-      { email, password },
-      {
-        onSuccess: (data: LoginResponse) => {
-          localStorage.setItem("accessToken", data.accessToken);
-          localStorage.setItem("refreshToken", data.refreshToken);
-          localStorage.setItem("nickname", data.user.nickname);
-          localStorage.setItem("profileImage", data.user.profileImageUrl ?? "");
-          window.dispatchEvent(new Event("auth-change"));
-          router.push("/");
-        },
-        onError: (error: Error) => {
-          alert(error.message);
-        },
-      }
-    );
+  const onSubmit = (values: LoginFormValues) => {
+    mutate(values, {
+      onSuccess: (data: LoginResponse) => {
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
+        localStorage.setItem("nickname", data.user.nickname);
+        localStorage.setItem("profileImage", data.user.profileImageUrl ?? "");
+        window.dispatchEvent(new Event("auth-change"));
+        router.push("/");
+      },
+      onError: (error: Error) => {
+        alert(error.message);
+      },
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-[62px] flex w-full flex-col">
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-[62px] flex w-full flex-col">
       <div className="flex flex-col">
         <label htmlFor="email" className="mb-[10px] text-16 font-medium text-gray-950">
           이메일
@@ -66,15 +49,13 @@ export default function LoginForm() {
         <Input
           id="email"
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onBlur={handleEmailBlur}
-          error={emailError}
+          {...register("email")}
+          error={errors.email?.message ?? ""}
           placeholder="이메일을 입력해 주세요"
           containerClassName="gap-0"
           errorClassName="m-0 mt-[6px] pl-1 text-12 font-medium leading-none text-red-500"
           className={`h-[54px] w-full rounded-2xl bg-white px-5 text-16 font-medium text-gray-950 shadow-[0_6px_6px_rgba(0,0,0,0.02)] placeholder:text-16 placeholder:font-medium placeholder:text-gray-400 ${
-            emailError ? "border border-red-500" : "border border-gray-100"
+            errors.email ? "border border-red-500" : "border border-gray-100"
           }`}
         />
       </div>
@@ -87,15 +68,13 @@ export default function LoginForm() {
           id="password"
           type="password"
           isPassword
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onBlur={handlePasswordBlur}
-          error={passwordError}
+          {...register("password")}
+          error={errors.password?.message ?? ""}
           placeholder="비밀번호를 입력해 주세요"
           containerClassName="gap-0"
           errorClassName="m-0 mt-[6px] pl-1 text-12 font-medium leading-none text-red-500"
           className={`h-[54px] w-full rounded-2xl bg-white px-5 text-16 font-medium text-gray-950 shadow-[0_6px_6px_rgba(0,0,0,0.02)] placeholder:text-16 placeholder:font-medium placeholder:text-gray-400 ${
-            passwordError ? "border border-red-500" : "border border-gray-100"
+            errors.password ? "border border-red-500" : "border border-gray-100"
           }`}
         />
       </div>
