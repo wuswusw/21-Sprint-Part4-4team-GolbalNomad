@@ -1,20 +1,73 @@
 // 예약 내역
 'use client';
-import { useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import CardReservation from '@/components/common/card/card-reservation';
 import type { BadgeStatus } from '@/types/card';
 import PageHeader from '@/components/common/PageHeader';
+import { getMyReservations, type ReservationItem } from '@/lib/api/reservations';
 
 const STATUS_FILTERS: { label: string; value: BadgeStatus }[] = [
-  { label: '예약 완료', value: 'confirmed' },
-  { label: '예약 취소', value: 'cancel' },
-  { label: '예약 승인', value: 'approval' },
-  { label: '예약 거절', value: 'rejected' },
+  { label: '예약 신청', value: 'pending' },
+  { label: '예약 승인', value: 'confirmed' },
+  { label: '예약 취소', value: 'canceled' },
+  { label: '예약 거절', value: 'declined' },
   { label: '체험 완료', value: 'completed' },
 ];
 
 export default function ReservationPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+
+    if (!token) {
+      router.replace('/auth/login');
+    }
+  }, [router]);
+
   const [selectedStatus, setSelectedStatus] = useState<BadgeStatus | null>(null);
+  const [items, setItems] = useState<ReservationItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [cursorId, setCursorId] = useState<number | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+
+  const fetchReservations = useCallback(
+    async ({
+      append = false,
+      nextCursorId,
+    }: { append?: boolean; nextCursorId?: number | null } = {}) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem('accessToken') || '';
+        const result = await getMyReservations(token, {
+          status: selectedStatus ?? undefined,
+          cursorId: append ? (nextCursorId ?? undefined) : undefined,
+        });
+
+        const list = result.reservations;
+        setItems((prev) => (append ? [...prev, ...list] : list));
+        setCursorId(result.cursorId ?? null);
+        setHasMore(result.cursorId != null);
+      } catch (err) {
+        console.error(err);
+        setError('예약내역을 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedStatus],
+  );
+
+  useEffect(() => {
+    setCursorId(null);
+    setItems([]);
+    setHasMore(false);
+    fetchReservations({ append: false });
+  }, [selectedStatus, fetchReservations]);
 
   return (
     <>
@@ -43,55 +96,40 @@ export default function ReservationPage() {
 
       {/* 예약 리스트 */}
       <div className="flex w-full flex-col gap-6">
-        <CardReservation
-          id={1}
-          imageUrl="https://cdn.dailyvet.co.kr/wp-content/uploads/2024/05/15231647/20240515ceva_experts4.jpg"
-          status="confirmed"
-          title="함께 배우면 즐거운 스트릿 댄스"
-          scheduledDate="2023. 02. 14"
-          price={10000}
-          people={10}
-        />
+        {loading && items.length === 0 ? (
+          <div>불러오는 중...</div>
+        ) : error && items.length === 0 ? (
+          <div>{error}</div>
+        ) : items.length === 0 ? (
+          <div>내역이 없습니다.</div>
+        ) : (
+          <>
+            {items.map((item) => (
+              <CardReservation
+                key={item.id}
+                id={item.id}
+                imageUrl={item.activity?.bannerImageUrl || '/images/default-thumb.png'}
+                status={item.status}
+                title={item.activity?.title ?? '체험명 없음'}
+                scheduledDate={`${item.date} ${item.startTime}~${item.endTime}`}
+                price={item.totalPrice}
+                people={item.headCount}
+              />
+            ))}
+          </>
+        )}
 
-        <CardReservation
-          id={2}
-          imageUrl="https://lh3.googleusercontent.com/proxy/DNVIwWacFoW3Za-pUNm8BiFDjLDOUAaq6y3dVk0TVXZSvlRvLGAqznzidRc1c7d-TqVhTxP8-h2D14HNgDEwfWvD0td6hQK1okNte93oCTs"
-          status="cancel"
-          title="함께 배우면 즐거운 스트릿 댄스"
-          scheduledDate="2023. 02. 14"
-          price={10000}
-          people={10}
-        />
+        {error && items.length > 0 && <div>{error}</div>}
 
-        <CardReservation
-          id={3}
-          imageUrl="https://i.pinimg.com/736x/d8/a6/cb/d8a6cbb02bc2c5c27ae238db2e89425d.jpg"
-          status="rejected"
-          title="함께 배우면 즐거운 스트릿 댄스"
-          scheduledDate="2023. 02. 14"
-          price={10000}
-          people={10}
-        />
-
-        <CardReservation
-          id={4}
-          imageUrl="https://i.pinimg.com/736x/d8/a6/cb/d8a6cbb02bc2c5c27ae238db2e89425d.jpg"
-          status="completed"
-          title="함께 배우면 즐거운 스트릿 댄스"
-          scheduledDate="2023. 02. 14"
-          price={10000}
-          people={10}
-        />
-
-        <CardReservation
-          id={5}
-          imageUrl="https://i.pinimg.com/736x/d8/a6/cb/d8a6cbb02bc2c5c27ae238db2e89425d.jpg"
-          status="approval"
-          title="함께 배우면 즐거운 스트릿 댄스"
-          scheduledDate="2023. 02. 14"
-          price={10000}
-          people={10}
-        />
+        {hasMore && (
+          <button
+            onClick={() => fetchReservations({ append: true, nextCursorId: cursorId })}
+            disabled={loading}
+            className="rounded-lg border border-[var(--color-primary-500)] px-4 py-2.5 text-[var(--color-primary-500)] transition-colors hover:bg-[var(--color-primary-500)] hover:text-white disabled:opacity-50"
+          >
+            더 보기
+          </button>
+        )}
       </div>
     </>
   );
