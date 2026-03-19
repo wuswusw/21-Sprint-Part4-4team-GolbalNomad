@@ -68,19 +68,19 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
             onImageChange?.(imgFile); // API 연결 시 부모에서 업로드 처리
         }
     }
-    const linkClassName = (href: string) => `group flex items-center gap-2 py-[15px] pl-5 rounded-xl ${pathname === href ? "bg-primary-100 text-gray-950" : "hover:ring hover:ring-primary-100 hover:ring-2 hover:text-gray-950"}`
+    const linkClassName = (href: string) => `group flex items-center gap-2 desktop:py-[15px] py-[14px] pl-5 rounded-xl ${pathname === href ? "bg-primary-100 text-gray-950" : "hover:ring hover:ring-primary-100 hover:ring-2 hover:text-gray-950"}`
     const defaultIconClass = (href: string) => pathname === href ? "hidden" : "block group-hover:hidden";
     const blueIconClass = (href: string) => pathname === href ? "block" : "hidden group-hover:block";
 
     
     return (
         <div className="flex flex-col items-center justify-center desktop:w-[291px] w-[178px] desktop:h-[450px] h-[342px] px-[14px] desktop:py-6 py-4 rounded-xl hidden tablet:flex shadow-[0px_4px_24px_0px_#9CB4CA33]">
-            <div className="mb-6 relative">
+            <div className="desktop:mb-6 mb-3 relative">
                 <Image src={profileImg} alt="BasicProfile" width={70} height={70} unoptimized className="rounded-full w-[70px] h-[70px] desktop:w-[120px] desktop:h-[120px]"/>
                 <Image src="/assets/icons/editButton.svg" alt="editProfileIcon" width={24} height={24} onClick={handleEditProfileIconClick} className="absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] cursor-pointer" />
                 <input type="file" ref={imgInputRef} onChange={handleProfileImgChange} accept="image/*" className="hidden" />
             </div>
-            <ul className="w-full flex flex-col gap-[14px] justify-center text-16 text-gray-600">
+            <ul className="w-full flex flex-col desktop:gap-[14px] gap-2 justify-center text-16 text-gray-600">
                 {menuLists.map((list) => {
                     return (
                         <li key={list.href}>

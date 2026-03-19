@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import LoginForm from "@/features/auth/components/login-form";
+import SignupForm from "@/features/auth/components/signup-form";
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <main className="flex min-h-screen items-start justify-center bg-white px-5 pt-[80px] pb-10">
       <div className="flex w-full max-w-[640px] flex-col items-center">
@@ -27,7 +27,7 @@ export default function LoginPage() {
           />
         </Link>
 
-        <LoginForm />
+        <SignupForm />
       </div>
     </main>
   );

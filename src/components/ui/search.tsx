@@ -49,7 +49,6 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
             width={24}
             height={24}
             className={iconClassName}
-            aria-hidden="true"
           />
         </div>
 
