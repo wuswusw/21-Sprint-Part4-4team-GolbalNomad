@@ -49,7 +49,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
       : type;
 
     return (
-      <div className={`flex flex-col gap-2 ${containerClassName}`}>
+      <div className={`flex flex-col ${containerClassName}`}>
         {label && (
           <label htmlFor={inputId} className={labelClassName}>
             {label}
