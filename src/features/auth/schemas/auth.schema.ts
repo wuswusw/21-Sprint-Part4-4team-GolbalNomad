@@ -1,28 +1,49 @@
-export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { z } from "zod";
 
-export function validateEmail(value: string) {
-  if (!value.trim()) return "이메일을 입력해 주세요.";
-  if (!EMAIL_REGEX.test(value)) return "이메일 형식으로 작성해 주세요.";
-  return "";
-}
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, "이메일을 입력해 주세요.")
+    .email("이메일 형식으로 작성해 주세요."),
+  password: z
+    .string()
+    .trim()
+    .min(1, "비밀번호를 입력해 주세요.")
+    .min(8, "8자 이상 작성해 주세요."),
+});
 
-export function validateNickname(value: string) {
-  if (!value.trim()) return "닉네임을 입력해 주세요.";
-  if (value.length > 10) return "열 자 이하로 작성해 주세요.";
-  return "";
-}
+export const signupSchema = z
+  .object({
+    email: z
+      .string()
+      .trim()
+      .min(1, "이메일을 입력해 주세요.")
+      .email("이메일 형식으로 작성해 주세요."),
+    nickname: z
+      .string()
+      .trim()
+      .min(1, "닉네임을 입력해 주세요.")
+      .max(10, "열 자 이하로 작성해 주세요."),
+    password: z
+      .string()
+      .trim()
+      .min(1, "비밀번호를 입력해 주세요.")
+      .min(8, "8자 이상 작성해 주세요."),
+    passwordConfirm: z
+      .string()
+      .trim()
+      .min(1, "비밀번호를 한 번 더 입력해 주세요."),
+  })
+  .superRefine(({ password, passwordConfirm }, ctx) => {
+    if (password !== passwordConfirm) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["passwordConfirm"],
+        message: "비밀번호가 일치하지 않습니다.",
+      });
+    }
+  });
 
-export function validatePassword(value: string) {
-  if (!value.trim()) return "비밀번호를 입력해 주세요.";
-  if (value.length < 8) return "8자 이상 작성해 주세요.";
-  return "";
-}
-
-export function validatePasswordConfirm(
-  password: string,
-  passwordConfirm: string
-) {
-  if (!passwordConfirm.trim()) return "비밀번호를 한 번 더 입력해 주세요.";
-  if (password !== passwordConfirm) return "비밀번호가 일치하지 않습니다.";
-  return "";
-}
+export type LoginFormValues = z.infer<typeof loginSchema>;
+export type SignupFormValues = z.infer<typeof signupSchema>;
