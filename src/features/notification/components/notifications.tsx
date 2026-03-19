@@ -1,4 +1,8 @@
+"use client";
+
 import Image from "next/image";
+
+const LOCATION_STYLE = "fixed left-1/2 -translate-x-1/2 tablet:translate-x-0  tablet:left-auto top-13 tablet:absolute tablet:top-9 tablet:right-0 z-100"
 
 const NOTIFICATIONS = [
     {
@@ -16,13 +20,18 @@ const NOTIFICATIONS = [
     
 ]
 
-function Notifications() {
+interface NotificationsProps {
+    onClose: () => void;
+}
 
+function Notifications({ onClose }: NotificationsProps) {
     return (
-        <div className="flex flex-col tablet:w-[231px] w-[327px] shadow-[0px_2px_8px_0px_#78748640] rounded-[10px] pb-2">
+        <div className={`${LOCATION_STYLE} flex flex-col tablet:w-[231px] w-[327px] shadow-[0px_2px_8px_0px_#78748640] rounded-[10px] pb-2`}>
             <div className="flex justify-between items-center px-5 py-[18.5px] border-b border-gray-100">
                 <h1 className="text-16 font-bold">알림 6개</h1>
-                <Image src="/assets/icons/delete.svg" alt="close" width={24} height={24} />
+                <button type="button" onClick={onClose} aria-label="알림 닫기">
+                    <Image src="/assets/icons/delete.svg" alt="close" width={24} height={24} />
+                </button>
             </div>
             {NOTIFICATIONS.map((notificationn) => (
                 <div key={notificationn.id} className="flex flex-col gap-2 px-5 py-4 text-gray-950">

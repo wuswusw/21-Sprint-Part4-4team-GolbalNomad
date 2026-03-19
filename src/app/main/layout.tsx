@@ -1,4 +1,4 @@
-import GNB from '@/components/common/GNB';
+import GNB from '@/components/common/gnb/gnb';
 import Footer from '@/components/common/Footer';
 import Sidemenu from '@/components/common/Sidemenu';
 
