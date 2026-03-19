@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { kakaoSignIn, kakaoSignUp } from "@/features/auth/api/auth.api";
 import { getKakaoRedirectUri } from "@/features/auth/lib/kakao";
 
-export default function KakaoOAuthPage() {
+function KakaoOAuthContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -99,5 +99,13 @@ export default function KakaoOAuthPage() {
     <main className="flex min-h-screen items-center justify-center bg-gray-25">
       <p className="text-16 font-medium text-gray-600">카카오 로그인 처리 중...</p>
     </main>
+  );
+}
+
+export default function KakaoOAuthPage() {
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <KakaoOAuthContent />
+    </Suspense>
   );
 }
