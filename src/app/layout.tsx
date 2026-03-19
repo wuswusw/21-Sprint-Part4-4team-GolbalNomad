@@ -21,6 +21,7 @@ export default function RootLayout({
           <ModalProvider>{children}</ModalProvider>
         </QueryProvider>
       </body>
+
     </html>
   );
 }
