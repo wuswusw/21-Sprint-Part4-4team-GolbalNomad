@@ -1,26 +1,34 @@
 "use client";
 
-import {useState} from "react";
+import { useState } from "react";
 import { format } from "date-fns";
 import Calender from "./reservation-calender";
+import type { ReservationAvailableDaysResponse } from "../types/experience-detail.type";
 
 interface ReservationCardProps {
     price?: number;
-    schedules?: {id: number, date: string, startTime: string, endTime: string}[];
+    availableDays?: ReservationAvailableDaysResponse;
 }
 
-function ReservationCard({ price, schedules }: ReservationCardProps) {
+function ReservationCard({ price, availableDays }: ReservationCardProps) {
     const [count, setCount] = useState(1);
-    const [isSelected, setIsSelected] = useState<string | null>(null);
+    const [selectedTimeId, setSelectedTimeId] = useState<number | null>(null);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
     const total = (price ?? 0) * count;
 
-    const availableTimes = selectedDate
-        ? schedules
-              ?.filter((schedule) => schedule.date === selectedDate)
-              .map((schedule) => `${schedule.startTime} ~ ${schedule.endTime}`) ?? []
-        : [];
+    const availableTimes =
+    selectedDate && availableDays
+      ? availableDays.find((day) => day.date === selectedDate)?.times ?? []
+      : [];
+
+    const handleTimeBtnClick = (id: number) => {
+        setSelectedTimeId((prev) => (prev === id ? null : id));
+    }
+     const handleDateSelect = (date: Date | undefined) => {
+        setSelectedDate(date ? format(date, "yyyy-MM-dd") : null);
+        setSelectedTimeId(null);
+    }
 
     const handleMinusBtnClick = () => {
         if (count <= 1) return;
@@ -31,20 +39,6 @@ function ReservationCard({ price, schedules }: ReservationCardProps) {
         setCount(count + 1);
     }
 
-    const handleTimeBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const time = e.currentTarget.textContent;
-        if(isSelected === time) {
-            setIsSelected(null);
-        } else {
-            setIsSelected(time);
-        }
-    }
-
-    const handleDateSelect = (date: Date | undefined) => {
-        setSelectedDate(date ? format(date, "yyyy-MM-dd") : null);
-        setIsSelected(null);
-    };
-
   return (
     <div className="p-[30px] rounded-3xl shadow-[0px_4px_24px_0px_#9CB4CA33]">
         <div className="flex justify-start items-center gap-1 mb-6">
@@ -53,7 +47,7 @@ function ReservationCard({ price, schedules }: ReservationCardProps) {
         </div>
         <h3 className="text-16 font-bold mb-2">날짜</h3>
         <div>
-            <Calender schedules={schedules} onSelectDate={handleDateSelect} />
+            <Calender availableDays={availableDays} onSelectDate={handleDateSelect} />
         </div>
         <div className="flex justify-between items-center my-6">
             <h3 className="text-16 font-bold">참여 인원수</h3>
@@ -71,15 +65,16 @@ function ReservationCard({ price, schedules }: ReservationCardProps) {
             ) : (
                 availableTimes.map((time) => (
                     <button
-                        key={time}
-                        onClick={handleTimeBtnClick}
+                        key={time.id}
+                        type="button"
+                        onClick={() => handleTimeBtnClick(time.id)}
                         className={`w-full px-3 py-4 rounded-[11px] ring ring-gray-300 text-15 font-medium hover:ring-primary-500 hover:text-primary-500 hover:bg-primary-100 ${
-                            isSelected === time
+                            selectedTimeId === time.id
                                 ? "ring-primary-500 text-primary-500 bg-primary-100"
                                 : "text-gray-950 bg-white"
                         }`}
                     >
-                        {time}
+                        {time.startTime} ~ {time.endTime}
                     </button>
                 ))
             )}

@@ -5,16 +5,12 @@ import { DayPicker, useDayPicker, type MonthCaptionProps } from "react-day-picke
 import { format } from "date-fns";
 import Image from "next/image";
 
-interface Schedule {
-  id: number;
-  date: string;
-  startTime: string;
-  endTime: string;
-}
+import type { ReservationAvailableDaysResponse } from "../types/experience-detail.type";
 
 interface MyDayPickerProps {
-  schedules?: Schedule[];
+  availableDays?: ReservationAvailableDaysResponse;
   onSelectDate?: (date: Date | undefined) => void;
+  onMonthChange?: (month: Date) => void;
 }
 
 const CustomCaption = ({ calendarMonth }: MonthCaptionProps) => {
@@ -35,38 +31,37 @@ const CustomCaption = ({ calendarMonth }: MonthCaptionProps) => {
   );
 };
 
-const MyDayPicker = ({ schedules, onSelectDate }: MyDayPickerProps) => {
+const MyDayPicker = ({ availableDays, onSelectDate, onMonthChange }: MyDayPickerProps) => {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  const hasSchedules = schedules !== undefined;
+  const [selected, setSelected] = useState<Date | undefined>(undefined);
+  const hasAvailableDays = availableDays !== undefined;
 
   const availableDateSet = useMemo(() => {
-    return new Set((schedules ?? []).map((schedule) => schedule.date));
-  }, [schedules]);
+    return new Set((availableDays ?? []).map((day) => day.date));
+  }, [availableDays]);
 
-  const isSameMonth = (date: Date) => {
-    return (
-      date.getFullYear() === currentMonth.getFullYear() &&
-      date.getMonth() === currentMonth.getMonth()
-    );
+  const handleMonthChange = (month: Date) => {
+    setCurrentMonth(month);
+    onMonthChange?.(month);
+    setSelected(undefined);
   };
 
-  const isScheduled = (date: Date) => {
-    return availableDateSet.has(format(date, "yyyy-MM-dd"));
-  };
 
   const isSelectable = (date: Date) => {
-    if (!hasSchedules) return true;
-    return isSameMonth(date) && isScheduled(date);
+    if (!hasAvailableDays) return true;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (date < today) return false;
+
+    const isSameMonth = date.getFullYear() === currentMonth.getFullYear() && date.getMonth() === currentMonth.getMonth();
+    if (!hasAvailableDays) return isSameMonth;
+    return isSameMonth && availableDateSet.has(format(date, "yyyy-MM-dd"));
   };
 
-  const [selected, setSelected] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
-    if (selected && !isSelectable(selected)) {
-      setSelected(undefined);
-    }
     onSelectDate?.(selected);
-  }, [selected, availableDateSet, hasSchedules, currentMonth]);
+  }, [selected]);
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -78,19 +73,19 @@ const MyDayPicker = ({ schedules, onSelectDate }: MyDayPickerProps) => {
           showOutsideDays
           hideNavigation
           month={currentMonth}
-          onMonthChange={setCurrentMonth}
+          onMonthChange={handleMonthChange}
           disabled={(date) => !isSelectable(date)}
           modifiers={
-            hasSchedules
+            hasAvailableDays
               ? {
                   available: (date) => isSelectable(date),
                   scheduledOutside: (date) =>
-                    !isSameMonth(date) && isScheduled(date),
+                    date.getMonth() !== currentMonth.getMonth() && availableDateSet.has(format(date, "yyyy-MM-dd")),
                 }
               : undefined
           }
           modifiersClassNames={
-            hasSchedules
+            hasAvailableDays
               ? {
                   available:
                     "bg-primary-100 text-primary-500 !text-primary-500 !bg-primary-100 rounded-full font-medium cursor-pointer hover:bg-primary-500 hover:text-white",

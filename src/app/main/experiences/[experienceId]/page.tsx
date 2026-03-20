@@ -2,8 +2,8 @@
 import {useState, useEffect} from "react";
 import {useParams} from "next/navigation";
 
-import {getExperienceDetail, getReviews} from "@/features/experience/api/experience-detail.api";
-import {ExperienceDetailResponse, ReviewResponse} from "@/features/experience/types/experience-detail.type";
+import {getExperienceDetail,getReservationAvailableDays, getReviews} from "@/features/experience/api/experience-detail.api";
+import {ExperienceDetailResponse,ReservationAvailableDaysResponse ,ReviewResponse} from "@/features/experience/types/experience-detail.type";
 
 import ImageGallery from "@/features/experience/components/image-gallery";
 import ExperienceDesc from "@/features/experience/components/experience-desc";
@@ -16,10 +16,15 @@ import ReservationCard from "@/features/experience/components/reservation-card";
 function ExperienceDetailPage() {
     const [experienceDetail, setExperienceDetail] = useState<ExperienceDetailResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [availableDays, setAvailableDays] = useState<ReservationAvailableDaysResponse | null>(null);
+    const [isAvailableDaysLoading, setIsAvailableDaysLoading] = useState(true);
     const [reviews, setReviews] = useState<ReviewResponse | null>(null);
     const [isReviewsLoading, setIsReviewsLoading] = useState(true);
     const params = useParams<{ experienceId: string }>();
     const experienceId = params?.experienceId;
+
+    const [currentYear, setCurrentYear] = useState(new Date().getFullYear().toString());
+    const [currentMonth, setCurrentMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0'));
 
     useEffect(() => {
         const fetchExperienceDetail = async () => {
@@ -51,10 +56,6 @@ function ExperienceDetailPage() {
                     schedules: [
                         { id: 101, date: "2026-03-23", startTime: "10:00", endTime: "12:00" },
                         { id: 101, date: "2026-03-23", startTime: "12:00", endTime: "14:00" },
-                        { id: 101, date: "2026-03-25", startTime: "14:00", endTime: "16:00" },
-                        { id: 102, date: "2026-03-28", startTime: "10:00", endTime: "12:00" },
-                        { id: 103, date: "2026-03-28", startTime: "13:00", endTime: "15:00" },
-                        { id: 104, date: "2026-04-03", startTime: "13:00", endTime: "15:00" },
                     ],
                     createdAt: "2026-03-20T00:00:00Z",
                     updatedAt: "2026-03-20T00:00:00Z"
@@ -65,6 +66,45 @@ function ExperienceDetailPage() {
         };
         fetchExperienceDetail();
     }, [experienceId]);
+
+    useEffect(() => {
+        const fetchAvailableDays = async () => {
+            if (!experienceId) return;
+            setIsAvailableDaysLoading(true);
+            try {
+                const response = await getReservationAvailableDays(Number(experienceId), currentYear, currentMonth);
+                setAvailableDays(response);
+            } catch (error) {
+                // alert("예약 가능한 날짜를 불러오는 데 실패했습니다. 다시 시도해주세요.");
+                setAvailableDays([
+                    {
+                      date: "2026-03-21",
+                      times: [
+                        { id: 201, startTime: "10:00", endTime: "12:00" },
+                        { id: 202, startTime: "14:00", endTime: "16:00" },
+                        { id: 203, startTime: "16:00", endTime: "18:00" },
+                      ]
+                    },
+                    {
+                      date: "2026-03-22",
+                      times: [
+                        { id: 204, startTime: "18:00", endTime: "20:00" },
+                        { id: 205, startTime: "21:00", endTime: "23:00" },
+                      ]
+                    },
+                    {
+                      date: "2026-04-02",
+                      times: [
+                        { id: 206, startTime: "18:00", endTime: "20:00" },
+                      ]
+                    },
+                  ]);
+            } finally {
+                setIsAvailableDaysLoading(false);
+            }
+        };
+        fetchAvailableDays();
+    }, [experienceId, currentYear, currentMonth]);
     
     useEffect(() => {
         const fetchReviews = async () => {
@@ -113,7 +153,7 @@ function ExperienceDetailPage() {
     }, [experienceId]);
     
     if (isLoading) return <div>Loading...</div>;
-    if (isReviewsLoading) return <div>Reviews Loading...</div>;
+    
 
   return (
     <div>
@@ -138,7 +178,10 @@ function ExperienceDetailPage() {
                     </section>
                     <section className="hidden desktop:block text-gray-950">
                         <ExperienceInfo title={experienceDetail?.title} category={experienceDetail?.category} rating={experienceDetail?.rating} address={experienceDetail?.address} description={experienceDetail?.description} reviewCount={experienceDetail?.reviewCount} />
-                        <ReservationCard price={experienceDetail?.price} schedules={experienceDetail?.schedules} />
+                        <ReservationCard
+                            price={experienceDetail?.price}
+                            availableDays={availableDays ?? []}
+                        />
                     </section>
                 </div>
             </div>
