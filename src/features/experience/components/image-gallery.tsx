@@ -9,18 +9,21 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const images = [
-  "/assets/images/img1.jpg",
-  "/assets/images/img2.jpg",
-  "/assets/images/img3.jpg",
-]; // api 연동 후 삭제
+interface ImageGalleryProps {
+  bannerImageUrl?: string;
+  subImages?: { id: number; imageUrl: string }[];
+}
 
-function ImageGallery() {
+function ImageGallery({ bannerImageUrl, subImages }: ImageGalleryProps) {
+  const banner = bannerImageUrl ?? "";
+  const subs = subImages ?? [];
+  const allImages = [banner, ...subs.map((item) => item.imageUrl)];
+
   return (
     <div className="w-full aspect-video tablet:aspect-auto tablet:h-100 rounded-3xl overflow-hidden">
       <Carousel className="w-full h-full">
         <CarouselContent className="h-full">
-          {images.map((src, index) => (
+          {allImages.map((src, index) => (
             <CarouselItem key={index} className="h-full">
               <div className="relative w-full h-full">
                 <Image

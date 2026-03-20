@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DayPicker, useDayPicker, type MonthCaptionProps } from "react-day-picker";
 import { format } from "date-fns";
 import Image from "next/image";
 
+interface Schedule {
+  id: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+}
+
 interface MyDayPickerProps {
+  schedules?: Schedule[];
+  onSelectDate?: (date: Date | undefined) => void;
 }
 
 const CustomCaption = ({ calendarMonth }: MonthCaptionProps) => {
@@ -26,8 +35,38 @@ const CustomCaption = ({ calendarMonth }: MonthCaptionProps) => {
   );
 };
 
-const MyDayPicker = () => {
-  const [selected, setSelected] = useState<Date | undefined>(new Date());
+const MyDayPicker = ({ schedules, onSelectDate }: MyDayPickerProps) => {
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  const hasSchedules = schedules !== undefined;
+
+  const availableDateSet = useMemo(() => {
+    return new Set((schedules ?? []).map((schedule) => schedule.date));
+  }, [schedules]);
+
+  const isSameMonth = (date: Date) => {
+    return (
+      date.getFullYear() === currentMonth.getFullYear() &&
+      date.getMonth() === currentMonth.getMonth()
+    );
+  };
+
+  const isScheduled = (date: Date) => {
+    return availableDateSet.has(format(date, "yyyy-MM-dd"));
+  };
+
+  const isSelectable = (date: Date) => {
+    if (!hasSchedules) return true;
+    return isSameMonth(date) && isScheduled(date);
+  };
+
+  const [selected, setSelected] = useState<Date | undefined>(undefined);
+
+  useEffect(() => {
+    if (selected && !isSelectable(selected)) {
+      setSelected(undefined);
+    }
+    onSelectDate?.(selected);
+  }, [selected, availableDateSet, hasSchedules, currentMonth]);
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -38,6 +77,28 @@ const MyDayPicker = () => {
           onSelect={setSelected}
           showOutsideDays
           hideNavigation
+          month={currentMonth}
+          onMonthChange={setCurrentMonth}
+          disabled={(date) => !isSelectable(date)}
+          modifiers={
+            hasSchedules
+              ? {
+                  available: (date) => isSelectable(date),
+                  scheduledOutside: (date) =>
+                    !isSameMonth(date) && isScheduled(date),
+                }
+              : undefined
+          }
+          modifiersClassNames={
+            hasSchedules
+              ? {
+                  available:
+                    "bg-primary-100 text-primary-500 !text-primary-500 !bg-primary-100 rounded-full font-medium cursor-pointer hover:bg-primary-500 hover:text-white",
+                  scheduledOutside:
+                    "bg-gray-100 text-gray-300 !text-gray-300 !bg-gray-50 rounded-full font-medium cursor-not-allowed",
+                }
+              : undefined
+          }
           formatters={{
             formatWeekdayName: (day) => format(day, "EEEEE"),
           }}
@@ -51,9 +112,10 @@ const MyDayPicker = () => {
             month_grid: "mx-auto",
             month_caption: "flex justify-between items-center py-2 mb-4",
             weekday: "text-[#333] font-semibold text-[16px] w-[46px] h-[46px]",
-            day: "h-[46px] w-[46px] text-center font-medium hover:bg-primary-100 hover:text-primary-500 rounded-full",
-            outside: "text-gray-300",
-            selected: "bg-primary-500 text-white font-bold rounded-full",
+            day: "h-[46px] w-[46px] text-center font-medium rounded-full",
+            outside: "text-gray-300 cursor-not-allowed",
+            selected:
+              "!bg-primary-500 !text-white font-bold rounded-full",
           }}
         />
       </div>
