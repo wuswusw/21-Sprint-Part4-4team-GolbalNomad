@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-const LOCATION_STYLE = "fixed left-1/2 -translate-x-1/2 tablet:translate-x-0  tablet:left-auto top-13 tablet:absolute tablet:top-9 tablet:right-0 z-100"
+const LOCATION_STYLE = "fixed left-1/2 -translate-x-1/2 tablet:translate-x-0  tablet:left-auto top-13 tablet:absolute tablet:top-9 tablet:right-0 z-50"
 
 const NOTIFICATIONS = [
     {
@@ -33,16 +33,16 @@ function Notifications({ onClose }: NotificationsProps) {
                     <Image src="/assets/icons/delete.svg" alt="close" width={24} height={24} />
                 </button>
             </div>
-            {NOTIFICATIONS.map((notificationn) => (
-                <div key={notificationn.id} className="flex flex-col gap-2 px-5 py-4 text-gray-950">
+            {NOTIFICATIONS.map((notification) => (
+                <div key={notification.id} className="flex flex-col gap-2 px-5 py-4 text-gray-950">
                     <div className="flex justify-between items-center">
-                        <span className="text-14 font-bold">예약 {notificationn.content}</span>
+                        <span className="text-14 font-bold">예약 {notification.content}</span>
                         <span className="text-12 text-gray-400">1분 전</span>
                     </div>
                     <div className="flex flex-col gap-2 text-14 text-gray-500">
-                        <p>{notificationn.title}</p>
-                        <p>{notificationn.createdAt}</p>
-                        <p>예약이 <span className={notificationn.content === "승인" ? "text-primary-500" : "text-[#FF2727]"}>{notificationn.content}</span>되었어요.</p>
+                        <p>{notification.title}</p>
+                        <p>{notification.createdAt}</p>
+                        <p>예약이 <span className={notification.content === "승인" ? "text-primary-500" : "text-[#FF2727]"}>{notification.content}</span>되었어요.</p>
                     </div>
                 </div>
             ))}
