@@ -1,19 +1,59 @@
-function ReviewCard() {
+import { format } from "date-fns";
+import { ReviewResponse } from "../types/experience-detail.type";
+
+interface ReviewCardProps {
+  reviews?: ReviewResponse | null;
+}
+
+function ReviewCard({ reviews }: ReviewCardProps) {
+  const reviewList = reviews?.reviews ?? [];
+
+  if (reviewList.length === 0) {
+    return (
+      <div className="w-full text-center text-body-14 text-[#79747E] py-6">
+        아직 후기가 없습니다.
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full rounded-xl p-5 shadow-[0px_4px_24px_0px_#9CB4CA33]">
-        <div className="flex justify-start items-center gap-2">
-            <span className="text-body-14 font-bold tablet:text-body-16">홍길동</span>
-            <span className="text-12 tablet:text-14 text-[#A4A1AA]">2023.2.4</span>
-        </div>
-        <div className="flex justify-start items-center">
-            <img src="/assets/icons/star.svg" alt="star" className="w-4 h-4" />
-            <img src="/assets/icons/star.svg" alt="star" className="w-4 h-4" />
-            <img src="/assets/icons/star.svg" alt="star" className="w-4 h-4" />
-            <img src="/assets/icons/star.svg" alt="star" className="w-4 h-4" />
-            <img src="/assets/icons/star.svg" alt="star" className="w-4 h-4" />
-        </div>
-        <p className="text-body-14 tablet:text-body-16 mt-3">저는 저희 스트릿 댄서 체험에 참가하게 된 지 얼마 안됐지만, 정말 즐거운 시간을 보냈습니다. 새로운 스타일과 춤추기를 좋아하는 나에게 정말 적합한 체험이었고, 전문가가 직접 강사로 참여하기 때문에 어떤 수준의 춤추는 사람도 쉽게 이해할 수 있었습니다. 강사님께서 정말 친절하게 설명해주셔서 정말 좋았고, 이번 체험을 거쳐 새로운 스타일과 춤추기에 대한 열정이 더욱 생겼습니다. 저는 이 체험을 적극 추천합니다!"</p>
-    </div>
+    <>
+      {reviewList.map((review) => {
+        const starCount = Math.max(0, Math.min(5, Math.round(review.rating)));
+
+        return (
+          <div
+            key={review.id}
+            className="w-full rounded-xl p-5 shadow-[0px_4px_24px_0px_#9CB4CA33]"
+          >
+            <div className="flex justify-start items-center gap-2">
+              <span className="text-body-14 font-bold tablet:text-body-16">
+                {review.user.nickname}
+              </span>
+              <span className="text-12 tablet:text-14 text-[#A4A1AA]">
+                {format(new Date(review.createdAt), "yyyy.MM.dd")}
+              </span>
+            </div>
+
+            <div className="flex justify-start items-center gap-2 mt-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <img
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={i}
+                  src="/assets/icons/star.svg"
+                  alt="star"
+                  className={`w-4 h-4 ${i < starCount ? "opacity-100" : "opacity-30"}`}
+                />
+              ))}
+            </div>
+
+            <p className="text-body-14 tablet:text-body-16 mt-3">
+              {review.content}
+            </p>
+          </div>
+        );
+      })}
+    </>
   );
 }
 

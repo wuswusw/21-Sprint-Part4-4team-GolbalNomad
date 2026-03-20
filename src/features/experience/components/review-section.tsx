@@ -1,10 +1,13 @@
+"use client";
+import { ReviewResponse } from "../types/experience-detail.type";
 import ReviewCard from "./review-card";
 
 interface ReviewSectionProps {
   reviewCount?: number;
   rating?: number;
+  reviews?: ReviewResponse;
 }
-function ReviewSection({ reviewCount, rating }: ReviewSectionProps) {
+function ReviewSection({ reviewCount, rating, reviews }: ReviewSectionProps) {
   return (
     <div>
         <div className="flex gap-2 justify-start items-center mb-2">
@@ -20,8 +23,7 @@ function ReviewSection({ reviewCount, rating }: ReviewSectionProps) {
             </div>
         </div>
         <div className="flex flex-col gap-5">
-            <ReviewCard />
-            <ReviewCard />
+            <ReviewCard reviews={reviews} />
         </div>
     </div>
   );
