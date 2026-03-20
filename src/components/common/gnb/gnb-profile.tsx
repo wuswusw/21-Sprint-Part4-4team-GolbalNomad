@@ -46,7 +46,7 @@ function GnbProfile({
           {nickname || "이름 없음"}
         </span>
         {isOpen && (
-          <div className="flex flex-col items-center justify-center w-32 px-[14px] py-4 rounded-xl shadow-[0px_2px_8px_0px_#78748640] absolute top-9 right-0">
+          <div className="flex flex-col items-center justify-center w-32 px-[14px] py-4 rounded-xl shadow-[0px_2px_8px_0px_#78748640] absolute top-9 right-0 z-100">
             <ul className="w-full flex flex-col gap-[14px] justify-center text-16 text-gray-600">
               <li>
                 <button
