@@ -62,3 +62,21 @@ export async function getMyReservations(
 
   return (await response.json()) as GetMyReservationsResponse;
 }
+
+export async function cancelReservation(token: string, reservationId: number | string) {
+  const response = await fetch(getApiUrl(`/my-reservations/${reservationId}`), {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status: 'canceled' }),
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('예약 취소 실패:', response.status, errorText);
+    throw new Error(`예약 취소 실패: ${response.status}`);
+  }
+}

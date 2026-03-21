@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/hooks/use-modal';
 import type { CardReservationProps } from '@/types/card';
+import { cancelReservation } from '@/lib/api/reservations';
 import Badge from './badge';
 
 export default function CardReservation({
@@ -12,11 +13,12 @@ export default function CardReservation({
   scheduledDate,
   price,
   people,
+  onCancelSuccess,
 }: CardReservationProps) {
   const router = useRouter();
   const { openModal } = useModal();
-  const showEdit = status === 'confirmed';
-  const showCancel = status === 'confirmed';
+  const showEdit = status === 'pending';
+  const showCancel = status === 'pending';
   const showWriteReview = status === 'completed';
 
   const buttons = (
@@ -32,7 +34,19 @@ export default function CardReservation({
 
       {showCancel && (
         <button
-          onClick={() => router.push(`/main/reservations/${id}/cancel`)}
+          onClick={() => {
+            openModal('alert', {
+              imageSrc: 'https://cdn-icons-png.flaticon.com/512/5610/5610967.png',
+              description: '예약을 취소하시겠어요?',
+              confirmText: '취소하기',
+              cancelText: '아니오',
+              onConfirm: async () => {
+                const token = localStorage.getItem('accessToken') || '';
+                await cancelReservation(token, id);
+                onCancelSuccess?.();
+              },
+            });
+          }}
           className="text-14 rounded-sm bg-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
         >
           예약 취소

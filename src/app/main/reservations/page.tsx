@@ -17,12 +17,15 @@ const STATUS_FILTERS: { label: string; value: BadgeStatus }[] = [
 
 export default function ReservationPage() {
   const router = useRouter();
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
 
     if (!token) {
       router.replace('/auth/login');
+    } else {
+      setIsAuthChecked(true);
     }
   }, [router]);
 
@@ -63,11 +66,14 @@ export default function ReservationPage() {
   );
 
   useEffect(() => {
+    if (!isAuthChecked) return;
     setCursorId(null);
     setItems([]);
     setHasMore(false);
     fetchReservations({ append: false });
-  }, [selectedStatus, fetchReservations]);
+  }, [selectedStatus, fetchReservations, isAuthChecked]);
+
+  if (!isAuthChecked) return null;
 
   return (
     <>
@@ -114,6 +120,7 @@ export default function ReservationPage() {
                 scheduledDate={`${item.date} ${item.startTime}~${item.endTime}`}
                 price={item.totalPrice}
                 people={item.headCount}
+                onCancelSuccess={() => fetchReservations({ append: false })}
               />
             ))}
           </>

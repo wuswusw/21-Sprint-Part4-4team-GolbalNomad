@@ -18,6 +18,7 @@ export interface CardReservationProps {
   scheduledDate: string;
   price: number;
   people: number;
+  onCancelSuccess?: () => void;
 }
 
 export interface CardExperiencesProps {

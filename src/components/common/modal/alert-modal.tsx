@@ -11,6 +11,7 @@ const sizeClass = {
 
 interface Props extends AlertModalProps {
   onClose: () => void;
+  onCancel?: () => void;
 }
 
 export default function AlertModal({
@@ -22,8 +23,8 @@ export default function AlertModal({
   onClose,
   size = 'sm',
 }: Props) {
-  const handleConfirm = () => {
-    onConfirm?.();
+  const handleConfirm = async () => {
+    await onConfirm?.();
     onClose();
   };
 
@@ -37,7 +38,11 @@ export default function AlertModal({
         onClick={(e) => e.stopPropagation()}
       >
         {imageSrc && (
-          <img src={imageSrc} alt="" className="mx-auto w-full max-w-[88px] rounded-xl object-cover" />
+          <img
+            src={imageSrc}
+            alt=""
+            className="mx-auto w-full max-w-[88px] rounded-xl object-cover"
+          />
         )}
         {description && <p className="text-18 text-center font-bold">{description}</p>}
         <div className="flex items-center justify-center gap-3">
