@@ -4,7 +4,7 @@
 import { AlertModalProps } from '@/types/modal';
 
 const sizeClass = {
-  sm: 'max-w-[385px]',
+  sm: 'max-w-[390px]',
   md: 'max-w-[400px]',
   lg: 'max-w-[560px]',
 };

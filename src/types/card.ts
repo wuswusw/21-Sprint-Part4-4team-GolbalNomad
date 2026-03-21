@@ -28,6 +28,5 @@ export interface CardExperiencesProps {
   rating: number;
   reviewCount?: number;
   price: number;
-  onEdit?: () => void;
   onDelete?: () => void;
 }
