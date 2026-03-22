@@ -91,7 +91,16 @@ function ExperienceDetailPage() {
                             bannerImageUrl={experienceDetail?.bannerImageUrl}
                             subImages={experienceDetail?.subImages}
                         />
-                        <ExperienceInfo className="desktop:hidden" title={experienceDetail?.title} category={experienceDetail?.category} rating={experienceDetail?.rating} address={experienceDetail?.address} description={experienceDetail?.description} />
+                        <ExperienceInfo
+                            className="desktop:hidden"
+                            activityId={experienceDetail?.id ?? experienceId}
+                            title={experienceDetail?.title}
+                            category={experienceDetail?.category}
+                            rating={experienceDetail?.rating}
+                            address={experienceDetail?.address}
+                            description={experienceDetail?.description}
+                            reviewCount={totalReviewCount}
+                        />
                         <hr className="w-full border-[#E0E0E5] desktop:hidden" />
                         <ExperienceDesc description={experienceDetail?.description} />
                         <hr className="w-full border-[#E0E0E5]" />
@@ -107,13 +116,14 @@ function ExperienceDetailPage() {
                         />
                     </section>
                     <section className="hidden desktop:block text-gray-950">
-                        <ExperienceInfo 
-                            title={experienceDetail?.title} 
-                            category={experienceDetail?.category} 
-                            rating={experienceDetail?.rating} 
-                            address={experienceDetail?.address} 
-                            description={experienceDetail?.description} 
-                            reviewCount={totalReviewCount} 
+                        <ExperienceInfo
+                            activityId={experienceDetail?.id ?? experienceId}
+                            title={experienceDetail?.title}
+                            category={experienceDetail?.category}
+                            rating={experienceDetail?.rating}
+                            address={experienceDetail?.address}
+                            description={experienceDetail?.description}
+                            reviewCount={totalReviewCount}
                         />
                         <ReservationCard
                             activityId={experienceId}
