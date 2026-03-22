@@ -14,6 +14,7 @@ import {
   useReservationAvailableDays,
 } from "@/features/experience/hooks/use-experience-detail";
 import { MOCK_DETAIL, MOCK_AVAILABLE_DAYS, MOCK_REVIEWS } from "@/features/experience/experience-detail-mock-data";
+import type { ReviewResponse } from "@/features/experience/types/experience-detail.type";
 
 
 function ExperienceDetailPage() {
@@ -23,15 +24,42 @@ function ExperienceDetailPage() {
     
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear().toString());
     const [currentMonth, setCurrentMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0'));
+    const [displayCount, setDisplayCount] = useState(3);
 
     const { data: detailData, isLoading: isExperienceDetailLoading } = useExperienceDetail(experienceId);
     const { data: schedules, isLoading: isAvailableDaysLoading } = useReservationAvailableDays(experienceId, currentYear, currentMonth);
-    const { data: reviews, isLoading: isReviewsLoading } = useExperienceReviews(experienceId);
+    const { data: reviewData, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading: isReviewsLoading } = useExperienceReviews(experienceId);
 
-    //등록된 체험 있을 시 수정 예정
+    const reviewPages = reviewData?.pages ? reviewData.pages : [{
+        reviews: MOCK_REVIEWS.reviews.slice(0, displayCount),
+        averageRating: MOCK_REVIEWS.averageRating,
+        totalCount: MOCK_REVIEWS.totalCount,
+        }];  //등록된 체험 있을 시 목업데이터 식제 예정
+
+    const reviewsForSection: ReviewResponse = {
+        reviews: reviewPages.flatMap((page) => page.reviews),
+        averageRating: reviewPages[0].averageRating,
+        totalCount: reviewPages[0].totalCount,
+    };
+
+    // 1. 현재 로드된 리뷰 개수 (목업 포함)
+    const currentLoadedCount = reviewsForSection.reviews.length;
+    const totalCount = reviewData?.pages[0]?.totalCount || MOCK_REVIEWS.totalCount;
+    const canLoadMore = hasNextPage || (currentLoadedCount < totalCount);
+
+    // 확인용 로그 (콘솔에서 확인해 보세요)
+    console.log("현재 로드된 개수:", currentLoadedCount);
+    console.log("전체 개수:", totalCount);
+    console.log("버튼 노출 여부(canLoadMore):", canLoadMore);
+
+    const totalReviewCount = reviewsForSection.totalCount;
+    const averageRating = reviewsForSection.averageRating;
+    
+    
+
+    //등록된 체험 있을 시 목업데이터 식제 예정
     const experienceDetail = detailData ?? MOCK_DETAIL;
     const availableDays = schedules ?? MOCK_AVAILABLE_DAYS;
-    const reviewData = reviews ?? MOCK_REVIEWS;
 
     const isInitialLoad = isExperienceDetailLoading || isAvailableDaysLoading || isReviewsLoading;
     
@@ -42,6 +70,14 @@ function ExperienceDetailPage() {
         setCurrentYear(year);
         setCurrentMonth(month);
     };
+
+    const handleLoadMore = () => {
+        if(reviewData) {
+            fetchNextPage();
+        } else {
+            setDisplayCount((prev) => Math.min(prev + 3, MOCK_REVIEWS.reviews.length));
+        }
+    }
     
     if (!isValidId) return <div>experienceId를 다시 확인해 주세요.</div>;
     if (isInitialLoad) return <div>Loading...</div>;
@@ -62,13 +98,23 @@ function ExperienceDetailPage() {
                         <Map address={experienceDetail?.address} />
                         <hr className="w-full border-[#E0E0E5]" />
                         <ReviewSection
-                            reviews={reviewData ?? undefined}
-                            reviewCount={experienceDetail?.reviewCount ?? 0}
-                            rating={experienceDetail?.rating ?? 0}
+                            reviews={reviewsForSection}
+                            reviewCount={totalReviewCount}
+                            rating={averageRating}
+                            onLoadMore={handleLoadMore}
+                            hasNextPage={canLoadMore}
+                            isFetchingNextPage={isFetchingNextPage}
                         />
                     </section>
                     <section className="hidden desktop:block text-gray-950">
-                        <ExperienceInfo title={experienceDetail?.title} category={experienceDetail?.category} rating={experienceDetail?.rating} address={experienceDetail?.address} description={experienceDetail?.description} reviewCount={experienceDetail?.reviewCount} />
+                        <ExperienceInfo 
+                            title={experienceDetail?.title} 
+                            category={experienceDetail?.category} 
+                            rating={experienceDetail?.rating} 
+                            address={experienceDetail?.address} 
+                            description={experienceDetail?.description} 
+                            reviewCount={totalReviewCount} 
+                        />
                         <ReservationCard
                             activityId={experienceId}
                             price={experienceDetail?.price}

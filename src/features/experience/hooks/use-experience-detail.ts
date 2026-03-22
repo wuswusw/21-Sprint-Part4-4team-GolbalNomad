@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { getExperienceDetail, getReservationAvailableDays, getReviews } from "../api/experience-detail.api";
 import {ExperienceDetailResponse,ReservationAvailableDaysResponse ,ReviewResponse} from "@/features/experience/types/experience-detail.type";
 import { MOCK_DETAIL, MOCK_AVAILABLE_DAYS, MOCK_REVIEWS } from "../experience-detail-mock-data";
@@ -23,10 +23,14 @@ export function useReservationAvailableDays(activityId: number, year: string, mo
 }
 
 export function useExperienceReviews(activityId: number) {
-    return useQuery<ReviewResponse>({
+    return useInfiniteQuery<ReviewResponse>({
         queryKey: ["activities", activityId, "reviews"],
-        queryFn: () => getReviews(activityId, 1, 10),
+        queryFn: ({pageParam = 1 }) => getReviews(activityId, pageParam as number, 3),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, allPage) => {
+            const loadedCount = allPage.length * 3;
+            return loadedCount < lastPage.totalCount ? loadedCount + 1 : undefined;
+        },
         enabled: !!activityId && !isNaN(activityId),
-        placeholderData: () => MOCK_REVIEWS //등록된 체험 있을 시 삭제 예정
     })
 }

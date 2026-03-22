@@ -20,6 +20,8 @@ interface ReservationCardProps {
     price?: number;
     availableDays?: ReservationAvailableDaysResponse;
     onCalendarMonthChange?: (month: Date) => void;
+    onLoadMore?: () => void;
+    hasNextPage?: boolean;
 }
 
 function ReservationCard({
