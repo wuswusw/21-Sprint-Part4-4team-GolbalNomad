@@ -1,9 +1,6 @@
 "use client";
-import {useState, useEffect} from "react";
-import {useParams} from "next/navigation";
-
-import {getExperienceDetail,getReservationAvailableDays, getReviews} from "@/features/experience/api/experience-detail.api";
-import {ExperienceDetailResponse,ReservationAvailableDaysResponse ,ReviewResponse} from "@/features/experience/types/experience-detail.type";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 
 import ImageGallery from "@/features/experience/components/image-gallery";
 import ExperienceDesc from "@/features/experience/components/experience-desc";
@@ -11,149 +8,43 @@ import Map from "@/features/experience/components/kakao-map";
 import ReviewSection from "@/features/experience/components/review-section";
 import ExperienceInfo from "@/features/experience/components/experience-info";
 import ReservationCard from "@/features/experience/components/reservation-card";
+import {
+  useExperienceDetail,
+  useExperienceReviews,
+  useReservationAvailableDays,
+} from "@/features/experience/hooks/use-experience-detail";
+import { MOCK_DETAIL, MOCK_AVAILABLE_DAYS, MOCK_REVIEWS } from "@/features/experience/experience-detail-mock-data";
 
 
 function ExperienceDetailPage() {
-    const [experienceDetail, setExperienceDetail] = useState<ExperienceDetailResponse | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [availableDays, setAvailableDays] = useState<ReservationAvailableDaysResponse | null>(null);
-    const [isAvailableDaysLoading, setIsAvailableDaysLoading] = useState(true);
-    const [reviews, setReviews] = useState<ReviewResponse | null>(null);
-    const [isReviewsLoading, setIsReviewsLoading] = useState(true);
     const params = useParams<{ experienceId: string }>();
-    const experienceId = params?.experienceId;
-
+    const experienceId = Number(params?.experienceId);
+    const isValidId = params?.experienceId && !isNaN(experienceId);
+    
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear().toString());
     const [currentMonth, setCurrentMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0'));
 
-    useEffect(() => {
-        const fetchExperienceDetail = async () => {
-            if (!experienceId) return;
-            setIsLoading(true);
-            try {
-                const response = await getExperienceDetail(Number(experienceId));
-                setExperienceDetail(response);
-            } catch (error) {
-                // alert("체험 상세 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.");
-            
-                // 테스트용으로 아래 가짜 데이터를 세팅, 추후 체험 등록 API 연동 시 삭제 예정
-                setExperienceDetail({
-                    id: Number(experienceId),
-                    userId: 1,
-                    teamId: "sample-team",
-                    title: "도쿄 타워 전망대 입장권 & 메인 데크 체험",
-                    description: " 도쿄의 아름다운 스카이라인을 한눈에 담아보세요. 150m 높이의 메인 데크에서 바라보는 360도 파노라마 뷰는 잊지 못할 추억을 선사합니다. 밤이 되면 화려하게 빛나는 도쿄의 야경을 감상하며 낭만적인 시간을 보내실 수 있습니다. 도쿄 타워 내부의 다양한 굿즈 샵과 카페도 놓치지 마세요!",
-                    category: "관광 · 랜드마크",
-                    address: "서울특별시 강남구 테헤란로 123",
-                    price: 50000,
-                    rating: 4.8,
-                    reviewCount: 124,
-                    bannerImageUrl: "/assets/images/img1.jpg",
-                    subImages: [
-                        { id: 1, imageUrl: "/assets/images/img2.jpg" },
-                        { id: 2, imageUrl: "/assets/images/img3.jpg" }
-                    ],
-                    schedules: [
-                        { id: 101, date: "2026-03-23", startTime: "10:00", endTime: "12:00" },
-                        { id: 101, date: "2026-03-23", startTime: "12:00", endTime: "14:00" },
-                    ],
-                    createdAt: "2026-03-20T00:00:00Z",
-                    updatedAt: "2026-03-20T00:00:00Z"
-                } as ExperienceDetailResponse);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchExperienceDetail();
-    }, [experienceId]);
+    const { data: detailData, isLoading: isExperienceDetailLoading } = useExperienceDetail(experienceId);
+    const { data: schedules, isLoading: isAvailableDaysLoading } = useReservationAvailableDays(experienceId, currentYear, currentMonth);
+    const { data: reviews, isLoading: isReviewsLoading } = useExperienceReviews(experienceId);
 
-    useEffect(() => {
-        const fetchAvailableDays = async () => {
-            if (!experienceId) return;
-            setIsAvailableDaysLoading(true);
-            try {
-                const response = await getReservationAvailableDays(Number(experienceId), currentYear, currentMonth);
-                setAvailableDays(response);
-            } catch (error) {
-                // alert("예약 가능한 날짜를 불러오는 데 실패했습니다. 다시 시도해주세요.");
-                setAvailableDays([
-                    {
-                      date: "2026-03-21",
-                      times: [
-                        { id: 201, startTime: "10:00", endTime: "12:00" },
-                        { id: 202, startTime: "14:00", endTime: "16:00" },
-                        { id: 203, startTime: "16:00", endTime: "18:00" },
-                      ]
-                    },
-                    {
-                      date: "2026-03-22",
-                      times: [
-                        { id: 204, startTime: "18:00", endTime: "20:00" },
-                        { id: 205, startTime: "21:00", endTime: "23:00" },
-                      ]
-                    },
-                    {
-                      date: "2026-04-02",
-                      times: [
-                        { id: 206, startTime: "18:00", endTime: "20:00" },
-                      ]
-                    },
-                  ]);
-            } finally {
-                setIsAvailableDaysLoading(false);
-            }
-        };
-        fetchAvailableDays();
-    }, [experienceId, currentYear, currentMonth]);
+    //등록된 체험 있을 시 수정 예정
+    const experienceDetail = detailData ?? MOCK_DETAIL;
+    const availableDays = schedules ?? MOCK_AVAILABLE_DAYS;
+    const reviewData = reviews ?? MOCK_REVIEWS;
+
+    const isInitialLoad = isExperienceDetailLoading || isAvailableDaysLoading || isReviewsLoading;
     
-    useEffect(() => {
-        const fetchReviews = async () => {
-            if (!experienceId) return;
-            setIsReviewsLoading(true);
-            try {
-                const response = await getReviews(Number(experienceId), 1, 10);
-                setReviews(response);
-            }
-            catch (error) {
-                // alert("리뷰를 불러오는 데 실패했습니다. 다시 시도해주세요.");
-                // 테스트용으로 아래 가짜 데이터를 세팅, 추후 리뷰 등록 API 연동 시 삭제 예정
-                setReviews({
-                    averageRating: 0,
-                    totalCount: 0,
-                    reviews: [
-                        {id: 1,
-                        user: {
-                            profileImageUrl: "/assets/images/default profile.png",
-                            nickname: "글로벌 노마드",
-                            id: 12,
-                        },
-                        activityId: 1,
-                        rating: 5,
-                        content: "너무 재밌었습니다!",
-                        createdAt: "2026-03-20T00:00:00Z",
-                        updatedAt: "2026-03-20T00:00:00Z"},
-                        {id: 2,
-                        user: {
-                            profileImageUrl: "/assets/images/default profile.png",
-                            nickname: "오렌지",
-                            id: 8,
-                        },
-                        activityId: 1,
-                        rating: 2,
-                        content: "퀄리티에 비해 가격이 너무 비싸요",
-                        createdAt: "2026-03-21T00:00:00Z",
-                        updatedAt: "2026-03-21T00:00:00Z"},
-                    ]
-                } as ReviewResponse);
-            } finally {
-                setIsReviewsLoading(false);
-            }
-        };
-        fetchReviews();
-    }, [experienceId]);
     
-    if (isLoading) return <div>Loading...</div>;
+    const handleCalendarMonthChange = (date: Date) => {
+        const year = date.getFullYear().toString();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        setCurrentYear(year);
+        setCurrentMonth(month);
+    };
     
+    if (!isValidId) return <div>experienceId를 다시 확인해 주세요.</div>;
+    if (isInitialLoad) return <div>Loading...</div>;
 
   return (
     <div>
@@ -171,16 +62,18 @@ function ExperienceDetailPage() {
                         <Map address={experienceDetail?.address} />
                         <hr className="w-full border-[#E0E0E5]" />
                         <ReviewSection
-                            reviews={reviews ?? undefined}
-                            reviewCount={experienceDetail?.reviewCount}
-                            rating={experienceDetail?.rating}
+                            reviews={reviewData ?? undefined}
+                            reviewCount={experienceDetail?.reviewCount ?? 0}
+                            rating={experienceDetail?.rating ?? 0}
                         />
                     </section>
                     <section className="hidden desktop:block text-gray-950">
                         <ExperienceInfo title={experienceDetail?.title} category={experienceDetail?.category} rating={experienceDetail?.rating} address={experienceDetail?.address} description={experienceDetail?.description} reviewCount={experienceDetail?.reviewCount} />
                         <ReservationCard
+                            activityId={experienceId}
                             price={experienceDetail?.price}
                             availableDays={availableDays ?? []}
+                            onCalendarMonthChange={handleCalendarMonthChange}
                         />
                     </section>
                 </div>

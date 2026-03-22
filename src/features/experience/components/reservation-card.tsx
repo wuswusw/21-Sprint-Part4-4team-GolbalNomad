@@ -3,32 +3,62 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import Calender from "./reservation-calender";
-import type { ReservationAvailableDaysResponse } from "../types/experience-detail.type";
+import { Button } from "@/components/ui/button";
 
-interface ReservationCardProps {
-    price?: number;
-    availableDays?: ReservationAvailableDaysResponse;
+import type {
+  ReservationAvailableDaysResponse,
+  ReservationAvailableTime,
+} from "../types/experience-detail.type";
+import { useCreateReservation } from "../hooks/use-create-reservation";
+
+function timeSlotKey(time: ReservationAvailableTime) {
+  return `${time.id}-${time.startTime}-${time.endTime}`;
 }
 
-function ReservationCard({ price, availableDays }: ReservationCardProps) {
+interface ReservationCardProps {
+    activityId: number;
+    price?: number;
+    availableDays?: ReservationAvailableDaysResponse;
+    onCalendarMonthChange?: (month: Date) => void;
+}
+
+function ReservationCard({
+    activityId,
+    price,
+    availableDays,
+    onCalendarMonthChange,
+}: ReservationCardProps) {
     const [count, setCount] = useState(1);
     const [selectedTimeId, setSelectedTimeId] = useState<number | null>(null);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const {mutate, isPending} = useCreateReservation(activityId);
 
     const total = (price ?? 0) * count;
+    const isReadyToReserve = selectedDate !== null && selectedTimeId !== null;
 
     const availableTimes =
     selectedDate && availableDays
       ? availableDays.find((day) => day.date === selectedDate)?.times ?? []
       : [];
 
-    const handleTimeBtnClick = (id: number) => {
-        setSelectedTimeId((prev) => (prev === id ? null : id));
-    }
-     const handleDateSelect = (date: Date | undefined) => {
+    const handleTimeBtnClick = (scheduleId: number) => {
+        setSelectedTimeId((prev) => (prev === scheduleId ? null : scheduleId));
+    };
+
+    const handleDateSelect = (date: Date | undefined) => {
         setSelectedDate(date ? format(date, "yyyy-MM-dd") : null);
         setSelectedTimeId(null);
-    }
+    };
+
+    const handleReservationBtnClick = () => {
+        if (selectedTimeId == null || selectedDate == null) return;
+        const slot = availableTimes.find((t) => t.id === selectedTimeId);
+        if (!slot) return;
+        mutate({
+            scheduleId: selectedTimeId,
+            headCount: count,
+        });
+    };
 
     const handleMinusBtnClick = () => {
         if (count <= 1) return;
@@ -47,7 +77,11 @@ function ReservationCard({ price, availableDays }: ReservationCardProps) {
         </div>
         <h3 className="text-16 font-bold mb-2">날짜</h3>
         <div>
-            <Calender availableDays={availableDays} onSelectDate={handleDateSelect} />
+            <Calender
+                availableDays={availableDays}
+                onSelectDate={handleDateSelect}
+                onMonthChange={onCalendarMonthChange}
+            />
         </div>
         <div className="flex justify-between items-center my-6">
             <h3 className="text-16 font-bold">참여 인원수</h3>
@@ -65,7 +99,7 @@ function ReservationCard({ price, availableDays }: ReservationCardProps) {
             ) : (
                 availableTimes.map((time) => (
                     <button
-                        key={time.id}
+                        key={timeSlotKey(time)}
                         type="button"
                         onClick={() => handleTimeBtnClick(time.id)}
                         className={`w-full px-3 py-4 rounded-[11px] ring ring-gray-300 text-15 font-medium hover:ring-primary-500 hover:text-primary-500 hover:bg-primary-100 ${
@@ -84,7 +118,15 @@ function ReservationCard({ price, availableDays }: ReservationCardProps) {
                 <p className="text-20 font-medium text-[#79747E]">총 합계</p>
                 <p className="text-20 font-bold">₩ {total.toLocaleString()}</p>
             </div>
-            <button className="px-10 py-4 rounded-[14px] bg-primary-500 text-white text-16 font-bold">예약하기</button>
+            <Button
+              variant="default"
+              size="lg"
+              disabled={!isReadyToReserve || isPending}
+              onClick={handleReservationBtnClick}
+              className="px-10 py-4 rounded-[14px] bg-primary-500 !text-white text-16 font-bold h-[50px]"
+            >
+                {isPending ? "예약 중" : "예약하기"}
+            </Button>
         </div>
     </div>
   );
