@@ -6,8 +6,7 @@ interface GetNotificationsParams {
 }
 
 interface DeleteNotificationsParams {
-    teatId:string;
-    notificationId:number;
+    notificationId: number;
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
