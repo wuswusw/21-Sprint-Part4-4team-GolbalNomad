@@ -1,6 +1,9 @@
 "use client";
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import {useState, useEffect} from "react";
+import {useParams} from "next/navigation";
+
+import {getExperienceDetail,getReservationAvailableDays, getReviews} from "@/features/experience/api/experience-detail.api";
+import {ExperienceDetailResponse,ReservationAvailableDaysResponse ,ReviewResponse} from "@/features/experience/types/experience-detail.type";
 
 import ImageGallery from "@/features/experience/components/image-gallery";
 import ExperienceDesc from "@/features/experience/components/experience-desc";
@@ -15,6 +18,7 @@ import {
 } from "@/features/experience/hooks/use-experience-detail";
 import { MOCK_DETAIL, MOCK_AVAILABLE_DAYS, MOCK_REVIEWS } from "@/features/experience/experience-detail-mock-data";
 import type { ReviewResponse } from "@/features/experience/types/experience-detail.type";
+
 
 
 function ExperienceDetailPage() {
@@ -101,6 +105,7 @@ function ExperienceDetailPage() {
                             description={experienceDetail?.description}
                             reviewCount={totalReviewCount}
                         />
+
                         <hr className="w-full border-[#E0E0E5] desktop:hidden" />
                         <ExperienceDesc description={experienceDetail?.description} />
                         <hr className="w-full border-[#E0E0E5]" />
