@@ -3,7 +3,14 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 
-const pageHeaderConfig: Record<string, any> = {
+interface PageHeaderConfig {
+  title: string;
+  description?: string;
+  buttonText?: string;
+  buttonHref?: string;
+}
+
+const pageHeaderConfig: Record<string, PageHeaderConfig> = {
   '/main/profile': {
     title: '내 정보',
     description: '닉네임과 비밀번호를 수정하실 수 있습니다.',
@@ -52,7 +59,7 @@ export default function PageHeader() {
       {config.buttonText && config.buttonHref && (
         <button
           className="text-16 flex-shrink-0 rounded-xl bg-[var(--color-primary-500)] px-4 py-2.5 font-bold text-white"
-          onClick={() => router.push(config.buttonHref)}
+          onClick={() => router.push(config.buttonHref!)}
         >
           {config.buttonText}
         </button>

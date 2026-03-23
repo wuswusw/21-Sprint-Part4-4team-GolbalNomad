@@ -58,7 +58,7 @@ export default function ReservationPage() {
       <CardReservation
         id={1}
         imageUrl="https://cdn-icons-png.flaticon.com/512/1628/1628767.png"
-        status="approval"
+        status="pending"
         title="함께 배우면 즐거운 스트릿 댄스"
         scheduledDate="2023. 02. 14"
         price={10000}
