@@ -41,14 +41,21 @@ export default function ReviewModal({
         {/* 별점 */}
         <div className="flex items-center justify-center gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              onClick={() => setRating(star)}
-              className={`text-2xl ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
-              aria-label={`별점 ${star}점`}
-            >
-              ★
-            </button>
+            // <button
+            //   key={star}
+            //   onClick={() => setRating(star)}
+            //   className={`text-2xl ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+            //   aria-label={`별점 ${star}점`}
+            // >
+            //   ★
+            // </button>
+            <label key={star} onClick={() => setRating(star)}>
+              <img
+                src={`/assets/icons/star_${star <= rating ? 'on' : 'off'}.svg`}
+                alt={`별점 ${star}점`}
+              />
+              <input type="radio" name="rating" value={star} className="hidden" />
+            </label>
           ))}
         </div>
       </div>
@@ -60,8 +67,9 @@ export default function ReviewModal({
           onChange={(e) => setContent(e.target.value)}
           placeholder="체험에서 느낀 경험을 자유롭게 남겨주세요"
           className="mt-4 mb-2 h-32 w-full resize-none rounded-lg border border-[var(--color-gray-300)] p-3 text-sm focus:border-[var(--color-primary-500)] focus:outline-none"
+          maxLength={100}
         />
-        <p className="text-14 text-right text-[var(--color-gray-600)]">0 / 100</p>
+        <p className="text-14 text-right text-[var(--color-gray-600)]">{content.length} / 100</p>
       </div>
     </BaseModal>
   );

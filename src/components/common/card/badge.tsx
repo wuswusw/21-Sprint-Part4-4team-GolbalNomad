@@ -1,22 +1,27 @@
-// 예약내역 내에 있는 상태 뱃지
+// 예약 상태 뱃지
 
-import { BadgeStatus } from '@/types/card';
+import type { BadgeStatus } from '@/types/card';
 
-const statusConfig: Record<BadgeStatus, { label: string; className: string }> = {
-  cancel: {
+type StatusConfig = {
+  label: string;
+  className: string;
+};
+
+const statusConfig: Record<BadgeStatus, StatusConfig> = {
+  canceled: {
     label: '예약 취소',
     className: 'bg-[var(--color-gray-100)] text-[var(--color-gray-600)]',
   },
   confirmed: {
-    label: '예약 확정',
+    label: '예약 승인',
     className: 'bg-[#E9FBE4] text-[#2BA90D]',
   },
-  rejected: {
+  declined: {
     label: '예약 거절',
     className: 'bg-[#FCECEA] text-[#F96767]',
   },
-  approval: {
-    label: '예약 승인',
+  pending: {
+    label: '예약 신청',
     className: 'bg-[#DDF9F9] text-[#1790A0]',
   },
   completed: {
