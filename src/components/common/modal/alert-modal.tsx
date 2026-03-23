@@ -2,6 +2,7 @@
 'use client';
 
 import { AlertModalProps } from '@/types/modal';
+import Image from 'next/image';
 
 const sizeClass = {
   sm: 'max-w-[390px]',
@@ -38,9 +39,11 @@ export default function AlertModal({
         onClick={(e) => e.stopPropagation()}
       >
         {imageSrc && (
-          <img
+          <Image
             src={imageSrc}
-            alt=""
+            alt="alert"
+            width={88}
+            height={88}
             className="mx-auto w-full max-w-[88px] rounded-xl object-cover"
           />
         )}
