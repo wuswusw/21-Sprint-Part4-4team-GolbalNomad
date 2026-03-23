@@ -1,10 +1,15 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import Link from "next/link";
 import useOpenOutsideClick from "@/hooks/use-click-outside";
+import { useModal } from "@/hooks/use-modal";
+
+const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID ?? "";
 
 interface ExperienceInfoProps {
     className?: string;
+    activityId?: number;
     title?: string;
     category?: string;
     rating?: number;
@@ -13,18 +18,42 @@ interface ExperienceInfoProps {
     reviewCount?: number;
 }
 
-function ExperienceInfo({ className, title, category, rating, address, description, reviewCount }: ExperienceInfoProps) {
+function ExperienceInfo({
+    className,
+    activityId,
+    title,
+    category,
+    rating,
+    address,
+    description,
+    reviewCount,
+}: ExperienceInfoProps) {
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
+    const { openModal } = useModal();
 
     const summary = description?.split('.')[0] + '.';
 
-    const closeDropdown = useCallback(() => { setIsOpen(false); }, []);
+    const closeDropdown = useCallback(() => {
+        setIsOpen(false);
+    }, []);
     useOpenOutsideClick(ref, closeDropdown, isOpen);
 
     const handleKebabClick = () => {
-        setIsOpen(prev => !prev);
-    }
+        setIsOpen((prev) => !prev);
+    };
+
+    const handleDeleteClick = () => {
+        closeDropdown();
+        openModal("alert", {
+            description: "체험을 삭제하시겠습니까?",
+            cancelText: "아니요",
+            confirmText: "네",
+            onConfirm: () => {
+                // TODO: 체험 삭제 API 연동
+            },
+        });
+    };
 
   return (
     <div className={`relative desktop:mb-[38px] ${className ?? ""}`}>
@@ -33,9 +62,21 @@ function ExperienceInfo({ className, title, category, rating, address, descripti
                 <img src="/assets/icons/kebab.svg" alt="kebab" className="w-6 h-6" />
             </button>
             {isOpen && (
-                <div className="w-[95px] absolute top-0 right-5 flex flex-col bg-white ring ring-[#dfdfdf] rounded-lg overflow-hidden">
-                    <button className="text-16 text-gray-950 hover:bg-primary-100 py-[18px]">수정하기</button>
-                    <button className="text-16 text-gray-950 hover:bg-primary-100 py-[18px]">삭제하기</button>            
+                <div className="w-[95px] absolute top-0 right-5 flex flex-col bg-white ring ring-[#dfdfdf] rounded-lg overflow-hidden z-10">
+                    <Link
+                        href={`/main/my-experiences/${activityId}/edit`}
+                        className="text-16 text-gray-950 hover:bg-primary-100 py-[18px] text-center"
+                        onClick={closeDropdown}
+                    >
+                        수정하기
+                    </Link>
+                    <button
+                        type="button"
+                        className="text-16 text-gray-950 hover:bg-primary-100 py-[18px]"
+                        onClick={handleDeleteClick}
+                    >
+                        삭제하기
+                    </button>
                 </div>
             )}
         </div>

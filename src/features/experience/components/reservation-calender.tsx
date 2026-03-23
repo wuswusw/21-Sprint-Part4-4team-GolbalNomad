@@ -104,7 +104,7 @@ const MyDayPicker = ({ availableDays, onSelectDate, onMonthChange }: MyDayPicker
             root: "w-full",
             months: "w-full",
             month: "w-full",
-            month_grid: "mx-auto",
+            month_grid: "mx-auto border-separate border-spacing-1",
             month_caption: "flex justify-between items-center py-2 mb-4",
             weekday: "text-[#333] font-semibold text-[16px] w-[46px] h-[46px]",
             day: "h-[46px] w-[46px] text-center font-medium rounded-full",
