@@ -3,7 +3,9 @@
 
 import { useState } from 'react';
 import { ReviewModalProps } from '@/types/modal';
+import { postReview } from '@/lib/api/reservations';
 import BaseModal from './base-modal';
+import Image from 'next/image';
 
 interface Props extends ReviewModalProps {
   onClose: () => void;
@@ -15,22 +17,46 @@ export default function ReviewModal({
   reservationDate,
   onClose,
 }: Props) {
-  const [rating, setRating] = useState(3);
+  const [rating, setRating] = useState('');
   const [content, setContent] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
-    // TODO: API 연동
-    console.log('후기 제출:', { reservationId, rating, content });
+  const resetForm = () => {
+    setRating('');
+    setContent('');
+    setError('');
+  };
+
+  const handleSubmit = async () => {
+    if (!rating) {
+      setError('별점을 선택해 주세요.');
+      return;
+    }
+    const trimmedContent = content.trim();
+    if (trimmedContent.length < 5) {
+      setError('후기 내용은 5자 이상 입력해 주세요.');
+      return;
+    }
+
+    const token = localStorage.getItem('accessToken') ?? '';
+    setIsLoading(true);
+    try {
+      await postReview(token, reservationId, {
+        rating: Number(rating),
+        content: trimmedContent,
+      });
+      resetForm();
+      onClose();
+    } catch {
+      setError('후기 작성에 실패했습니다. 다시 시도해 주세요.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <BaseModal
-      onClose={onClose}
-      gap="gap-7.5"
-      padding="px-7.5 py-6"
-      confirmText="작성하기"
-      onConfirm={handleSubmit}
-    >
+    <BaseModal onClose={onClose} gap="gap-7.5" padding="px-7.5 py-6">
       <div className="flex flex-col gap-3.5">
         {/* 타이틀 */}
         <div className="flex flex-col items-center gap-1.5 pt-13">
@@ -41,21 +67,15 @@ export default function ReviewModal({
         {/* 별점 */}
         <div className="flex items-center justify-center gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
-            // <button
-            //   key={star}
-            //   onClick={() => setRating(star)}
-            //   className={`text-2xl ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
-            //   aria-label={`별점 ${star}점`}
-            // >
-            //   ★
-            // </button>
-            <label key={star} onClick={() => setRating(star)}>
-              <img
-                src={`/assets/icons/star_${star <= rating ? 'on' : 'off'}.svg`}
+            <button key={star} onClick={() => setRating(star.toString())}>
+              <Image
+                src={`/assets/icons/star_${star <= Number(rating) ? 'on' : 'off'}.svg`}
+                width={35}
+                height={34}
                 alt={`별점 ${star}점`}
               />
               <input type="radio" name="rating" value={star} className="hidden" />
-            </label>
+            </button>
           ))}
         </div>
       </div>
@@ -70,6 +90,18 @@ export default function ReviewModal({
           maxLength={100}
         />
         <p className="text-14 text-right text-[var(--color-gray-600)]">{content.length} / 100</p>
+      </div>
+
+      {error && <p className="text-14 text-center text-red-500">{error}</p>}
+
+      <div className="flex items-center justify-center">
+        <button
+          onClick={handleSubmit}
+          disabled={isLoading}
+          className="rounded-lg bg-[var(--color-primary-500)] px-4 py-2 text-white disabled:opacity-50"
+        >
+          {isLoading ? '작성 중...' : '작성하기'}
+        </button>
       </div>
     </BaseModal>
   );

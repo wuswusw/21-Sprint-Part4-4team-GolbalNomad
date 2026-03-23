@@ -4,14 +4,13 @@
 import CardExperiences from '@/components/common/card/card-experiences';
 import PageHeader from '@/components/common/PageHeader';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  deleteMyExperience,
-  getMyExperiences,
-  type MyActivityItem,
-} from '@/lib/api/my-experiences';
+import { useRouter } from 'next/navigation';
+import { deleteMyExperience, getMyExperiences } from '@/lib/api/my-experiences';
+import type { MyActivityItem } from '@/types/my-experiences';
 import { useModal } from '@/hooks/use-modal';
 
 export default function MyExperiencesPage() {
+  const router = useRouter();
   const { openModal } = useModal();
   const [items, setItems] = useState<MyActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,6 +54,10 @@ export default function MyExperiencesPage() {
         setItems((prev) => prev.filter((item) => item.id !== activityId));
       } catch (err) {
         const message = err instanceof Error ? err.message : '체험 삭제에 실패했습니다.';
+        if (message === 'Unauthorized') {
+          router.push('/auth/login');
+          return;
+        }
         openModal('alert', { description: message, confirmText: '확인' });
       }
     },

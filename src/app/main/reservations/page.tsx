@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import CardReservation from '@/components/common/card/card-reservation';
 import type { BadgeStatus } from '@/types/card';
 import PageHeader from '@/components/common/PageHeader';
-import { getMyReservations, type ReservationItem } from '@/lib/api/reservations';
+import { getMyReservations } from '@/lib/api/reservations';
+import type { ReservationItem } from '@/types/reservations';
 
 const STATUS_FILTERS: { label: string; value: BadgeStatus }[] = [
   { label: '예약 신청', value: 'pending' },
