@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { CardExperiencesProps } from '@/types/card';
+import type { CardExperiencesProps } from '@/types/card';
 import { useModal } from '@/hooks/use-modal';
 
 export default function CardExperiences({
@@ -9,6 +9,7 @@ export default function CardExperiences({
   rating,
   reviewCount,
   price,
+  onDelete,
 }: CardExperiencesProps) {
   const router = useRouter();
   const { openModal } = useModal();
@@ -29,7 +30,7 @@ export default function CardExperiences({
             confirmText: '삭제하기',
             cancelText: '아니오',
             onConfirm: () => {
-              console.log('삭제');
+              onDelete?.();
             },
           });
         }}
@@ -41,7 +42,7 @@ export default function CardExperiences({
   );
 
   return (
-    <div className="flex w-full justify-between gap-3 rounded-xl px-7.5 py-9 shadow-[0_4px_24px_rgba(156,180,202,0.2))]">
+    <div className="flex w-full justify-between gap-3 rounded-xl px-7.5 py-9 shadow-[0_4px_24px_rgba(156,180,202,0.2)]">
       {/* 내용 */}
       <div className="flex flex-1 flex-col justify-between gap-5">
         <div className="flex flex-col gap-3">
