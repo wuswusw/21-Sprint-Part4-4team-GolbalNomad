@@ -9,7 +9,7 @@ const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID ?? "";
 
 interface ExperienceInfoProps {
     className?: string;
-    activityId?: number;
+    activityId?: number;p
     title?: string;
     category?: string;
     rating?: number;
