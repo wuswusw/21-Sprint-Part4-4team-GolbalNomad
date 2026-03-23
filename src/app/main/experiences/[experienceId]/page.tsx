@@ -1,9 +1,8 @@
 "use client";
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import {useParams} from "next/navigation";
 
-import {getExperienceDetail,getReservationAvailableDays, getReviews} from "@/features/experience/api/experience-detail.api";
-import {ExperienceDetailResponse,ReservationAvailableDaysResponse ,ReviewResponse} from "@/features/experience/types/experience-detail.type";
+import type { ReviewResponse } from "@/features/experience/types/experience-detail.type";
 
 import ImageGallery from "@/features/experience/components/image-gallery";
 import ExperienceDesc from "@/features/experience/components/experience-desc";
@@ -17,9 +16,6 @@ import {
   useReservationAvailableDays,
 } from "@/features/experience/hooks/use-experience-detail";
 import { MOCK_DETAIL, MOCK_AVAILABLE_DAYS, MOCK_REVIEWS } from "@/features/experience/experience-detail-mock-data";
-import type { ReviewResponse } from "@/features/experience/types/experience-detail.type";
-
-
 
 function ExperienceDetailPage() {
     const params = useParams<{ experienceId: string }>();
