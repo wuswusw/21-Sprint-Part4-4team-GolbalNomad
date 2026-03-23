@@ -9,9 +9,11 @@ declare global {
   }
 }
 
-const ADDRESS = "서울시 중구 청계천로 100";
+interface MapProps {
+  address?: string;
+}
 
-function Map() {
+function Map({ address }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const initMap = () => {
@@ -20,7 +22,7 @@ function Map() {
     window.kakao.maps.load(() => {
       const geocoder = new window.kakao.maps.services.Geocoder();
 
-      geocoder.addressSearch(ADDRESS, (result: any, status: any) => {
+      geocoder.addressSearch(address, (result: any, status: any) => {
         if (status === window.kakao.maps.services.Status.OK) {
           const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
 
@@ -50,7 +52,7 @@ function Map() {
         onLoad={initMap}
       />
       <h2 className="text-body-18">오시는 길</h2>
-      <p className="text-body-14 mb-3">{ADDRESS}</p>
+      <p className="text-body-14 mb-3">{address}</p>
       <div ref={mapRef} className="w-full h-[450px] rounded-3xl" />
     </div>
   );
