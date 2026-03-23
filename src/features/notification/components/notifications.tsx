@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useNotifications } from "../hooks/use-notifications";
 
-const LOCATION_STYLE = "fixed left-1/2 -translate-x-1/2 tablet:translate-x-0  tablet:left-auto top-13 tablet:absolute tablet:top-9 tablet:right-0 z-50"
+const LOCATION_STYLE = "fixed left-1/2 -translate-x-1/2 tablet:translate-x-0  tablet:left-auto top-13 tablet:absolute tablet:top-9 tablet:right-0 z-50 bg-white"
 
 
 interface NotificationsProps {
