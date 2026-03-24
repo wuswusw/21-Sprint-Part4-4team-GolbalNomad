@@ -98,7 +98,7 @@ import {
   }
   
 
-  export async function getReservedSchedule({
+  export async function getReservationDailySchedule({
     activityId,
     date,
   }: GetReservedDailyScheduleParams): Promise<ReservedDailyScheduleResponse[]> {
