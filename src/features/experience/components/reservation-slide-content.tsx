@@ -144,7 +144,7 @@ function ReservationSlideContent({
 
   return (
     <div className="max-h-[min(85vh,640px)] overflow-y-auto py-3 px-1">
-      <div className="hidden tablet:Section tablet:py-6 tablet:px-[30px]">
+      <div className="hidden tablet:block tablet:py-6 tablet:px-[30px]">
         <div className="flex items-start gap-6">
           <div className="shrink-0 max-w-[min(100%,320px)] min-w-[240px]">
             {calendarSection}
