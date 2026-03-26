@@ -16,12 +16,14 @@ import {
   useReservationAvailableDays,
 } from "@/features/experience/hooks/use-experience-detail";
 import { MOCK_DETAIL, MOCK_AVAILABLE_DAYS, MOCK_REVIEWS } from "@/features/experience/experience-detail-mock-data";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 function ExperienceDetailPage() {
     const params = useParams<{ experienceId: string }>();
     const experienceId = Number(params?.experienceId);
     const isValidId = params?.experienceId && !isNaN(experienceId);
     
+    const { data: currentUser } = useCurrentUser();
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear().toString());
     const [currentMonth, setCurrentMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0'));
     const [displayCount, setDisplayCount] = useState(3);
@@ -60,6 +62,7 @@ function ExperienceDetailPage() {
     //등록된 체험 있을 시 목업데이터 식제 예정
     const experienceDetail = detailData ?? MOCK_DETAIL;
     const availableDays = schedules ?? MOCK_AVAILABLE_DAYS;
+    const isOwner = !!currentUser && experienceDetail?.userId === currentUser.id;
 
     const isInitialLoad = isExperienceDetailLoading || isAvailableDaysLoading || isReviewsLoading;
     
@@ -100,6 +103,7 @@ function ExperienceDetailPage() {
                             address={experienceDetail?.address}
                             description={experienceDetail?.description}
                             reviewCount={totalReviewCount}
+                            isOwner={isOwner}
                         />
 
                         <hr className="w-full border-[#E0E0E5] desktop:hidden" />
@@ -125,6 +129,7 @@ function ExperienceDetailPage() {
                             address={experienceDetail?.address}
                             description={experienceDetail?.description}
                             reviewCount={totalReviewCount}
+                            isOwner={isOwner}
                         />
                         <ReservationCard
                             activityId={experienceId}
