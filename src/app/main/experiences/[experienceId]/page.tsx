@@ -88,14 +88,14 @@ function ExperienceDetailPage() {
   return (
     <div>
             <div className="w-full mx-auto desktop:mt-22 tablet:mt-[34px] mt-[30px] desktop:mb-45 mb-[75px] mb-[30px] flex justify-center pb-[168px] desktop:pb-0">
-                <div className="w-full desktop:max-w-[1200px] px-10 grid grid-cols-1 desktop:grid-cols-[1fr_410px] gap-10">
+                <div className={`w-full desktop:max-w-[1200px] px-10 grid grid-cols-1 ${!isOwner ? "desktop:grid-cols-[1fr_410px]" : ""} gap-10`}>
                     <section className="w-full flex flex-col gap-6 tablet:gap-[30px] desktop:gap-10 text-gray-950">
                         <ImageGallery
                             bannerImageUrl={experienceDetail?.bannerImageUrl}
                             subImages={experienceDetail?.subImages}
                         />
                         <ExperienceInfo
-                            className="desktop:hidden"
+                            className={isOwner ? "" : "desktop:hidden"}
                             activityId={experienceDetail?.id ?? experienceId}
                             title={experienceDetail?.title}
                             category={experienceDetail?.category}
@@ -120,24 +120,26 @@ function ExperienceDetailPage() {
                             isFetchingNextPage={isFetchingNextPage}
                         />
                     </section>
-                    <section className="hidden desktop:block text-gray-950">
-                        <ExperienceInfo
-                            activityId={experienceDetail?.id ?? experienceId}
-                            title={experienceDetail?.title}
-                            category={experienceDetail?.category}
-                            rating={experienceDetail?.rating}
-                            address={experienceDetail?.address}
-                            description={experienceDetail?.description}
-                            reviewCount={totalReviewCount}
-                            isOwner={isOwner}
-                        />
-                        <ReservationCard
-                            activityId={experienceId}
-                            price={experienceDetail?.price}
-                            availableDays={availableDays ?? []}
-                            onCalendarMonthChange={handleCalendarMonthChange}
-                        />
-                    </section>
+                    {!isOwner && (
+                        <section className="hidden desktop:block text-gray-950">
+                            <ExperienceInfo
+                                activityId={experienceDetail?.id ?? experienceId}
+                                title={experienceDetail?.title}
+                                category={experienceDetail?.category}
+                                rating={experienceDetail?.rating}
+                                address={experienceDetail?.address}
+                                description={experienceDetail?.description}
+                                reviewCount={totalReviewCount}
+                                isOwner={isOwner}
+                            />
+                            <ReservationCard
+                                activityId={experienceId}
+                                price={experienceDetail?.price}
+                                availableDays={availableDays ?? []}
+                                onCalendarMonthChange={handleCalendarMonthChange}
+                            />
+                        </section>
+                    )}
                 </div>
             </div>
     </div>
