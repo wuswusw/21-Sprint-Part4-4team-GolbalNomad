@@ -19,6 +19,7 @@ export interface ReviewModalProps {
   activityTitle: string;
   reservationDate: string;
   size?: 'sm' | 'md' | 'lg';
+  onReviewSuccess?: () => void;
 }
 
 // slide 모달

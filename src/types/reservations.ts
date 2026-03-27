@@ -9,6 +9,7 @@ export type ReservationItem = {
   endTime: string;
   totalPrice: number;
   headCount: number;
+  reviewSubmitted?: boolean;
   activity?: {
     title?: string;
     bannerImageUrl?: string;

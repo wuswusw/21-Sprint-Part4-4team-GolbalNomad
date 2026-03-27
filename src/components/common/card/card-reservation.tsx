@@ -11,22 +11,27 @@ export default function CardReservation({
   status,
   title,
   scheduledDate,
+  date,
+  startTime,
+  endTime,
   price,
   people,
   onCancelSuccess,
+  onReviewSuccess,
+  reviewSubmitted,
 }: CardReservationProps) {
   const router = useRouter();
   const { openModal } = useModal();
   const showEdit = status === 'pending';
   const showCancel = status === 'pending';
-  const showWriteReview = status === 'completed';
+  const showWriteReview = status === 'completed' && !reviewSubmitted;
 
   const buttons = (
-    <div className="flex gap-2">
+    <div className="flex w-full gap-3">
       {showEdit && (
         <button
           onClick={() => router.push(`/main/reservations/${id}/edit`)}
-          className="text-14 rounded-sm border border-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
+          className="desktop:py-[6px] text-14 flex-1 rounded-sm border border-[var(--color-gray-50)] p-[10px] font-medium text-[var(--color-gray-600)]"
         >
           예약 변경
         </button>
@@ -36,7 +41,7 @@ export default function CardReservation({
         <button
           onClick={() => {
             openModal('alert', {
-              imageSrc: 'https://cdn-icons-png.flaticon.com/512/5610/5610967.png',
+              imageSrc: '/assets/images/img-warning.png',
               description: '예약을 취소하시겠어요?',
               confirmText: '취소하기',
               cancelText: '아니오',
@@ -47,7 +52,7 @@ export default function CardReservation({
               },
             });
           }}
-          className="text-14 rounded-sm bg-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
+          className="desktop:py-[6px] text-14 flex-1 rounded-sm bg-[var(--color-gray-50)] p-[10px] font-medium text-[var(--color-gray-600)]"
         >
           예약 취소
         </button>
@@ -58,10 +63,11 @@ export default function CardReservation({
             openModal('review', {
               reservationId: id.toString(),
               activityTitle: title,
-              reservationDate: scheduledDate,
+              reservationDate: `${date} / ${startTime} - ${endTime} (${people}명)`,
+              onReviewSuccess,
             });
           }}
-          className="text-14 rounded-sm bg-[var(--color-primary-500)] px-[10px] py-[6px] text-white"
+          className="desktop:py-[6px] text-14 flex-1 rounded-sm bg-[var(--color-primary-500)] p-[10px] font-medium text-white"
         >
           후기 작성
         </button>
@@ -70,16 +76,25 @@ export default function CardReservation({
   );
 
   return (
-    <div className="flex w-full flex-col gap-3">
+    <div className="desktop:before:hidden relative flex w-full flex-col gap-3 before:absolute before:-top-[25px] before:right-0 before:left-0 before:block before:border-t before:border-[var(--color-primary-100)] before:content-[''] first:before:hidden">
+      <div className="text-16 desktop:hidden font-bold">{date}</div>
+
       <div className="relative flex rounded-xl shadow-[0_4px_24px_rgba(156,180,202,0.2)]">
         {/* 내용 */}
-        <div className="z-10 -mr-6 flex w-full flex-col gap-1.5 rounded-xl bg-white px-10 py-7.5 shadow-[0_-8px_20px_rgba(0,0,0,0.05)]">
-          <div className="flex flex-col items-start gap-3">
+        <div className="tablet:-mr-5 z-10 -mr-8.5 flex w-full flex-col gap-2 rounded-xl bg-white p-5 shadow-[0_-8px_20px_rgba(0,0,0,0.05)]">
+          <div className="flex flex-col items-start gap-2">
             <Badge status={status} />
 
-            <div className="flex flex-col items-start gap-2">
+            <div className="flex flex-col items-start gap-1">
               <p className="text-18 font-bold">{title}</p>
-              <p className="text-16 text-[var(--color-gray-500)]">{scheduledDate}</p>
+              <p className="text-16 flex items-center gap-5 text-[var(--color-gray-500)]">
+                <span className="desktop:after:content-['•'] desktop:after:absolute desktop:after:right-[-14px] desktop:block relative hidden">
+                  {date}
+                </span>
+                <span>
+                  {startTime} - {endTime}
+                </span>
+              </p>
             </div>
           </div>
 
@@ -93,10 +108,11 @@ export default function CardReservation({
         </div>
 
         {/* 이미지 */}
-        <div className="relative h-[180px] w-[180px] shrink-0 overflow-hidden rounded-xl">
+        <div className="relative min-h-[136px] w-[136px] shrink-0 overflow-hidden rounded-xl">
           <Image src={imageUrl} alt={title} fill className="object-cover" />
         </div>
       </div>
+
       <div className="tablet:hidden flex">{buttons}</div>
     </div>
   );

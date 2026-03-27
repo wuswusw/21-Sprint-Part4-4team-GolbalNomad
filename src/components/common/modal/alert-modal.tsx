@@ -3,6 +3,7 @@
 
 import { AlertModalProps } from '@/types/modal';
 import Image from 'next/image';
+import Button from '@/components/common/Button';
 
 const sizeClass = {
   sm: 'max-w-[390px]',
@@ -50,19 +51,20 @@ export default function AlertModal({
         {description && <p className="text-18 text-center font-bold">{description}</p>}
         <div className="flex items-center justify-center gap-3">
           {cancelText && (
-            <button
+            <Button
+              variant="outline"
               onClick={onClose}
-              className="rounded-lg border border-[var(--color-gray-700)] px-4 py-2 text-[var(--color-gray-700)]"
+              // className="rounded-lg border border-[var(--color-gray-700)] px-4 py-2 text-[var(--color-gray-700)]"
             >
               {cancelText}
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             onClick={handleConfirm}
-            className="rounded-lg bg-[var(--color-primary-500)] px-4 py-2 text-white"
+            // className="rounded-lg bg-[var(--color-primary-500)] px-4 py-2 text-white"
           >
             {confirmText ?? '확인'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -76,7 +76,7 @@ export default function MyExperiencesPage() {
       </div>
 
       {/* 체험관리 리스트 */}
-      <div className="flex w-full flex-col gap-6">
+      <div className="desktop:gap-6 flex w-full flex-col gap-[30px] px-6">
         {loading && items.length === 0 ? (
           <div>불러오는 중...</div>
         ) : error && items.length === 0 ? (

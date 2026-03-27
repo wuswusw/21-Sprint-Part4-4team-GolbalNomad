@@ -79,30 +79,34 @@ export default function ReservationPage() {
   return (
     <>
       {/* 상단 */}
-      <div className="flex w-full flex-col items-start gap-3.5 py-2.5">
+      <div className="flex w-full flex-col items-start gap-6 py-2.5">
         {/* 타이틀 */}
         <PageHeader />
 
         {/* 상태 */}
-        <div className="flex gap-2">
-          {STATUS_FILTERS.map(({ label, value }) => (
-            <button
-              key={value}
-              onClick={() => setSelectedStatus((prev) => (prev === value ? null : value))}
-              className={`text-16 rounded-full border px-4 py-2.5 font-medium transition-colors ${
-                selectedStatus === value
-                  ? 'border-[var(--color-primary-500)] bg-[var(--color-primary-500)] text-white'
-                  : 'border-[#D8D8D8] bg-white text-[var(--color-gray-950)]'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+        <div className="w-full overflow-x-hidden px-[24px]">
+          <div className="-mx-[24px] overflow-x-auto overscroll-x-contain pr-0 pl-[24px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex w-max gap-2">
+              {STATUS_FILTERS.map(({ label, value }) => (
+                <button
+                  key={value}
+                  onClick={() => setSelectedStatus((prev) => (prev === value ? null : value))}
+                  className={`text-16 shrink-0 rounded-full border px-4 py-[10px] transition-colors ${
+                    selectedStatus === value
+                      ? 'border-[#333333] bg-[#333333] font-bold text-white'
+                      : 'border-[#D8D8D8] bg-white font-medium text-[var(--color-gray-950)]'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* 예약 리스트 */}
-      <div className="flex w-full flex-col gap-6">
+      <div className="desktop:gap-[24px] flex w-full flex-col gap-[50px] px-[24px]">
         {loading && items.length === 0 ? (
           <div>불러오는 중...</div>
         ) : error && items.length === 0 ? (
@@ -118,10 +122,15 @@ export default function ReservationPage() {
                 imageUrl={item.activity?.bannerImageUrl || '/images/default-thumb.png'}
                 status={item.status}
                 title={item.activity?.title ?? '체험명 없음'}
-                scheduledDate={`${item.date} ${item.startTime}~${item.endTime}`}
+                scheduledDate={`${item.date} ${item.startTime} - ${item.endTime}`}
+                date={item.date}
+                startTime={item.startTime}
+                endTime={item.endTime}
                 price={item.totalPrice}
                 people={item.headCount}
                 onCancelSuccess={() => fetchReservations({ append: false })}
+                onReviewSuccess={() => fetchReservations({ append: false })}
+                reviewSubmitted={item.reviewSubmitted}
               />
             ))}
           </>
