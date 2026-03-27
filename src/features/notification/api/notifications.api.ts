@@ -47,7 +47,7 @@ export async function getNotifications ({cursorId, size = 10}: GetNotificationsP
     if (cursorId) queryParams.set("cursorId", cursorId.toString());
     if (size) queryParams.set("size", size.toString());
 
-    const response = await fetch(getApiUrl(`/notifications?${queryParams.toString()}`), {
+    const response = await fetch(getApiUrl(`/my-notifications?${queryParams.toString()}`), {
         method: "GET",
         headers: buildAuthHeaders(),
     });
@@ -69,7 +69,7 @@ export async function getNotifications ({cursorId, size = 10}: GetNotificationsP
 }
 
 export async function deleteNotifications ({notificationId}: DeleteNotificationsParams): Promise<void> {
-    const response = await fetch(getApiUrl(`/notifications/${notificationId}`), {
+    const response = await fetch(getApiUrl(`/my-notifications/${notificationId}`), {
         method: "DELETE",
         headers: buildAuthHeaders(),
     });
