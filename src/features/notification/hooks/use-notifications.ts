@@ -4,6 +4,8 @@ import { QUERY_KEYS } from "@/constants/query-keys";
 import type { NotificationsResponse } from "../types/notifications.type";
 
 const DEFAULT_SIZE = 10;
+const REFETCH_INTERVAL_MS = 30_000;
+const STALE_TIME_MS = 25_000;
 
 export function useNotifications() {
     const queryClient = useQueryClient();
@@ -11,6 +13,8 @@ export function useNotifications() {
     const { data, isLoading, isError, refetch } = useQuery({
         queryKey: [QUERY_KEYS.NOTIFICATIONS],
         queryFn: () => getNotifications({ cursorId: null, size: DEFAULT_SIZE }),
+        refetchInterval: REFETCH_INTERVAL_MS,
+        staleTime: STALE_TIME_MS,
     });
 
     const deleteNotification = useMutation({

@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
-import { useNotifications } from "../hooks/use-notifications";
 import { getRelativeTime } from "@/lib/utils";
 import type { Notifications as NotificationType } from "../types/notifications.type";
 
@@ -12,6 +11,10 @@ const LOCATION_STYLE =
 interface NotificationsProps {
     onClose: () => void;
     lastReadAt: string | null;
+    notifications: NotificationType[];
+    totalCount: number;
+    isLoading: boolean;
+    onDelete: (id: number) => void;
 }
 
 function NotificationItem({
@@ -53,10 +56,14 @@ function NotificationItem({
     );
 }
 
-function Notifications({ onClose, lastReadAt }: NotificationsProps) {
-    const { notifications, totalCount, isLoading, deleteNotification } =
-        useNotifications();
-
+function Notifications({
+    onClose,
+    lastReadAt,
+    notifications,
+    totalCount,
+    isLoading,
+    onDelete,
+}: NotificationsProps) {
     return (
         <div
             className={`${LOCATION_STYLE} flex flex-col w-[327px] tablet:w-[368px] shadow-[0px_2px_8px_0px_#78748640] rounded-[10px] pb-2`}
@@ -83,7 +90,7 @@ function Notifications({ onClose, lastReadAt }: NotificationsProps) {
                         새로운 알림이 없습니다
                     </p>
                 ) : (
-                    notifications.map((notification) => (
+                    notifications.map((notification: NotificationType) => (
                         <NotificationItem
                             key={notification.id}
                             notification={notification}
@@ -91,7 +98,7 @@ function Notifications({ onClose, lastReadAt }: NotificationsProps) {
                                 !lastReadAt ||
                                 new Date(notification.createdAt) > new Date(lastReadAt)
                             }
-                            onDelete={deleteNotification}
+                            onDelete={onDelete}
                         />
                     ))
                 )}
