@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getNotifications, deleteNotifications } from "../api/notifications.api";
 import { QUERY_KEYS } from "@/constants/query-keys";
+import type { NotificationsResponse } from "../types/notifications.type";
 
 const DEFAULT_SIZE = 10;
 
@@ -15,11 +16,41 @@ export function useNotifications() {
     const deleteNotification = useMutation({
         mutationFn: (notificationId: number) =>
             deleteNotifications({ notificationId }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.NOTIFICATIONS] });
+        onMutate: async (notificationId: number) => {
+            await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.NOTIFICATIONS] });
+
+            const previousData = queryClient.getQueryData<NotificationsResponse>([
+                QUERY_KEYS.NOTIFICATIONS,
+            ]);
+
+            queryClient.setQueryData<NotificationsResponse>(
+                [QUERY_KEYS.NOTIFICATIONS],
+                (old) => {
+                    if (!old) return old;
+
+                    return {
+                        ...old,
+                        notifications: old.notifications.filter(
+                            (notification) => notification.id !== notificationId
+                        ),
+                        totalCount: Math.max(0, old.totalCount - 1),
+                    };
+                }
+            );
+
+            return { previousData };
         },
-        onError: (error) => {
+        onError: (error, _notificationId, context) => {
+            if (context?.previousData) {
+                queryClient.setQueryData(
+                    [QUERY_KEYS.NOTIFICATIONS],
+                    context.previousData
+                );
+            }
             console.error("알림 삭제 실패:", error);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.NOTIFICATIONS] });
         },
     });
 
