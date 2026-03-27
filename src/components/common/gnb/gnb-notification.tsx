@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useCallback } from "react";
-import useClickOutside from "@/hooks/useClickOutside";
+import { useRef, useCallback, useState, useEffect } from "react";
+import useClickOutside from "@/hooks/use-click-outside";
 import Notifications from "@/features/notification/components/notifications";
+
+const LAST_READ_KEY = "lastNotificationReadAt";
 
 interface GnbNotificationProps {
   isOpen: boolean;
@@ -12,8 +14,23 @@ interface GnbNotificationProps {
 
 function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
   const notificationRef = useRef<HTMLDivElement>(null);
+  const [lastReadAt, setLastReadAt] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLastReadAt(localStorage.getItem(LAST_READ_KEY));
+  }, []);
+
   const close = useCallback(() => {
     if (isOpen) onToggle();
+  }, [isOpen, onToggle]);
+
+  const handleToggle = useCallback(() => {
+    if (!isOpen) {
+      const now = new Date().toISOString();
+      localStorage.setItem(LAST_READ_KEY, now);
+      setLastReadAt(now);
+    }
+    onToggle();
   }, [isOpen, onToggle]);
 
   useClickOutside(notificationRef, close, isOpen);
@@ -25,7 +42,7 @@ function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
         alt="bell"
         width={24}
         height={24}
-        onClick={onToggle}
+        onClick={handleToggle}
         className="w-[24px] h-[24px] cursor-pointer"
       />
       <Image
@@ -36,7 +53,7 @@ function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
         className="absolute top-0 right-0"
       />
       {isOpen && (
-        <Notifications onClose={close} />
+        <Notifications onClose={close} lastReadAt={lastReadAt} />
       )}
     </div>
   );
