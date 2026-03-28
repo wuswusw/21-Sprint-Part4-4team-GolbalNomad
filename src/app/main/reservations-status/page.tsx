@@ -43,7 +43,7 @@ function ReservationsStatusPage() {
     }
 
     return (
-            <div className="desktop:w-160 tablet:w-[476px] w-full">
+            <div className="desktop:w-160 w-full">
                 <div className="flex flex-col desktop:gap-[30px] tablet:gap-6 gap-[18px] text-gray-950">
                     <div className="flex flex-col gap-[10px] tablet:px-0 px-6 ">
                         <h2 className="text-18 font-bold">예약 현황</h2>
