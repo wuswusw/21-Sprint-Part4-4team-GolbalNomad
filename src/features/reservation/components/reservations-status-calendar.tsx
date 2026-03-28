@@ -114,7 +114,7 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
         className={`w-full h-full relative flex flex-col items-center pt-[18px] px-2 text-16 transition-colors cursor-pointer
           `}
         >
-          {hasReservations && !isPast && (
+          {hasReservations && (
             <Image src="/assets/icons/statusDot.svg" alt="dot" width={6} height={6} className="mb-1 absolute top-3 tablet:right-3 desktop:right-7" />
           )}
           <span className="w-full text-center">{day.date.getDate()}</span>

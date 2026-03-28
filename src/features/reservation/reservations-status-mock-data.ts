@@ -38,22 +38,24 @@ import {
   ];
   
   // 2. 월별 예약 현황 (캘린더 점/배지용)
+  // 해당 월·날짜의 모든 시간대(MOCK_DAILY_SCHEDULES)를 합산한 값과 맞춤. declined는 타입상 미포함.
+  // completed는 status가 "completed"인 행만 (아래 MOCK_RESERVATIONS 기준).
   export const MOCK_MONTHLY_SCHEDULES: Record<string, ReservationMonthlyScheduleResponse[]> = {
     "1-2026-03": [
-      { date: "2026-03-24", reservations: { completed: 1, confirmed: 1, pending: 0 } },
+      { date: "2026-03-24", reservations: { completed: 0, confirmed: 1, pending: 0 } },
       { date: "2026-03-28", reservations: { completed: 0, confirmed: 3, pending: 0 } },
       { date: "2026-03-30", reservations: { completed: 0, confirmed: 2, pending: 1 } },
-      { date: "2026-03-31", reservations: { completed: 1, confirmed: 1, pending: 2 } },
+      { date: "2026-03-31", reservations: { completed: 0, confirmed: 1, pending: 3 } },
     ],
     "2-2026-03": [
-      { date: "2026-03-15", reservations: { completed: 5, confirmed: 0, pending: 2 } },
+      { date: "2026-03-15", reservations: { completed: 0, confirmed: 2, pending: 3 } },
     ]
   };
   
-  // 3. 날짜별 스케줄 (디테일 탭/시간대용)
+  // 3. 날짜별 스케줄 (디테일 탭/시간대용) — 각 scheduleId의 MOCK_RESERVATIONS 행 status 집계와 일치
   export const MOCK_DAILY_SCHEDULES: Record<string, ReservedDailyScheduleResponse[]> = {
     "1-2026-03-24": [
-      { scheduleId: 101, startTime: "10:00", endTime: "12:00", count: { declined: 0, confirmed: 1, pending: 1 } },
+      { scheduleId: 101, startTime: "10:00", endTime: "12:00", count: { declined: 1, confirmed: 1, pending: 0 } },
     ],
     "1-2026-03-28": [
       { scheduleId: 201, startTime: "09:00", endTime: "11:00", count: { declined: 0, confirmed: 3, pending: 0 } },
@@ -62,11 +64,11 @@ import {
       { scheduleId: 301, startTime: "15:00", endTime: "17:00", count: { declined: 0, confirmed: 2, pending: 1 } },
     ],
     "1-2026-03-31": [
-      { scheduleId: 302, startTime: "11:00", endTime: "13:00", count: { declined: 0, confirmed: 1, pending: 2 } },
+      { scheduleId: 302, startTime: "11:00", endTime: "13:00", count: { declined: 0, confirmed: 1, pending: 3 } },
       { scheduleId: 303, startTime: "16:00", endTime: "18:00", count: { declined: 1, confirmed: 0, pending: 0 } },
     ],
     "2-2026-03-15": [
-      { scheduleId: 304, startTime: "11:00", endTime: "13:00", count: { declined: 0, confirmed: 5, pending: 2 } },
+      { scheduleId: 304, startTime: "11:00", endTime: "13:00", count: { declined: 2, confirmed: 2, pending: 3 } },
       { scheduleId: 305, startTime: "16:00", endTime: "18:00", count: { declined: 1, confirmed: 0, pending: 0 } },
     ],
   };
