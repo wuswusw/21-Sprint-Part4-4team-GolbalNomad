@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef} from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { DayPicker, useDayPicker, type MonthCaptionProps } from "react-day-picker";
 import { format } from "date-fns";
@@ -54,7 +54,23 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
     
     const monthlySchedule = MOCK_MONTHLY_SCHEDULES[mockKey] || [];
     const dailySchedule = monthlySchedule?.find((schedule) => schedule.date === dateKey);
-    const reservations = dailySchedule?.reservations ?? { completed: 0, confirmed: 0, pending: 0 };
+    const rawReservations = dailySchedule?.reservations ?? { completed: 0, confirmed: 0, pending: 0 };
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const isPast = day.date < today;
+
+    const reservations = isPast
+      ? {
+          completed:
+            rawReservations.completed +
+            rawReservations.confirmed +
+            rawReservations.pending,
+          confirmed: 0,
+          pending: 0,
+        }
+      : rawReservations;
+
     const hasReservations =
       reservations.completed > 0 ||
       reservations.confirmed > 0 ||
@@ -98,7 +114,7 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
         className={`w-full h-full relative flex flex-col items-center pt-[18px] px-2 text-16 transition-colors cursor-pointer
           `}
         >
-          {hasReservations && (
+          {hasReservations && !isPast && (
             <Image src="/assets/icons/statusDot.svg" alt="dot" width={6} height={6} className="mb-1 absolute top-3 tablet:right-3 desktop:right-7" />
           )}
           <span className="w-full text-center">{day.date.getDate()}</span>

@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ReservationsStatusCalendar from "@/features/reservation/components/reservations-status-calendar";
-import ReservationsStatusDetail from "@/features/reservation/components/reservations-status-detail";
 import Dropdown, { type DropdownItem } from "@/components/common/Dropdown";
 import { useMyActivities } from "@/features/reservation/hooks/use-my-activities";
 import ReservationsStatusSkeleton from "@/features/reservation/components/reservations-status-skeleton";
