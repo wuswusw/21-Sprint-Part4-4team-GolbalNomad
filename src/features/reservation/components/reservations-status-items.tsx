@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
+import Dropdown, { type DropdownItem } from "@/components/common/Dropdown";
 import { MOCK_DAILY_SCHEDULES, MOCK_RESERVATIONS } from "@/features/reservation/reservations-status-mock-data";
 
 type Tab = "신청" | "승인" | "거절";
@@ -25,12 +26,26 @@ function ReservationsStatusItems({ activityId, selectedDate, activeTab }: itemPr
     const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
     
     useEffect(() => {
-        if (dailySchedules.length > 0) {
-            setSelectedScheduleId(dailySchedules[0].scheduleId);
+        const schedules = MOCK_DAILY_SCHEDULES[scheduleKey] || [];
+        if (schedules.length > 0) {
+            setSelectedScheduleId(schedules[0].scheduleId);
         } else {
             setSelectedScheduleId(null);
         }
-    }, [dateKey, activityId]);
+    }, [scheduleKey]);
+
+    const scheduleDropdownItems: DropdownItem[] = dailySchedules.map((s) => ({
+        id: s.scheduleId,
+        label: `${s.startTime} ~ ${s.endTime}`,
+    }));
+
+    const selectedSchedule = dailySchedules.find((s) => s.scheduleId === selectedScheduleId);
+    const selectedScheduleItem: DropdownItem | null = selectedSchedule
+        ? {
+              id: selectedSchedule.scheduleId,
+              label: `${selectedSchedule.startTime} ~ ${selectedSchedule.endTime}`,
+          }
+        : null;
 
     const allReservations = selectedScheduleId ? MOCK_RESERVATIONS[selectedScheduleId] || [] : [];
 
@@ -53,18 +68,14 @@ function ReservationsStatusItems({ activityId, selectedDate, activeTab }: itemPr
         <div className="flex w-full min-h-0 flex-col gap-[30px] tablet:flex-row desktop:flex-col">
             <div className="w-full flex flex-col gap-3">
                 <p className="text-18 font-bold">예약 시간</p>
-                {dailySchedules.length > 0 ? (
-                    dailySchedules.map((schedule) => (
-                        <div
-                        key={schedule.scheduleId}
-                        onClick={() => setSelectedScheduleId(schedule.scheduleId)}
-                        className="w-full h-[54px] ring ring-[#E0E0E5] rounded-xl flex items-center justify-center"
-                        >
-                            {schedule.startTime} - {schedule.endTime}
-                            
-                        </div>
-                    )) 
-                    ) : (
+                {scheduleDropdownItems.length > 0 ? (
+                    <Dropdown
+                        items={scheduleDropdownItems}
+                        selectedItem={selectedScheduleItem}
+                        placeholder="시간대를 선택해 주세요"
+                        onSelect={(item) => setSelectedScheduleId(Number(item.id))}
+                    />
+                ) : (
                     <p className="text-center text-gray-400 text-14">예약 시간이 없습니다.</p>
                 )}
             </div>

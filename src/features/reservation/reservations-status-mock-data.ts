@@ -40,7 +40,7 @@ import {
   // 2. 월별 예약 현황 (캘린더 점/배지용)
   export const MOCK_MONTHLY_SCHEDULES: Record<string, ReservationMonthlyScheduleResponse[]> = {
     "1-2026-03": [
-      { date: "2026-03-24", reservations: { completed: 2, confirmed: 1, pending: 1 } },
+      { date: "2026-03-24", reservations: { completed: 1, confirmed: 1, pending: 0 } },
       { date: "2026-03-28", reservations: { completed: 0, confirmed: 3, pending: 0 } },
       { date: "2026-03-30", reservations: { completed: 0, confirmed: 2, pending: 1 } },
       { date: "2026-03-31", reservations: { completed: 1, confirmed: 1, pending: 2 } },
@@ -54,7 +54,6 @@ import {
   export const MOCK_DAILY_SCHEDULES: Record<string, ReservedDailyScheduleResponse[]> = {
     "1-2026-03-24": [
       { scheduleId: 101, startTime: "10:00", endTime: "12:00", count: { declined: 0, confirmed: 1, pending: 1 } },
-      { scheduleId: 102, startTime: "14:00", endTime: "16:00", count: { declined: 1, confirmed: 0, pending: 0 } },
     ],
     "1-2026-03-28": [
       { scheduleId: 201, startTime: "09:00", endTime: "11:00", count: { declined: 0, confirmed: 3, pending: 0 } },
@@ -123,7 +122,7 @@ import {
     302: [
       {
         id: 801, nickname: "비실이", userId: 9, teamId: "team-1", activityId: 1, scheduleId: 302,
-        status: "completed", reviewSubmitted: true, totalPrice: 50000, headCount: 1,
+        status: "pending", reviewSubmitted: true, totalPrice: 50000, headCount: 1,
         date: "2026-03-31", startTime: "11:00", endTime: "13:00", createdAt: "2026-03-10T10:00:00Z", updatedAt: "2026-03-10T10:00:00Z"
       },
       {
@@ -151,44 +150,44 @@ import {
     ],
     304: [
       {
-        id: 920, nickname: "귤수확A", userId: 20, teamId: "team-1", activityId: 2, scheduleId: 304,
-        status: "completed", reviewSubmitted: true, totalPrice: 40000, headCount: 2,
+        id: 920, nickname: "정대만", userId: 20, teamId: "team-1", activityId: 2, scheduleId: 304,
+        status: "pending", reviewSubmitted: true, totalPrice: 40000, headCount: 2,
         date: "2026-03-15", startTime: "11:00", endTime: "13:00", createdAt: "2026-03-01T10:00:00Z", updatedAt: "2026-03-01T10:00:00Z"
       },
       {
-        id: 921, nickname: "귤수확B", userId: 21, teamId: "team-1", activityId: 2, scheduleId: 304,
-        status: "completed", reviewSubmitted: true, totalPrice: 20000, headCount: 1,
+        id: 921, nickname: "강백호", userId: 21, teamId: "team-1", activityId: 2, scheduleId: 304,
+        status: "confirmed", reviewSubmitted: true, totalPrice: 20000, headCount: 1,
         date: "2026-03-15", startTime: "11:00", endTime: "13:00", createdAt: "2026-03-02T10:00:00Z", updatedAt: "2026-03-02T10:00:00Z"
       },
       {
-        id: 922, nickname: "귤수확C", userId: 22, teamId: "team-1", activityId: 2, scheduleId: 304,
-        status: "completed", reviewSubmitted: true, totalPrice: 60000, headCount: 3,
+        id: 922, nickname: "송태섭", userId: 22, teamId: "team-1", activityId: 2, scheduleId: 304,
+        status: "confirmed", reviewSubmitted: true, totalPrice: 60000, headCount: 3,
         date: "2026-03-15", startTime: "11:00", endTime: "13:00", createdAt: "2026-03-03T10:00:00Z", updatedAt: "2026-03-03T10:00:00Z"
       },
       {
-        id: 923, nickname: "귤수확D", userId: 23, teamId: "team-1", activityId: 2, scheduleId: 304,
-        status: "completed", reviewSubmitted: true, totalPrice: 20000, headCount: 1,
+        id: 923, nickname: "채치수", userId: 23, teamId: "team-1", activityId: 2, scheduleId: 304,
+        status: "declined", reviewSubmitted: true, totalPrice: 20000, headCount: 1,
         date: "2026-03-15", startTime: "11:00", endTime: "13:00", createdAt: "2026-03-04T10:00:00Z", updatedAt: "2026-03-04T10:00:00Z"
       },
       {
-        id: 924, nickname: "귤수확E", userId: 24, teamId: "team-1", activityId: 2, scheduleId: 304,
-        status: "completed", reviewSubmitted: true, totalPrice: 20000, headCount: 1,
+        id: 924, nickname: "이준호", userId: 24, teamId: "team-1", activityId: 2, scheduleId: 304,
+        status: "pending", reviewSubmitted: true, totalPrice: 20000, headCount: 1,
         date: "2026-03-15", startTime: "11:00", endTime: "13:00", createdAt: "2026-03-05T10:00:00Z", updatedAt: "2026-03-05T10:00:00Z"
       },
       {
-        id: 925, nickname: "신청자F", userId: 25, teamId: "team-1", activityId: 2, scheduleId: 304,
+        id: 925, nickname: "서태웅", userId: 25, teamId: "team-1", activityId: 2, scheduleId: 304,
         status: "pending", reviewSubmitted: false, totalPrice: 40000, headCount: 2,
         date: "2026-03-15", startTime: "11:00", endTime: "13:00", createdAt: "2026-03-12T10:00:00Z", updatedAt: "2026-03-12T10:00:00Z"
       },
       {
-        id: 926, nickname: "신청자G", userId: 26, teamId: "team-1", activityId: 2, scheduleId: 304,
-        status: "pending", reviewSubmitted: false, totalPrice: 20000, headCount: 1,
+        id: 926, nickname: "채소연", userId: 26, teamId: "team-1", activityId: 2, scheduleId: 304,
+        status: "declined", reviewSubmitted: false, totalPrice: 20000, headCount: 1,
         date: "2026-03-15", startTime: "11:00", endTime: "13:00", createdAt: "2026-03-13T10:00:00Z", updatedAt: "2026-03-13T10:00:00Z"
       },
     ],
     305: [
       {
-        id: 927, nickname: "거절된예약", userId: 27, teamId: "team-1", activityId: 2, scheduleId: 305,
+        id: 927, nickname: "강한나", userId: 27, teamId: "team-1", activityId: 2, scheduleId: 305,
         status: "declined", reviewSubmitted: false, totalPrice: 20000, headCount: 1,
         date: "2026-03-15", startTime: "16:00", endTime: "18:00", createdAt: "2026-03-08T10:00:00Z", updatedAt: "2026-03-08T10:00:00Z"
       },
