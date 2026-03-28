@@ -49,7 +49,14 @@ import {
     ],
     "2-2026-03": [
       { date: "2026-03-15", reservations: { completed: 0, confirmed: 2, pending: 3 } },
-    ]
+    ],
+    "1-2026-04": [
+      { date: "2026-04-01", reservations: { completed: 0, confirmed: 1, pending: 3 } },
+      { date: "2026-04-02", reservations: { completed: 0, confirmed: 2, pending: 0 } },
+    ],
+    "2-2026-04": [
+      { date: "2026-04-01", reservations: { completed: 0, confirmed: 1, pending: 1 } },
+    ],
   };
   
   // 3. 날짜별 스케줄 (디테일 탭/시간대용) — 각 scheduleId의 MOCK_RESERVATIONS 행 status 집계와 일치
@@ -70,6 +77,16 @@ import {
     "2-2026-03-15": [
       { scheduleId: 304, startTime: "11:00", endTime: "13:00", count: { declined: 2, confirmed: 2, pending: 3 } },
       { scheduleId: 305, startTime: "16:00", endTime: "18:00", count: { declined: 1, confirmed: 0, pending: 0 } },
+    ],
+    "1-2026-04-01": [
+      { scheduleId: 401, startTime: "10:00", endTime: "12:00", count: { declined: 0, confirmed: 1, pending: 2 } },
+      { scheduleId: 402, startTime: "14:00", endTime: "16:00", count: { declined: 0, confirmed: 0, pending: 1 } },
+    ],
+    "1-2026-04-02": [
+      { scheduleId: 403, startTime: "09:00", endTime: "11:00", count: { declined: 0, confirmed: 2, pending: 0 } },
+    ],
+    "2-2026-04-01": [
+      { scheduleId: 404, startTime: "10:30", endTime: "12:30", count: { declined: 0, confirmed: 1, pending: 1 } },
     ],
   };
   
@@ -192,6 +209,54 @@ import {
         id: 927, nickname: "강한나", userId: 27, teamId: "team-1", activityId: 2, scheduleId: 305,
         status: "declined", reviewSubmitted: false, totalPrice: 20000, headCount: 1,
         date: "2026-03-15", startTime: "16:00", endTime: "18:00", createdAt: "2026-03-08T10:00:00Z", updatedAt: "2026-03-08T10:00:00Z"
+      },
+    ],
+    401: [
+      {
+        id: 928, nickname: "감자", userId: 30, teamId: "team-1", activityId: 1, scheduleId: 401,
+        status: "pending", reviewSubmitted: false, totalPrice: 50000, headCount: 2,
+        date: "2026-04-01", startTime: "10:00", endTime: "12:00", createdAt: "2026-03-28T09:00:00Z", updatedAt: "2026-03-28T09:00:00Z"
+      },
+      {
+        id: 929, nickname: "고구마", userId: 31, teamId: "team-1", activityId: 1, scheduleId: 401,
+        status: "pending", reviewSubmitted: false, totalPrice: 50000, headCount: 1,
+        date: "2026-04-01", startTime: "10:00", endTime: "12:00", createdAt: "2026-03-29T10:00:00Z", updatedAt: "2026-03-29T10:00:00Z"
+      },
+      {
+        id: 930, nickname: "토마토", userId: 32, teamId: "team-1", activityId: 1, scheduleId: 401,
+        status: "confirmed", reviewSubmitted: false, totalPrice: 100000, headCount: 2,
+        date: "2026-04-01", startTime: "10:00", endTime: "12:00", createdAt: "2026-03-30T08:00:00Z", updatedAt: "2026-03-30T08:00:00Z"
+      },
+    ],
+    402: [
+      {
+        id: 931, nickname: "옥수수", userId: 33, teamId: "team-1", activityId: 1, scheduleId: 402,
+        status: "pending", reviewSubmitted: false, totalPrice: 50000, headCount: 1,
+        date: "2026-04-01", startTime: "14:00", endTime: "16:00", createdAt: "2026-03-30T12:00:00Z", updatedAt: "2026-03-30T12:00:00Z"
+      },
+    ],
+    403: [
+      {
+        id: 932, nickname: "사과", userId: 34, teamId: "team-1", activityId: 1, scheduleId: 403,
+        status: "confirmed", reviewSubmitted: false, totalPrice: 80000, headCount: 2,
+        date: "2026-04-02", startTime: "09:00", endTime: "11:00", createdAt: "2026-03-31T09:00:00Z", updatedAt: "2026-03-31T09:00:00Z"
+      },
+      {
+        id: 933, nickname: "딸기", userId: 35, teamId: "team-1", activityId: 1, scheduleId: 403,
+        status: "confirmed", reviewSubmitted: false, totalPrice: 40000, headCount: 1,
+        date: "2026-04-02", startTime: "09:00", endTime: "11:00", createdAt: "2026-03-31T11:00:00Z", updatedAt: "2026-03-31T11:00:00Z"
+      },
+    ],
+    404: [
+      {
+        id: 934, nickname: "수박", userId: 36, teamId: "team-1", activityId: 2, scheduleId: 404,
+        status: "pending", reviewSubmitted: false, totalPrice: 20000, headCount: 2,
+        date: "2026-04-01", startTime: "10:30", endTime: "12:30", createdAt: "2026-03-29T10:00:00Z", updatedAt: "2026-03-29T10:00:00Z"
+      },
+      {
+        id: 935, nickname: "오렌지", userId: 37, teamId: "team-1", activityId: 2, scheduleId: 404,
+        status: "confirmed", reviewSubmitted: false, totalPrice: 20000, headCount: 1,
+        date: "2026-04-01", startTime: "10:30", endTime: "12:30", createdAt: "2026-03-30T10:00:00Z", updatedAt: "2026-03-30T10:00:00Z"
       },
     ],
   };
