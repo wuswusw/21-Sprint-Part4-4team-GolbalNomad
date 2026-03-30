@@ -1,12 +1,13 @@
 // 예약 내역
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import CardReservation from '@/components/common/card/card-reservation';
 import type { BadgeStatus } from '@/types/card';
 import PageHeader from '@/components/common/PageHeader';
 import { getMyReservations } from '@/lib/api/reservations';
 import type { ReservationItem } from '@/types/reservations';
+import useInfiniteScroll from '@/hooks/use-infinite-scroll';
 
 const STATUS_FILTERS: { label: string; value: BadgeStatus }[] = [
   { label: '예약 신청', value: 'pending' },
@@ -37,6 +38,8 @@ export default function ReservationPage() {
   const [cursorId, setCursorId] = useState<number | null>(null);
   const [hasMore, setHasMore] = useState(false);
 
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
   const fetchReservations = useCallback(
     async ({
       append = false,
@@ -45,6 +48,8 @@ export default function ReservationPage() {
       try {
         setLoading(true);
         setError(null);
+
+        await new Promise((resolve) => setTimeout(resolve, 3500)); //임시
 
         const token = localStorage.getItem('accessToken') || '';
         const result = await getMyReservations(token, {
@@ -65,6 +70,16 @@ export default function ReservationPage() {
     },
     [selectedStatus],
   );
+
+  useInfiniteScroll({
+    targetRef: sentinelRef,
+    enabled: hasMore && !loading,
+    onIntersect: () =>
+      fetchReservations({
+        append: true,
+        nextCursorId: cursorId,
+      }),
+  });
 
   useEffect(() => {
     if (!isAuthChecked) return;
@@ -138,14 +153,9 @@ export default function ReservationPage() {
 
         {error && items.length > 0 && <div>{error}</div>}
 
-        {hasMore && (
-          <button
-            onClick={() => fetchReservations({ append: true, nextCursorId: cursorId })}
-            disabled={loading}
-            className="rounded-lg border border-[var(--color-primary-500)] px-4 py-2.5 text-[var(--color-primary-500)] transition-colors hover:bg-[var(--color-primary-500)] hover:text-white disabled:opacity-50"
-          >
-            더 보기
-          </button>
+        {hasMore && <div ref={sentinelRef} className="h-10" />}
+        {loading && items.length > 0 && (
+          <div className="text-center text-sm text-gray-400">불러오는 중...</div>
         )}
       </div>
     </>

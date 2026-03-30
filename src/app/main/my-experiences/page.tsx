@@ -3,11 +3,12 @@
 
 import CardExperiences from '@/components/common/card/card-experiences';
 import PageHeader from '@/components/common/PageHeader';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteMyExperience, getMyExperiences } from '@/lib/api/my-experiences';
 import type { MyActivityItem } from '@/types/my-experiences';
 import { useModal } from '@/hooks/use-modal';
+import useInfiniteScroll from '@/hooks/use-infinite-scroll';
 
 export default function MyExperiencesPage() {
   const router = useRouter();
@@ -18,6 +19,8 @@ export default function MyExperiencesPage() {
   const [cursorId, setCursorId] = useState<number | null>(null);
   const [hasMore, setHasMore] = useState(false);
 
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
   const fetchExperiences = useCallback(
     async ({
       append = false,
@@ -26,6 +29,8 @@ export default function MyExperiencesPage() {
       try {
         setLoading(true);
         setError(null);
+
+        await new Promise((resolve) => setTimeout(resolve, 3500)); //임시
 
         const token = localStorage.getItem('accessToken') || '';
         const result = await getMyExperiences(token, {
@@ -64,6 +69,12 @@ export default function MyExperiencesPage() {
     [openModal],
   );
 
+  useInfiniteScroll({
+    targetRef: sentinelRef,
+    enabled: hasMore && !loading,
+    onIntersect: () => fetchExperiences({ append: true, nextCursorId: cursorId }),
+  });
+
   useEffect(() => {
     fetchExperiences();
   }, [fetchExperiences]);
@@ -101,14 +112,9 @@ export default function MyExperiencesPage() {
 
         {error && items.length > 0 && <div>{error}</div>}
 
-        {hasMore && (
-          <button
-            onClick={() => fetchExperiences({ append: true, nextCursorId: cursorId })}
-            disabled={loading}
-            className="rounded-lg border border-[var(--color-primary-500)] px-4 py-2.5 text-[var(--color-primary-500)] transition-colors hover:bg-[var(--color-primary-500)] hover:text-white disabled:opacity-50"
-          >
-            더 보기
-          </button>
+        {hasMore && <div ref={sentinelRef} className="h-10" />}
+        {loading && items.length > 0 && (
+          <div className="text-center text-sm text-gray-400">불러오는 중...</div>
         )}
       </div>
     </>

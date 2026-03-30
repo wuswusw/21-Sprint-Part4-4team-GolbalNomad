@@ -26,7 +26,7 @@ export async function getMyExperiences(
     query.set('cursorId', String(params.cursorId));
   }
 
-  query.set('size', String(params?.size ?? 10));
+  query.set('size', String(params?.size ?? 3));
 
   const response = await fetch(getApiUrl(`/my-activities?${query.toString()}`), {
     method: 'GET',
