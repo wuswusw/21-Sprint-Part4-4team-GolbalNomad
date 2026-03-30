@@ -33,7 +33,13 @@ async function parseError(response: Response): Promise<never> {
   let errorMessage = "요청 처리 중 오류가 발생했습니다.";
 
   try {
-    const errorData: AuthErrorResponse = await response.json();
+    const errorData = await response.json();
+
+    console.log("에러 status:", response.status);
+    console.log("에러 raw:", errorData);
+    console.log("에러 message:", errorData?.message);
+    console.log("에러 전체:", JSON.stringify(errorData, null, 2));
+
     errorMessage = errorData.message || errorMessage;
   } catch {
     errorMessage = "서버 오류가 발생했습니다.";

@@ -1,22 +1,31 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
-import { useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { kakaoSignIn, kakaoSignUp } from "@/features/auth/api/auth.api";
 import { getKakaoRedirectUri } from "@/features/auth/lib/kakao";
 
-function KakaoOAuthContent() {
+declare global {
+  interface Window {
+    __kakaoOauthLock?: boolean;
+    __kakaoProcessedCode?: string | null;
+  }
+}
+
+export default function KakaoOAuthPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
+    if (window.__kakaoOauthLock) return;
+    window.__kakaoOauthLock = true;
+
     const run = async () => {
-      const code = searchParams.get("code");
-      const error = searchParams.get("error");
-      const errorDescription = searchParams.get("error_description");
-      const state = searchParams.get("state");
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const error = params.get("error");
+      const errorDescription = params.get("error_description");
+      const state = params.get("state");
+
       const mode =
         (state as "sign-in" | "sign-up" | null) ||
         (sessionStorage.getItem("socialAuthMode") as
@@ -36,32 +45,28 @@ function KakaoOAuthContent() {
         return;
       }
 
-      const tokenResponse = await fetch("/api", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code }),
-      });
-
-      const tokenData = await tokenResponse.json();
-
-      if (!tokenResponse.ok || !tokenData.accessToken) {
-        alert(tokenData.message || "카카오 토큰 발급에 실패했습니다.");
-        router.replace("/auth/login");
+      if (window.__kakaoProcessedCode === code) {
         return;
       }
+      window.__kakaoProcessedCode = code;
+
+      // 주소창에서 code 제거
+      window.history.replaceState({}, "", "/oauth");
 
       const redirectUri = getKakaoRedirectUri();
 
       if (mode === "sign-in") {
         const data = await kakaoSignIn({
           redirectUri,
-          token: tokenData.accessToken,
+          token: code,
         });
 
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
+        localStorage.setItem("nickname", data.user.nickname);
+        localStorage.setItem("profileImage", data.user.profileImageUrl ?? "");
+        window.dispatchEvent(new Event("auth-change"));
+
         sessionStorage.removeItem("socialAuthMode");
         sessionStorage.removeItem("socialSignupNickname");
         router.replace("/");
@@ -79,35 +84,40 @@ function KakaoOAuthContent() {
       const data = await kakaoSignUp({
         nickname,
         redirectUri,
-        token: tokenData.accessToken,
+        token: code,
       });
 
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("nickname", data.user.nickname);
+      localStorage.setItem("profileImage", data.user.profileImageUrl ?? "");
+      window.dispatchEvent(new Event("auth-change"));
+
       sessionStorage.removeItem("socialAuthMode");
       sessionStorage.removeItem("socialSignupNickname");
       router.replace("/");
     };
 
-    run().catch((err: unknown) => {
+    run().catch((error: unknown) => {
+      console.error("[KAKAO OAUTH ERROR]", error);
       const message =
-        err instanceof Error ? err.message : "카카오 로그인 처리 중 오류가 발생했습니다.";
+        error instanceof Error
+          ? error.message
+          : "카카오 로그인 처리 중 오류가 발생했습니다.";
       alert(message);
       router.replace("/auth/login");
     });
-  }, [router, searchParams]);
+
+    return () => {
+      window.__kakaoOauthLock = false;
+    };
+  }, [router]);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-25">
-      <p className="text-16 font-medium text-gray-600">카카오 로그인 처리 중...</p>
+      <p className="text-16 font-medium text-gray-600">
+        카카오 로그인 처리 중...
+      </p>
     </main>
-  );
-}
-
-export default function KakaoOAuthPage() {
-  return (
-    <Suspense fallback={<div>로딩 중...</div>}>
-      <KakaoOAuthContent />
-    </Suspense>
   );
 }

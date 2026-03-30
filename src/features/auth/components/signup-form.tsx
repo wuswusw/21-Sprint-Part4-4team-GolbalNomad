@@ -44,8 +44,28 @@ export default function SignupForm() {
     );
   };
 
+  const handleKakaoSignup = async () => {
+    if (!nickname?.trim()) {
+      alert("카카오 회원가입 전에 닉네임을 입력해 주세요.");
+      return;
+    }
+
+    try {
+      await startKakaoAuth("sign-up", nickname);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "카카오 회원가입 준비 중 오류가 발생했습니다.";
+      alert(message);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mt-[62px] flex w-full flex-col">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mt-[62px] flex w-full flex-col"
+    >
       <div className="flex flex-col">
         <label
           htmlFor="signup-email"
@@ -127,7 +147,9 @@ export default function SignupForm() {
           containerClassName="gap-0"
           errorClassName="m-0 mt-[6px] pl-1 text-12 font-medium leading-none text-red-500"
           className={`h-[54px] w-full rounded-2xl bg-white px-5 text-16 font-medium text-gray-950 shadow-[0_6px_6px_rgba(0,0,0,0.02)] placeholder:text-16 placeholder:font-medium placeholder:text-gray-400 ${
-            errors.passwordConfirm ? "border border-red-500" : "border border-gray-100"
+            errors.passwordConfirm
+              ? "border border-red-500"
+              : "border border-gray-100"
           }`}
         />
       </div>
@@ -150,14 +172,7 @@ export default function SignupForm() {
 
       <button
         type="button"
-        onClick={() => {
-          if (!nickname?.trim()) {
-            alert("카카오 회원가입 전에 닉네임을 입력해 주세요.");
-            return;
-          }
-
-          startKakaoAuth("sign-up", nickname);
-        }}
+        onClick={handleKakaoSignup}
         className="mt-[30px] flex h-[54px] w-full items-center justify-center gap-2 rounded-2xl border border-gray-100 bg-white text-16 font-medium text-gray-700 shadow-[0_6px_6px_rgba(0,0,0,0.02)]"
       >
         <Image
