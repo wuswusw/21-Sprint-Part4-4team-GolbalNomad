@@ -64,59 +64,67 @@ function AllExperiences({
   };
 
   return (
-    <section ref={sectionRef} className="mx-auto mt-[80px] w-[1120px] pb-[218px]">
-      <div className="flex items-center justify-between">
-        <h2 className="text-[24px] font-bold text-black">🛝 모든 체험</h2>
+    <section
+      ref={sectionRef}
+      className="mx-auto mt-[80px] w-[1120px] pb-[218px]"
+    >
+      <h2 className="text-[24px] font-bold text-black">🛝 모든 체험</h2>
 
-        <select
-          value={sort}
-          onChange={(e) => onSortChange(e.target.value as ActivitySort)}
-          className="bg-transparent text-14 text-black outline-none"
-        >
-          <option value="latest">최신순</option>
-          <option value="price_asc">가격 낮은 순</option>
-          <option value="price_desc">가격 높은 순</option>
-        </select>
-      </div>
+      <div className="mt-[20px] flex items-start justify-between gap-6">
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={onResetAll}
+            className={`flex items-center gap-2 rounded-full border px-4 py-2 text-14 ${
+              !category && !keyword && sort === "latest"
+                ? "border-black bg-black text-white"
+                : "border-gray-200 bg-white text-black"
+            }`}
+          >
+            전체
+          </button>
 
-      <div className="mt-[20px] flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={onResetAll}
-          className={`flex items-center gap-2 rounded-full border px-4 py-2 text-14 ${
-            !category && !keyword && sort === "latest"
-              ? "border-black bg-black text-white"
-              : "border-gray-200 bg-white text-black"
-          }`}
-        >
-          전체
-        </button>
+          {categories.map((item) => {
+            const isActive = category === item.label;
 
-        {categories.map((item) => {
-          const isActive = category === item.label;
+            return (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => onCategoryChange(item.label)}
+                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-14 ${
+                  isActive
+                    ? "border-black bg-black text-white"
+                    : "border-gray-200 bg-white text-black"
+                }`}
+              >
+                <Image
+                  src={item.icon}
+                  alt={item.label}
+                  width={24}
+                  height={24}
+                  className={`h-6 w-6 ${isActive ? "brightness-0 invert" : ""}`}
+                />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-          return (
-            <button
-              key={item.label}
-              type="button"
-              onClick={() => onCategoryChange(item.label)}
-              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-14 ${
-                isActive
-                  ? "border-black bg-black text-white"
-                  : "border-gray-200 bg-white text-black"
-              }`}
-            >
-              <Image
-                src={item.icon}
-                alt={item.label}
-                width={24}
-                height={24}
-                className={`h-6 w-6 ${isActive ? "brightness-0 invert" : ""}`}
-              />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
+        <div className="relative shrink-0">
+          <select
+            value={sort}
+            onChange={(e) => onSortChange(e.target.value as ActivitySort)}
+            className="appearance-none bg-transparent pr-4 text-14 text-black outline-none"
+          >
+            <option value="latest">최신순</option>
+            <option value="price_asc">가격 낮은 순</option>
+            <option value="price_desc">가격 높은 순</option>
+          </select>
+          <span className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-12">
+            ▼
+          </span>
+        </div>
       </div>
 
       {keyword && (
