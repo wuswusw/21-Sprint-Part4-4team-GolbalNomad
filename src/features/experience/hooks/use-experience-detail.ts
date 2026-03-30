@@ -9,7 +9,7 @@ export function useExperienceDetail(activityId: number) {
         queryKey: ["activities", activityId],
         queryFn: () => getExperienceDetail(activityId),
         enabled: !!activityId && !isNaN(activityId),
-        placeholderData: () => MOCK_DETAIL //등록된 체험 있을 시 삭제 예정
+        placeholderData: () => MOCK_DETAIL // TODO: 실제 API 연동 시 mock 제거
     });
 }
 
@@ -18,7 +18,7 @@ export function useReservationAvailableDays(activityId: number, year: string, mo
         queryKey: ["activities", activityId, "available-schedule", year, month],
         queryFn: () => getReservationAvailableDays(activityId, year, month),
         enabled: !!activityId && !isNaN(activityId) && !!year && !!month,
-        placeholderData: () => MOCK_AVAILABLE_DAYS //등록된 체험 있을 시 삭제 예정
+        placeholderData: () => MOCK_AVAILABLE_DAYS // TODO: 실제 API 연동 시 mock 제거
     })
 }
 
