@@ -2,14 +2,27 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import ReservationsStatusCalendar from "@/features/reservation/components/reservations-status-calendar";
-import ReservationsStatusDetail from "@/features/reservation/components/reservations-status-detail";
 import Dropdown, { type DropdownItem } from "@/components/common/Dropdown";
 import { useMyActivities } from "@/features/reservation/hooks/use-my-activities";
+import ReservationsStatusSkeleton from "@/features/reservation/components/reservations-status-skeleton";
 
 import { MOCK_MY_ACTIVITIES } from "@/features/reservation/reservations-status-mock-data"; //추후 삭제 예정
 
 function ReservationsStatusPage() {
+    const router = useRouter();
+    const [isAuthChecked, setIsAuthChecked] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+            router.replace("/auth/login");
+        } else {
+            setIsAuthChecked(true);
+        }
+    }, [router]);
+
     const {data, isLoading} = useMyActivities(100);
     const activities = MOCK_MY_ACTIVITIES; //추후 데이터 생기면 data?.pages.flatMap((page) => page.activities) ?? []; 로 변경
     const dropdownItems: DropdownItem[] = activities.map((activity) => ({
@@ -25,12 +38,12 @@ function ReservationsStatusPage() {
         }
     }, [dropdownItems, selectedItem])
 
-
-    if(isLoading) {
-        return <div>Loading...</div>
+    if (!isAuthChecked || isLoading) {
+        return <ReservationsStatusSkeleton />;
     }
+
     return (
-            <div className="desktop:w-160 tablet:w-[476px] w-full">
+            <div className="desktop:w-160 w-full">
                 <div className="flex flex-col desktop:gap-[30px] tablet:gap-6 gap-[18px] text-gray-950">
                     <div className="flex flex-col gap-[10px] tablet:px-0 px-6 ">
                         <h2 className="text-18 font-bold">예약 현황</h2>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef} from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { DayPicker, useDayPicker, type MonthCaptionProps } from "react-day-picker";
 import { format } from "date-fns";
@@ -54,7 +54,23 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
     
     const monthlySchedule = MOCK_MONTHLY_SCHEDULES[mockKey] || [];
     const dailySchedule = monthlySchedule?.find((schedule) => schedule.date === dateKey);
-    const reservations = dailySchedule?.reservations ?? { completed: 0, confirmed: 0, pending: 0 };
+    const rawReservations = dailySchedule?.reservations ?? { completed: 0, confirmed: 0, pending: 0 };
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const isPast = day.date < today;
+
+    const reservations = isPast
+      ? {
+          completed:
+            rawReservations.completed +
+            rawReservations.confirmed +
+            rawReservations.pending,
+          confirmed: 0,
+          pending: 0,
+        }
+      : rawReservations;
+
     const hasReservations =
       reservations.completed > 0 ||
       reservations.confirmed > 0 ||
