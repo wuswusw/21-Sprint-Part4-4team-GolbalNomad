@@ -8,7 +8,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <GnbWrapper />
       <div className="tablet:mx-auto tablet:px-[30px] desktop:px-0 desktop:w-[980px] desktop:gap-[50px] tablet:gap-[30px] mb-20 flex w-full">
         <ConditionalSidebar />
-        <div className="tablet:gap-[50px] desktop:gap-[30px] flex w-full flex-col items-start gap-[33px]">
+        <div className="tablet:gap-[50px] desktop:gap-[30px] flex w-full flex-col items-center gap-[33px]">
           {children}
         </div>
       </div>
