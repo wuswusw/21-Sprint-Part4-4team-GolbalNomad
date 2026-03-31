@@ -54,8 +54,8 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
 
   const openDetailSheet = (date: Date) => {
     openModal("slide", {
-      title: format(date, "yyyy년 MM월 dd일"),
-      padding: "px-6 pb-8 pt-3",
+      title: "",
+      padding: "p-0",
       children: (
         <ReservationsStatusDetail
           activityId={activityId}
@@ -75,6 +75,22 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
     openDetailSheet(selectedDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, activityId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+
+    const handleChange = (event: MediaQueryListEvent) => {
+      if (!event.matches) return;
+      closeModal();
+      onDateChange(null);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, [closeModal, onDateChange]);
 
   const CustomDayButton = ({ day, modifiers, onClick, ...props }: React.ComponentProps<"button"> & { day: { date: Date }; modifiers: Record<string, boolean> }) => {
     const dateKey = format(day.date, "yyyy-MM-dd");

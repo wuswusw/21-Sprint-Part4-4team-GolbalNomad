@@ -150,7 +150,7 @@ function ReservationsStatusItems({
       </div>
       <div className="w-full flex min-h-0 flex-col gap-3">
         <p className="text-18 font-bold shrink-0">예약 내역</p>
-        <div className="flex max-h-[120px] flex-col gap-3 overflow-y-auto overscroll-y-contain pr-1 [-webkit-overflow-scrolling:touch]">
+        <div className="flex desktop:max-h-[120px] h-50 flex-col gap-3 overflow-y-auto overscroll-y-contain pr-1 [-webkit-overflow-scrolling:touch]">
           {sortedFilteredReservations.length > 0 ? (
             sortedFilteredReservations.map((reservation) => (
               <div
