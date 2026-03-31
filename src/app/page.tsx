@@ -1,7 +1,16 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Gnb from "@/components/common/gnb/gnb";
+import Footer from "@/components/common/Footer";
+import HomeBanner from "@/components/home/home-banner";
+import HomeSearch from "@/components/home/home-search";
+import PopularExperiences from "@/features/activity/components/popular-experiences";
+import AllExperiences from "@/features/activity/components/all-experiences";
+import type {
+  ActivityCategory,
+  ActivitySort,
+} from "@/features/activity/types/activity.type";
 
 type AuthSnapshot = {
   isLogin: boolean;
@@ -65,6 +74,12 @@ export default function HomePage() {
     getServerSnapshot
   );
 
+  const [inputKeyword, setInputKeyword] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [category, setCategory] = useState<ActivityCategory | undefined>();
+  const [sort, setSort] = useState<ActivitySort>("latest");
+  const [page, setPage] = useState(1);
+
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
@@ -73,15 +88,76 @@ export default function HomePage() {
     window.dispatchEvent(new Event("auth-change"));
   };
 
+  const handleSearch = () => {
+    setCategory(undefined);
+    setSort("latest");
+    setPage(1);
+    setKeyword(inputKeyword.trim());
+  };
+
+  const handleCategoryChange = (value?: ActivityCategory) => {
+    setKeyword("");
+    setInputKeyword("");
+    setSort("latest");
+    setPage(1);
+    setCategory(value);
+  };
+
+  const handleSortChange = (value: ActivitySort) => {
+    setKeyword("");
+    setInputKeyword("");
+    setCategory(undefined);
+    setPage(1);
+    setSort(value);
+  };
+
+  const handleResetAll = () => {
+    setKeyword("");
+    setInputKeyword("");
+    setCategory(undefined);
+    setSort("latest");
+    setPage(1);
+  };
+
   return (
-    <div>
-      <Gnb
-        isLogin={auth.isLogin}
-        nickname={auth.nickname}
-        profileImage={auth.profileImage || undefined}
-        onLogout={handleLogout}
-      />
-      <main>메인페이지 내용</main>
+    <div className="min-h-screen bg-white">
+      <div className="bg-[linear-gradient(180deg,_#BBDDFF_0%,_#F7FBFF_45%,_#F7F8FA_75%,_#FFFFFF_100%)]">
+        <header>
+          <Gnb
+            isLogin={auth.isLogin}
+            nickname={auth.nickname}
+            profileImage={auth.profileImage || undefined}
+            onLogout={handleLogout}
+          />
+        </header>
+
+        <main>
+          <div className="mx-auto max-w-[1200px] px-6 tablet:px-10 desktop:px-0">
+            <HomeBanner />
+
+            <HomeSearch
+              keyword={inputKeyword}
+              onChangeKeyword={setInputKeyword}
+              onSearch={handleSearch}
+            />
+
+            <PopularExperiences />
+
+            <AllExperiences
+              category={category}
+              sort={sort}
+              keyword={keyword}
+              page={page}
+              onPageChange={setPage}
+              onCategoryChange={handleCategoryChange}
+              onSortChange={handleSortChange}
+              onResetAll={handleResetAll}
+            />
+          </div>
+        </main>
+      </div>
+
+      <Footer />
     </div>
   );
 }
