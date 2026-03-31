@@ -25,11 +25,15 @@ export async function getExperienceDetail(
   return response.json();
 }
 
-export async function getReservationAvailableDays(
-  activityId: number,
-  year: string,
-  month: string
-): Promise<ReservationAvailableDaysResponse> {
+export async function getReservationAvailableDays({
+  activityId,
+  year,
+  month,
+}: {
+  activityId: number;
+  year: string;
+  month: string;
+}): Promise<ReservationAvailableDaysResponse> {
   const params = new URLSearchParams({ year, month });
   const url = `${getApiUrl(`/activities/${activityId}/available-schedule`)}?${params.toString()}`;
 
@@ -51,11 +55,15 @@ export async function getReservationAvailableDays(
   return response.json();
 }
 
-export async function getReviews(
-  activityId: number,
-  page: number,
-  size: number
-): Promise<ReviewResponse> {
+export async function getReviews({
+  activityId,
+  page,
+  size,
+}: {
+  activityId: number;
+  page: number;
+  size: number;
+}): Promise<ReviewResponse> {
   const params = new URLSearchParams({
     page: String(page),
     size: String(size),

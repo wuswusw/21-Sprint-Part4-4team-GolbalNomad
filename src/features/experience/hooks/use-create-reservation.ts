@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useModal } from "@/hooks/use-modal";
 import { createReservation } from "../api/experience-detail.api";
+import { experienceQueryKeys } from "../lib/experience-detail-query-keys";
 import type { CreateReservationRequest } from "../types/experience-detail.type";
 
 export function useCreateReservation(activityId: number) {
@@ -20,7 +21,7 @@ export function useCreateReservation(activityId: number) {
       });
       queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
       queryClient.invalidateQueries({
-        queryKey: ["activities", activityId, "available-schedule"],
+        queryKey: experienceQueryKeys.availableSchedule.root(activityId),
       });
     },
     onError: (error, variables) => {

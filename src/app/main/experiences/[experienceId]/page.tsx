@@ -2,8 +2,6 @@
 import {useState} from "react";
 import {useParams} from "next/navigation";
 
-import type { ReviewResponse } from "@/features/experience/types/experience-detail.type";
-
 import ImageGallery from "@/features/experience/components/image-gallery";
 import ExperienceDesc from "@/features/experience/components/experience-desc";
 import Map from "@/features/experience/components/kakao-map";
@@ -18,6 +16,11 @@ import {
   useReservationAvailableDays,
 } from "@/features/experience/hooks/use-experience-detail";
 import { MOCK_DETAIL, MOCK_AVAILABLE_DAYS, MOCK_REVIEWS } from "@/features/experience/experience-detail-mock-data";
+import {
+    EXPERIENCE_DETAIL_REVIEW_PAGE_SIZE,
+    mergeReviewPages,
+    toCalendarYearMonthStrings,
+} from "@/features/experience/lib/experience-detail.utils";
 
 function ExperienceDetailPage() {
     const params = useParams<{ experienceId: string }>();
@@ -25,12 +28,17 @@ function ExperienceDetailPage() {
     const isValidId = params?.experienceId && !isNaN(experienceId);
     
     const { data: currentUser } = useCurrentUser();
-    const [currentYear, setCurrentYear] = useState(new Date().getFullYear().toString());
-    const [currentMonth, setCurrentMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0'));
-    const [displayCount, setDisplayCount] = useState(3);
+    const initialCalendar = toCalendarYearMonthStrings(new Date());
+    const [currentYear, setCurrentYear] = useState(initialCalendar.year);
+    const [currentMonth, setCurrentMonth] = useState(initialCalendar.month);
+    const [displayCount, setDisplayCount] = useState(EXPERIENCE_DETAIL_REVIEW_PAGE_SIZE);
 
     const { data: detailData, isLoading: isExperienceDetailLoading } = useExperienceDetail(experienceId);
-    const { data: schedules, isLoading: isAvailableDaysLoading } = useReservationAvailableDays(experienceId, currentYear, currentMonth);
+    const { data: schedules, isLoading: isAvailableDaysLoading } = useReservationAvailableDays({
+        activityId: experienceId,
+        year: currentYear,
+        month: currentMonth,
+    });
     const { data: reviewData, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading: isReviewsLoading } = useExperienceReviews(experienceId);
 
     // TODO: 실제 API 연동 시 mock fallback 제거
@@ -40,11 +48,7 @@ function ExperienceDetailPage() {
         totalCount: MOCK_REVIEWS.totalCount,
         }];
 
-    const reviewsForSection: ReviewResponse = {
-        reviews: reviewPages.flatMap((page) => page.reviews),
-        averageRating: reviewPages[0].averageRating,
-        totalCount: reviewPages[0].totalCount,
-    };
+    const reviewsForSection = mergeReviewPages(reviewPages);
 
     // TODO: 실제 API 연동 시 MOCK_REVIEWS fallback 제거
     const currentLoadedCount = reviewsForSection.reviews.length;
@@ -64,8 +68,7 @@ function ExperienceDetailPage() {
     
     
     const handleCalendarMonthChange = (date: Date) => {
-        const year = date.getFullYear().toString();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const { year, month } = toCalendarYearMonthStrings(date);
         setCurrentYear(year);
         setCurrentMonth(month);
     };
@@ -75,7 +78,9 @@ function ExperienceDetailPage() {
         if(reviewData) {
             fetchNextPage();
         } else {
-            setDisplayCount((prev) => Math.min(prev + 3, MOCK_REVIEWS.reviews.length));
+            setDisplayCount((prev) =>
+                Math.min(prev + EXPERIENCE_DETAIL_REVIEW_PAGE_SIZE, MOCK_REVIEWS.reviews.length)
+            );
         }
     }
     
