@@ -35,7 +35,6 @@ export default function ImageUploadSection({
   const PREVIEW_CONTAINER_CLASSES = `
     relative h-40 w-40 rounded-2xl 
     group overflow-hidden flex-shrink-0
-    shadow-[0_2px_10px_rgba(0,0,0,0.05)]
   `;
 
   const DELETE_BTN_CLASSES = `
