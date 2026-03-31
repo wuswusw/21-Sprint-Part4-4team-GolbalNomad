@@ -26,7 +26,7 @@ export async function getMyReservations(
   if (params?.status) query.set('status', params.status);
   if (params?.cursorId !== undefined) query.set('cursorId', String(params.cursorId));
 
-  query.set('size', String(params?.size ?? 10));
+  query.set('size', String(params?.size ?? 3));
 
   const response = await fetch(getApiUrl(`/my-reservations?${query.toString()}`), {
     method: 'GET',
