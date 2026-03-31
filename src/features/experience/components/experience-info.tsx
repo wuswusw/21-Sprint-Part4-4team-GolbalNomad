@@ -16,6 +16,7 @@ interface ExperienceInfoProps {
     address?: string;
     description?: string;
     reviewCount?: number;
+    isOwner?: boolean;
 }
 
 function ExperienceInfo({
@@ -27,6 +28,7 @@ function ExperienceInfo({
     address,
     description,
     reviewCount,
+    isOwner = false,
 }: ExperienceInfoProps) {
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
@@ -57,29 +59,31 @@ function ExperienceInfo({
 
   return (
     <div className={`relative desktop:mb-[38px] ${className ?? ""}`}>
-        <div ref={ref}>
-            <button className="absolute top-0 right-0" onClick={handleKebabClick}>
-                <img src="/assets/icons/kebab.svg" alt="kebab" className="w-6 h-6" />
-            </button>
-            {isOpen && (
-                <div className="w-[95px] absolute top-0 right-5 flex flex-col bg-white ring ring-[#dfdfdf] rounded-lg overflow-hidden z-10">
-                    <Link
-                        href={`/main/my-experiences/${activityId}/edit`}
-                        className="text-16 text-gray-950 hover:bg-primary-100 py-[18px] text-center"
-                        onClick={closeDropdown}
-                    >
-                        수정하기
-                    </Link>
-                    <button
-                        type="button"
-                        className="text-16 text-gray-950 hover:bg-primary-100 py-[18px]"
-                        onClick={handleDeleteClick}
-                    >
-                        삭제하기
-                    </button>
-                </div>
-            )}
-        </div>
+        {isOwner && (
+            <div ref={ref}>
+                <button className="absolute top-0 right-0" onClick={handleKebabClick}>
+                    <img src="/assets/icons/kebab.svg" alt="kebab" className="w-6 h-6" />
+                </button>
+                {isOpen && (
+                    <div className="w-[95px] absolute top-0 right-5 flex flex-col bg-white ring ring-[#dfdfdf] rounded-lg overflow-hidden z-10">
+                        <Link
+                            href={`/main/my-experiences/${activityId}/edit`}
+                            className="text-16 text-gray-950 hover:bg-primary-100 py-[18px] text-center"
+                            onClick={closeDropdown}
+                        >
+                            수정하기
+                        </Link>
+                        <button
+                            type="button"
+                            className="text-16 text-gray-950 hover:bg-primary-100 py-[18px]"
+                            onClick={handleDeleteClick}
+                        >
+                            삭제하기
+                        </button>
+                    </div>
+                )}
+            </div>
+        )}
         <p className="tablet:text-body-14 text-13 mb-2">{category}</p>
         <h1 className="tablet:text-24 text-18 font-bold mb-[17px]">{title}</h1>
         <div className="flex justify-start items-center gap-[6px] mb-[10px]">
