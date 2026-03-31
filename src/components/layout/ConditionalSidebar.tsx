@@ -10,9 +10,13 @@ const SIDEBAR_PATHS = [
   '/main/reservations-status',
 ];
 
+const EXCLUDE_PATHS = ['/main/my-experiences/create'];
+
 export default function ConditionalSidebar() {
   const pathname = usePathname();
-  const showSidebar = SIDEBAR_PATHS.some((path) => pathname.startsWith(path));
+  const showSidebar =
+    SIDEBAR_PATHS.some((path) => pathname.startsWith(path)) &&
+    !EXCLUDE_PATHS.some((path) => pathname.startsWith(path));
 
   if (!showSidebar) return null;
 
