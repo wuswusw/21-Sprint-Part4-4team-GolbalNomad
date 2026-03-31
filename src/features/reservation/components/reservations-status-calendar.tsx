@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { DayPicker, useDayPicker, type MonthCaptionProps } from "react-day-picker";
 import { format } from "date-fns";
 import ReservationsStatusDetail from "@/features/reservation/components/reservations-status-detail";
+import { useModal } from "@/hooks/use-modal";
 
 import { MOCK_MONTHLY_SCHEDULES } from "@/features/reservation/reservations-status-mock-data"; //추후 삭제 예정
 
@@ -46,6 +47,34 @@ function CustomMonthCaption({ calendarMonth }: MonthCaptionProps) {
 
 function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }: Props ) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { openModal, closeModal } = useModal();
+
+  const isDesktop = () =>
+    typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
+
+  const openDetailSheet = (date: Date) => {
+    openModal("slide", {
+      title: format(date, "yyyy년 MM월 dd일"),
+      padding: "px-6 pb-8 pt-3",
+      children: (
+        <ReservationsStatusDetail
+          activityId={activityId}
+          selectedDate={date}
+          onClose={() => {
+            closeModal();
+            onDateChange(null);
+          }}
+        />
+      ),
+    });
+  };
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    if (isDesktop()) return;
+    openDetailSheet(selectedDate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, activityId]);
 
   const CustomDayButton = ({ day, modifiers, onClick, ...props }: React.ComponentProps<"button"> & { day: { date: Date }; modifiers: Record<string, boolean> }) => {
     const dateKey = format(day.date, "yyyy-MM-dd");
@@ -110,6 +139,7 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
         {...props}
         onClick={() => {
           onDateChange(day.date);
+          if (!isDesktop()) openDetailSheet(day.date);
         }}
         className={`w-full h-full relative flex flex-col items-center pt-[18px] px-2 text-16 transition-colors cursor-pointer
           `}
