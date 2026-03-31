@@ -1,4 +1,3 @@
-// alert 모달
 'use client';
 
 import { AlertModalProps } from '@/types/modal';
@@ -6,9 +5,9 @@ import Image from 'next/image';
 import Button from '@/components/common/Button';
 
 const sizeClass = {
-  sm: 'max-w-[390px]',
-  md: 'max-w-[400px]',
-  lg: 'max-w-[560px]',
+  sm: 'max-w-[320px] md:max-w-[400px]',
+  md: 'max-w-[320px] md:max-w-[400px]',
+  lg: 'max-w-[320px] md:max-w-[400px]',
 };
 
 interface Props extends AlertModalProps {
@@ -32,7 +31,7 @@ export default function AlertModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
       onClick={onClose}
     >
       <div
@@ -48,7 +47,9 @@ export default function AlertModal({
             className="mx-auto w-full max-w-[88px] rounded-xl object-cover"
           />
         )}
+
         {description && <p className="text-18 text-center font-bold">{description}</p>}
+
         <div className="flex items-center justify-center gap-3">
           {cancelText && (
             <Button
