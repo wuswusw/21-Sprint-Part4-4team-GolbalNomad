@@ -40,10 +40,28 @@ export default function LoginForm() {
     });
   };
 
+  const handleKakaoLogin = async () => {
+    try {
+      await startKakaoAuth("sign-in");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "카카오 로그인 준비 중 오류가 발생했습니다.";
+      alert(message);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mt-[62px] flex w-full flex-col">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mt-[62px] flex w-full flex-col"
+    >
       <div className="flex flex-col">
-        <label htmlFor="email" className="mb-[10px] text-16 font-medium text-gray-950">
+        <label
+          htmlFor="email"
+          className="mb-[10px] text-16 font-medium text-gray-950"
+        >
           이메일
         </label>
         <Input
@@ -61,7 +79,10 @@ export default function LoginForm() {
       </div>
 
       <div className="mt-5 flex flex-col">
-        <label htmlFor="password" className="mb-[10px] text-16 font-medium text-gray-950">
+        <label
+          htmlFor="password"
+          className="mb-[10px] text-16 font-medium text-gray-950"
+        >
           비밀번호
         </label>
         <Input
@@ -95,7 +116,7 @@ export default function LoginForm() {
 
       <button
         type="button"
-        onClick={() => startKakaoAuth("sign-in")}
+        onClick={handleKakaoLogin}
         className="mt-[30px] flex h-[54px] w-full items-center justify-center gap-2 rounded-2xl border border-gray-100 bg-white text-16 font-medium text-gray-700"
       >
         <Image
