@@ -1,25 +1,8 @@
 // 내 체험 관리 API
+import type { GetMyExperiencesResponse } from '@/types/my-experiences';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID;
-
-export type MyActivityItem = {
-  id: number;
-  userId: number;
-  title: string;
-  description: string;
-  category: string;
-  price: number;
-  address: string;
-  bannerImageUrl: string;
-  rating: number;
-};
-
-export type GetMyExperiencesResponse = {
-  cursorId: number | null;
-  totalCount: number;
-  activities: MyActivityItem[];
-};
 
 function getApiUrl(path: string) {
   if (!BASE_URL) throw new Error('NEXT_PUBLIC_API_BASE_URL이 설정되지 않았습니다.');

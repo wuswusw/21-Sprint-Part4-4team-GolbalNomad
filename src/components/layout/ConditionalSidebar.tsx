@@ -17,7 +17,7 @@ export default function ConditionalSidebar() {
   if (!showSidebar) return null;
 
   return (
-    <div className="w-72.5">
+    <div className="tablet:block tablet:w-[178px] desktop:w-[290px] hidden">
       <Sidemenu />
     </div>
   );

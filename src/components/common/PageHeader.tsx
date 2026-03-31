@@ -48,8 +48,8 @@ export default function PageHeader() {
   const config = pageHeaderConfig[pathname];
 
   return (
-    <div className="flex w-full justify-between gap-4">
-      <div className="flex flex-1 flex-col items-start gap-1.5">
+    <div className="flex w-full justify-between gap-4 px-[24px]">
+      <div className="flex flex-1 flex-col items-start gap-[10px]">
         <h3 className="text-18 font-bold">{config.title}</h3>
         {config.description && (
           <p className="text-14 font-medium text-gray-500">{config.description}</p>
