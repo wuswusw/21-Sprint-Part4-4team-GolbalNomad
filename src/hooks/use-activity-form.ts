@@ -17,8 +17,8 @@ export function useActivityForm() {
   const [schedules, setSchedules] = useState<Schedule[]>([
     { id: String(Number(new Date())), date: "", startTime: null, endTime: null }
   ]);
-  const [bannerImg, setBannerImg] = useState<string | null>(null);
-  const [introImgs, setIntroImgs] = useState<string[]>([]);
+  const [bannerImg, setBannerImg] = useState<{ preview: string; file: File } | null>(null);
+  const [introImgs, setIntroImgs] = useState<{ id: string; preview: string; file: File }[]>([]);
 
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const introInputRef = useRef<HTMLInputElement>(null);
@@ -56,8 +56,11 @@ export function useActivityForm() {
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (bannerImg?.startsWith("blob:")) URL.revokeObjectURL(bannerImg);
-      setBannerImg(URL.createObjectURL(file));
+      if (bannerImg?.preview.startsWith("blob:")) URL.revokeObjectURL(bannerImg.preview);
+      setBannerImg({
+        preview: URL.createObjectURL(file),
+        file: file
+      });
     }
   };
 
@@ -67,8 +70,14 @@ export function useActivityForm() {
       alert("이미지는 최대 4장까지 등록 가능합니다.");
       return;
     }
-    const newUrls = files.map(file => URL.createObjectURL(file));
-    setIntroImgs(prev => [...prev, ...newUrls]);
+    
+    const newImages = files.map(file => ({
+      id: String(Math.random()), 
+      preview: URL.createObjectURL(file),
+      file: file 
+    }));
+    
+    setIntroImgs(prev => [...prev, ...newImages]);
   };
 
   return {
