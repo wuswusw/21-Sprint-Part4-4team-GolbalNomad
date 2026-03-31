@@ -30,7 +30,6 @@ export default function ImageUploadSection({
     border border-[#E0E0E5] 
     flex flex-col items-center justify-center 
     bg-transparent hover:bg-gray-50 transition-all
-    shadow-[0_2px_10px_rgba(0,0,0,0.05)]
   `;
 
   const PREVIEW_CONTAINER_CLASSES = `
