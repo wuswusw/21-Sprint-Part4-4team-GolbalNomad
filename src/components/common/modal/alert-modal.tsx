@@ -9,9 +9,6 @@ const sizeClass = {
   sm: 'max-w-[320px] md:max-w-[400px]',
   md: 'max-w-[320px] md:max-w-[400px]',
   lg: 'max-w-[320px] md:max-w-[400px]',
-  sm: 'max-w-[320px] md:max-w-[400px]',
-  md: 'max-w-[320px] md:max-w-[400px]',
-  lg: 'max-w-[320px] md:max-w-[400px]',
 };
 
 interface Props extends AlertModalProps {
@@ -26,7 +23,6 @@ export default function AlertModal({
   cancelText,
   onConfirm,
   onClose,
-  size = 'sm',
   size = 'sm',
 }: Props) {
   const handleConfirm = async () => {
