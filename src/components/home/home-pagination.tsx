@@ -11,7 +11,7 @@ function HomePagination({
   totalPages,
   onPageChange,
 }: HomePaginationProps) {
-  if (totalPages <= 1) return null;
+  if (totalPages < 1) return null;
 
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
 

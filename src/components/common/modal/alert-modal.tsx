@@ -1,12 +1,12 @@
-// alert 모달
-'use client';
+"use client";
 
-import { AlertModalProps } from '@/types/modal';
+import Image from "next/image";
+import { AlertModalProps } from "@/types/modal";
 
 const sizeClass = {
-  sm: 'max-w-[390px]',
-  md: 'max-w-[400px]',
-  lg: 'max-w-[560px]',
+  sm: "max-w-[320px] md:max-w-[400px]",
+  md: "max-w-[320px] md:max-w-[400px]",
+  lg: "max-w-[320px] md:max-w-[400px]",
 };
 
 interface Props extends AlertModalProps {
@@ -21,7 +21,7 @@ export default function AlertModal({
   cancelText,
   onConfirm,
   onClose,
-  size = 'sm',
+  size = "sm",
 }: Props) {
   const handleConfirm = async () => {
     await onConfirm?.();
@@ -30,7 +30,7 @@ export default function AlertModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
       onClick={onClose}
     >
       <div
@@ -38,27 +38,32 @@ export default function AlertModal({
         onClick={(e) => e.stopPropagation()}
       >
         {imageSrc && (
-          <img
-            src={imageSrc}
-            alt=""
-            className="mx-auto w-full max-w-[88px] rounded-xl object-cover"
-          />
+          <div className="relative mx-auto h-[88px] w-[88px] overflow-hidden rounded-xl">
+            <Image src={imageSrc} alt="" fill className="object-cover" />
+          </div>
         )}
-        {description && <p className="text-18 text-center font-bold">{description}</p>}
+
+        {description && (
+          <p className="text-18 text-center font-bold">{description}</p>
+        )}
+
         <div className="flex items-center justify-center gap-3">
           {cancelText && (
             <button
+              type="button"
               onClick={onClose}
               className="rounded-lg border border-[var(--color-gray-700)] px-4 py-2 text-[var(--color-gray-700)]"
             >
               {cancelText}
             </button>
           )}
+
           <button
+            type="button"
             onClick={handleConfirm}
-            className="rounded-lg bg-[var(--color-primary-500)] px-4 py-2 text-white"
+            className="h-[41px] w-[180px] rounded-lg bg-[var(--color-primary-500)] text-white md:h-[47px] md:w-[200px]"
           >
-            {confirmText ?? '확인'}
+            {confirmText ?? "확인"}
           </button>
         </div>
       </div>
