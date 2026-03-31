@@ -1,11 +1,14 @@
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useQuery,
+  useInfiniteQuery,
+  keepPreviousData,
+} from "@tanstack/react-query";
 import { getExperienceDetail, getReservationAvailableDays, getReviews } from "../api/experience-detail.api";
 import {
   ExperienceDetailResponse,
   ReservationAvailableDaysResponse,
   ReviewResponse,
 } from "@/features/experience/types/experience-detail.type";
-import { MOCK_DETAIL, MOCK_AVAILABLE_DAYS } from "../experience-detail-mock-data";
 import { experienceQueryKeys } from "../lib/experience-detail-query-keys";
 import { EXPERIENCE_DETAIL_REVIEW_PAGE_SIZE } from "../lib/experience-detail.utils";
 
@@ -14,7 +17,6 @@ export function useExperienceDetail(activityId: number) {
     queryKey: experienceQueryKeys.detail(activityId),
     queryFn: () => getExperienceDetail(activityId),
     enabled: !!activityId && !isNaN(activityId),
-    placeholderData: () => MOCK_DETAIL, // TODO: 실제 API 연동 시 mock 제거
   });
 }
 
@@ -31,7 +33,7 @@ export function useReservationAvailableDays({
     queryKey: experienceQueryKeys.availableSchedule.month(activityId, year, month),
     queryFn: () => getReservationAvailableDays({ activityId, year, month }),
     enabled: !!activityId && !isNaN(activityId) && !!year && !!month,
-    placeholderData: () => MOCK_AVAILABLE_DAYS, // TODO: 실제 API 연동 시 mock 제거
+    placeholderData: keepPreviousData,
   });
 }
 

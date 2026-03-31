@@ -1,6 +1,6 @@
 "use client";
-import {useState} from "react";
-import {useParams} from "next/navigation";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 
 import ImageGallery from "@/features/experience/components/image-gallery";
 import ExperienceDesc from "@/features/experience/components/experience-desc";
@@ -15,135 +15,161 @@ import {
   useExperienceReviews,
   useReservationAvailableDays,
 } from "@/features/experience/hooks/use-experience-detail";
-import { MOCK_DETAIL, MOCK_AVAILABLE_DAYS, MOCK_REVIEWS } from "@/features/experience/experience-detail-mock-data";
 import {
-    EXPERIENCE_DETAIL_REVIEW_PAGE_SIZE,
-    mergeReviewPages,
-    toCalendarYearMonthStrings,
+  mergeReviewPages,
+  toCalendarYearMonthStrings,
 } from "@/features/experience/lib/experience-detail.utils";
 
 function ExperienceDetailPage() {
-    const params = useParams<{ experienceId: string }>();
-    const experienceId = Number(params?.experienceId);
-    const isValidId = params?.experienceId && !isNaN(experienceId);
-    
-    const { data: currentUser } = useCurrentUser();
-    const initialCalendar = toCalendarYearMonthStrings(new Date());
-    const [currentYear, setCurrentYear] = useState(initialCalendar.year);
-    const [currentMonth, setCurrentMonth] = useState(initialCalendar.month);
-    const [displayCount, setDisplayCount] = useState(EXPERIENCE_DETAIL_REVIEW_PAGE_SIZE);
+  const params = useParams<{ experienceId: string }>();
+  const experienceId = Number(params?.experienceId);
+  const isValidId = params?.experienceId && !isNaN(experienceId);
 
-    const { data: detailData, isLoading: isExperienceDetailLoading } = useExperienceDetail(experienceId);
-    const { data: schedules, isLoading: isAvailableDaysLoading } = useReservationAvailableDays({
-        activityId: experienceId,
-        year: currentYear,
-        month: currentMonth,
+  const { data: currentUser } = useCurrentUser();
+  const initialCalendar = toCalendarYearMonthStrings(new Date());
+  const [currentYear, setCurrentYear] = useState(initialCalendar.year);
+  const [currentMonth, setCurrentMonth] = useState(initialCalendar.month);
+
+  const {
+    data: detailData,
+    isLoading: isExperienceDetailLoading,
+    isError: isDetailError,
+    error: detailError,
+  } = useExperienceDetail(experienceId);
+  const { data: schedules } = useReservationAvailableDays({
+      activityId: experienceId,
+      year: currentYear,
+      month: currentMonth,
     });
-    const { data: reviewData, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading: isReviewsLoading } = useExperienceReviews(experienceId);
+  const {
+    data: reviewData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isReviewsLoading,
+  } = useExperienceReviews(experienceId);
 
-    // TODO: 실제 API 연동 시 mock fallback 제거
-    const reviewPages = reviewData?.pages ? reviewData.pages : [{
-        reviews: MOCK_REVIEWS.reviews.slice(0, displayCount),
-        averageRating: MOCK_REVIEWS.averageRating,
-        totalCount: MOCK_REVIEWS.totalCount,
-        }];
+  const reviewPages = reviewData?.pages ?? [];
+  const reviewsForSection = mergeReviewPages(reviewPages);
 
-    const reviewsForSection = mergeReviewPages(reviewPages);
+  const totalReviewCount = reviewsForSection.totalCount;
+  const averageRating = reviewsForSection.averageRating;
 
-    // TODO: 실제 API 연동 시 MOCK_REVIEWS fallback 제거
-    const currentLoadedCount = reviewsForSection.reviews.length;
-    const totalCount = reviewData?.pages[0]?.totalCount || MOCK_REVIEWS.totalCount;
-    const canLoadMore = hasNextPage || (currentLoadedCount < totalCount);
+  const experienceDetail = detailData;
+  const availableDays = schedules ?? [];
 
-    const totalReviewCount = reviewsForSection.totalCount;
-    const averageRating = reviewsForSection.averageRating;
-    
+  const isOwner =
+    !!currentUser && experienceDetail != null && experienceDetail.userId === currentUser.id;
 
-    // TODO: 실제 API 연동 시 MOCK_DETAIL, MOCK_AVAILABLE_DAYS fallback 제거
-    const experienceDetail = detailData ?? MOCK_DETAIL;
-    const availableDays = schedules ?? MOCK_AVAILABLE_DAYS;
-    const isOwner = !!currentUser && experienceDetail?.userId === currentUser.id;
+  const isInitialLoad =
+    isExperienceDetailLoading || isReviewsLoading;
 
-    const isInitialLoad = isExperienceDetailLoading || isAvailableDaysLoading || isReviewsLoading;
-    
-    
-    const handleCalendarMonthChange = (date: Date) => {
-        const { year, month } = toCalendarYearMonthStrings(date);
-        setCurrentYear(year);
-        setCurrentMonth(month);
-    };
+  const handleCalendarMonthChange = (date: Date) => {
+    const { year, month } = toCalendarYearMonthStrings(date);
+    setCurrentYear(year);
+    setCurrentMonth(month);
+  };
 
-    // TODO: 실제 API 연동 시 else 분기(mock displayCount) 제거
-    const handleLoadMore = () => {
-        if(reviewData) {
-            fetchNextPage();
-        } else {
-            setDisplayCount((prev) =>
-                Math.min(prev + EXPERIENCE_DETAIL_REVIEW_PAGE_SIZE, MOCK_REVIEWS.reviews.length)
-            );
-        }
-    }
-    
-    if (!isValidId) return <div>experienceId를 다시 확인해 주세요.</div>;
-    if (isInitialLoad) return <ExperienceDetailSkeleton />;
+  const handleLoadMore = () => {
+    fetchNextPage();
+  };
+
+  if (!isValidId) {
+    return <div className="w-full px-10">experienceId를 다시 확인해 주세요.</div>;
+  }
+  if (isInitialLoad) {
+    return (
+      <div className="w-full min-w-0">
+        <ExperienceDetailSkeleton />
+      </div>
+    );
+  }
+  if (isDetailError) {
+    return (
+      <div className="flex min-h-[40vh] w-full items-center justify-center px-10 text-center text-body-16 text-gray-600">
+        {detailError instanceof Error
+          ? detailError.message
+          : "체험 정보를 불러오지 못했습니다."}
+      </div>
+    );
+  }
+  if (!experienceDetail) {
+    return (
+      <div className="flex min-h-[40vh] w-full items-center justify-center px-10 text-center text-body-16 text-gray-600">
+        체험 정보를 불러오지 못했습니다.
+      </div>
+    );
+  }
 
   return (
-    <div>
-            <div className="w-full mx-auto desktop:mt-22 tablet:mt-[34px] mt-[30px] desktop:mb-45 mb-[75px] mb-[30px] flex justify-center pb-[168px] desktop:pb-0">
-                <div className={`w-full desktop:max-w-[1200px] px-10 grid grid-cols-1 ${!isOwner ? "desktop:grid-cols-[1fr_410px]" : ""} gap-10`}>
-                    <section className="w-full flex flex-col gap-6 tablet:gap-[30px] desktop:gap-10 text-gray-950">
-                        <ImageGallery
-                            bannerImageUrl={experienceDetail?.bannerImageUrl}
-                            subImages={experienceDetail?.subImages}
-                        />
-                        <ExperienceInfo
-                            className={isOwner ? "" : "desktop:hidden"}
-                            activityId={experienceDetail?.id ?? experienceId}
-                            title={experienceDetail?.title}
-                            category={experienceDetail?.category}
-                            rating={experienceDetail?.rating}
-                            address={experienceDetail?.address}
-                            description={experienceDetail?.description}
-                            reviewCount={totalReviewCount}
-                            isOwner={isOwner}
-                        />
+    <div className="w-full min-w-0">
+      <div className="mx-auto w-full min-w-0 desktop:mt-22 tablet:mt-[34px] mt-[30px] desktop:mb-45 mb-[75px] mb-[30px] flex justify-center pb-[168px] desktop:pb-0">
+        <div
+          className={`w-full min-w-0 px-10 tablet:px-0 grid grid-cols-1 gap-10 ${!isOwner ? "desktop:grid-cols-[minmax(0,1fr)_410px]" : ""}`}
+        >
+          <section className="w-full min-w-0 flex flex-col gap-6 tablet:gap-[30px] desktop:gap-10 text-gray-950">
+            <ImageGallery
+              bannerImageUrl={experienceDetail.bannerImageUrl}
+              subImages={experienceDetail.subImages}
+            />
+            <ExperienceInfo
+              className={isOwner ? "" : "desktop:hidden"}
+              activityId={experienceDetail.id ?? experienceId}
+              title={experienceDetail.title}
+              category={experienceDetail.category}
+              rating={experienceDetail.rating}
+              address={experienceDetail.address}
+              description={experienceDetail.description}
+              reviewCount={totalReviewCount}
+              isOwner={isOwner}
+            />
 
-                        <hr className="w-full border-[#E0E0E5] desktop:hidden" />
-                        <ExperienceDesc description={experienceDetail?.description} />
-                        <hr className="w-full border-[#E0E0E5]" />
-                        <Map address={experienceDetail?.address} />
-                        <hr className="w-full border-[#E0E0E5]" />
-                        <ReviewSection
-                            reviews={reviewsForSection}
-                            reviewCount={totalReviewCount}
-                            rating={averageRating}
-                            onLoadMore={handleLoadMore}
-                            hasNextPage={canLoadMore}
-                            isFetchingNextPage={isFetchingNextPage}
-                        />
-                    </section>
-                    {!isOwner && (
-                        <section className="hidden desktop:block text-gray-950">
-                            <ExperienceInfo
-                                activityId={experienceDetail?.id ?? experienceId}
-                                title={experienceDetail?.title}
-                                category={experienceDetail?.category}
-                                rating={experienceDetail?.rating}
-                                address={experienceDetail?.address}
-                                description={experienceDetail?.description}
-                                reviewCount={totalReviewCount}
-                                isOwner={isOwner}
-                            />
-                            <ReservationCard
-                                activityId={experienceId}
-                                price={experienceDetail?.price}
-                                availableDays={availableDays ?? []}
-                                onCalendarMonthChange={handleCalendarMonthChange}
-                            />
-                        </section>
-                    )}
-                </div>
-            </div>
+            <hr className="w-full border-[#E0E0E5] desktop:hidden" />
+            <ExperienceDesc description={experienceDetail.description} />
+            <hr className="w-full border-[#E0E0E5]" />
+            <Map address={experienceDetail.address} />
+            {!isOwner && (
+              <div className="min-w-0 desktop:hidden">
+                <ReservationCard
+                  activityId={experienceId}
+                  price={experienceDetail.price}
+                  availableDays={availableDays}
+                  onCalendarMonthChange={handleCalendarMonthChange}
+                />
+              </div>
+            )}
+            <hr className="w-full border-[#E0E0E5]" />
+            <ReviewSection
+              reviews={reviewsForSection}
+              reviewCount={totalReviewCount}
+              rating={averageRating}
+              onLoadMore={handleLoadMore}
+              hasNextPage={!!hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+            />
+          </section>
+          {!isOwner && (
+            <section className="hidden w-full min-w-0 desktop:block text-gray-950">
+              <ExperienceInfo
+                activityId={experienceDetail.id ?? experienceId}
+                title={experienceDetail.title}
+                category={experienceDetail.category}
+                rating={experienceDetail.rating}
+                address={experienceDetail.address}
+                description={experienceDetail.description}
+                reviewCount={totalReviewCount}
+                isOwner={isOwner}
+              />
+              <ReservationCard
+                activityId={experienceId}
+                price={experienceDetail.price}
+                availableDays={availableDays}
+                onCalendarMonthChange={handleCalendarMonthChange}
+              />
+            </section>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

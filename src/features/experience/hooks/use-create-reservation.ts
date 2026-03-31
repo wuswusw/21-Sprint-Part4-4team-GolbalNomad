@@ -25,8 +25,12 @@ export function useCreateReservation(activityId: number) {
       });
     },
     onError: (error, variables) => {
+      const description =
+        error instanceof Error && error.message.trim().length > 0
+          ? error.message
+          : "예약에 실패했습니다.";
       openModal("alert", {
-        description: "예약에 실패했습니다.",
+        description,
         confirmText: "확인",
       });
       console.error("에러 발생 상세:", error);
