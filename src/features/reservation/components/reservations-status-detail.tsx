@@ -28,13 +28,6 @@ function ReservationsStatusDetail({ activityId, selectedDate, onClose }: Reserva
     const detailRef = useRef<HTMLDivElement>(null);
     useOutsideClick(detailRef, onClose, true);
 
-function ReservationsStatusDetail({ activityId, selectedDate, onClose }: ReservationsStatusDetailProps) {
-    const [activeTab, setActiveTab] = useState<Tab>("신청");
-    void activityId;
-    
-    const detailRef = useRef<HTMLDivElement>(null);
-    useOutsideClick(detailRef, onClose, true);
-    
     return (
         <div ref={detailRef} className="desktop:w-85 w-full px-6 py-[30px] bg-white rounded-3xl flex flex-col gap-[30px] shadow-[0_4px_24px_0_#9CB4CA33] text-gray-950">
             <div className="flex flex-col gap-3 items-start relative">
