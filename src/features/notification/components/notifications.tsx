@@ -1,53 +1,110 @@
 "use client";
 
 import Image from "next/image";
+import { Loader2 } from "lucide-react";
+import { getRelativeTime } from "@/lib/utils";
+import type { Notifications as NotificationType } from "../types/notifications.type";
 
-const LOCATION_STYLE = "fixed left-1/2 -translate-x-1/2 tablet:translate-x-0  tablet:left-auto top-13 tablet:absolute tablet:top-9 tablet:right-0 z-50"
-
-const NOTIFICATIONS = [
-    {
-        id: 1,
-        title: "함께하면 즐거운 스트릿 댄스",
-        content: "승인",
-        createdAt: "2026-03-17T17:02:37.054Z",
-    },
-    {
-        id: 2,
-        title: "함께하면 즐거운 스트릿 댄스",
-        content: "거절",
-        createdAt: "2026-03-17T17:02:37.054Z",
-    },
-    
-]
+const LOCATION_STYLE =
+    "fixed left-1/2 -translate-x-1/2 tablet:translate-x-0 tablet:left-auto top-13 tablet:absolute tablet:top-9 tablet:right-0 z-50 bg-white";
 
 interface NotificationsProps {
     onClose: () => void;
+    lastReadAt: string | null;
+    notifications: NotificationType[];
+    totalCount: number;
+    isLoading: boolean;
+    onDelete: (id: number) => void;
 }
 
-function Notifications({ onClose }: NotificationsProps) {
+function NotificationItem({
+    notification,
+    isNew,
+    onDelete,
+}: {
+    notification: NotificationType;
+    isNew: boolean;
+    onDelete: (id: number) => void;
+}) {
     return (
-        <div className={`${LOCATION_STYLE} flex flex-col tablet:w-[231px] w-[327px] shadow-[0px_2px_8px_0px_#78748640] rounded-[10px] pb-2`}>
-            <div className="flex justify-between items-center px-5 py-[18.5px] border-b border-gray-100">
-                <h1 className="text-16 font-bold">알림 6개</h1>
-                <button type="button" onClick={onClose} aria-label="알림 닫기">
-                    <Image src="/assets/icons/delete.svg" alt="close" width={24} height={24} />
+        <div
+            className={`relative flex flex-col gap-1 px-5 py-4 ${isNew ? "bg-primary-100" : ""}`}
+        >
+            <div className="flex items-start gap-2">
+                {isNew && (
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary-500" />
+                )}
+                <p className="flex-1 text-14 leading-relaxed">{notification.content}</p>
+                <button
+                    type="button"
+                    onClick={() => onDelete(notification.id)}
+                    className="shrink-0 p-0.5"
+                    aria-label="알림 삭제"
+                >
+                    <Image
+                        src="/assets/icons/delete.svg"
+                        alt="삭제"
+                        width={16}
+                        height={16}
+                    />
                 </button>
             </div>
-            {NOTIFICATIONS.map((notification) => (
-                <div key={notification.id} className="flex flex-col gap-2 px-5 py-4 text-gray-950">
-                    <div className="flex justify-between items-center">
-                        <span className="text-14 font-bold">예약 {notification.content}</span>
-                        <span className="text-12 text-gray-400">1분 전</span>
-                    </div>
-                    <div className="flex flex-col gap-2 text-14 text-gray-500">
-                        <p>{notification.title}</p>
-                        <p>{notification.createdAt}</p>
-                        <p>예약이 <span className={notification.content === "승인" ? "text-primary-500" : "text-[#FF2727]"}>{notification.content}</span>되었어요.</p>
-                    </div>
-                </div>
-            ))}
+            <span className="self-end text-12 text-gray-400">
+                {getRelativeTime(notification.createdAt)}
+            </span>
         </div>
-    )
+    );
+}
+
+function Notifications({
+    onClose,
+    lastReadAt,
+    notifications,
+    totalCount,
+    isLoading,
+    onDelete,
+}: NotificationsProps) {
+    return (
+        <div
+            className={`${LOCATION_STYLE} flex flex-col w-[327px] tablet:w-[368px] shadow-[0px_2px_8px_0px_#78748640] rounded-[10px] pb-2`}
+        >
+            <div className="flex justify-between items-center px-5 py-[18.5px] border-b border-gray-100">
+                <h1 className="text-16 font-bold">알림 {totalCount}개</h1>
+                <button type="button" onClick={onClose} aria-label="알림 닫기">
+                    <Image
+                        src="/assets/icons/delete.svg"
+                        alt="close"
+                        width={24}
+                        height={24}
+                    />
+                </button>
+            </div>
+
+            <div className="max-h-[400px] overflow-y-auto">
+                {isLoading ? (
+                    <div className="flex justify-center py-10">
+                        <Loader2 className="animate-spin text-gray-400" size={24} />
+                    </div>
+                ) : notifications.length === 0 ? (
+                    <p className="py-10 text-center text-14 text-gray-400">
+                        새로운 알림이 없습니다
+                    </p>
+                ) : (
+                    notifications.map((notification: NotificationType) => (
+                        <NotificationItem
+                            key={notification.id}
+                            notification={notification}
+                            isNew={
+                                !lastReadAt ||
+                                new Date(notification.createdAt) > new Date(lastReadAt)
+                            }
+                            onDelete={onDelete}
+                        />
+                    ))
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default Notifications;

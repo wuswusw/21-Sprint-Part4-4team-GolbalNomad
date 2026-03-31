@@ -6,7 +6,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <GnbWrapper />
-      <div className="mx-auto flex w-[980px] gap-12.5">
+      <div className="mx-auto flex max-w-[980px] w-full gap-12.5">
         <ConditionalSidebar />
         <div className="flex w-full flex-col items-start gap-7.5">{children}</div>
       </div>
