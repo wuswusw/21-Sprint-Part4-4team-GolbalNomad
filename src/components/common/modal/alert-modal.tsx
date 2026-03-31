@@ -1,10 +1,14 @@
 'use client';
+'use client';
 
 import { AlertModalProps } from '@/types/modal';
 import Image from 'next/image';
 import Button from '@/components/common/Button';
 
 const sizeClass = {
+  sm: 'max-w-[320px] md:max-w-[400px]',
+  md: 'max-w-[320px] md:max-w-[400px]',
+  lg: 'max-w-[320px] md:max-w-[400px]',
   sm: 'max-w-[320px] md:max-w-[400px]',
   md: 'max-w-[320px] md:max-w-[400px]',
   lg: 'max-w-[320px] md:max-w-[400px]',
@@ -22,6 +26,7 @@ export default function AlertModal({
   cancelText,
   onConfirm,
   onClose,
+  size = 'sm',
   size = 'sm',
 }: Props) {
   const handleConfirm = async () => {
@@ -48,6 +53,7 @@ export default function AlertModal({
           />
         )}
 
+        {description && <p className="text-18 text-center font-bold">{description}</p>}
         {description && <p className="text-18 text-center font-bold">{description}</p>}
 
         <div className="flex items-center justify-center gap-3">
