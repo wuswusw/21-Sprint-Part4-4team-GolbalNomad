@@ -8,6 +8,7 @@ import PageHeader from '@/components/common/PageHeader';
 import { getMyReservations } from '@/lib/api/reservations';
 import type { ReservationItem } from '@/types/reservations';
 import useInfiniteScroll from '@/hooks/use-infinite-scroll';
+import ReservationCardSkeleton from '@/components/reservations/reservation-card-skeleton';
 
 const STATUS_FILTERS: { label: string; value: BadgeStatus }[] = [
   { label: '예약 신청', value: 'pending' },
@@ -49,7 +50,7 @@ export default function ReservationPage() {
         setLoading(true);
         setError(null);
 
-        await new Promise((resolve) => setTimeout(resolve, 3500)); //임시
+        await new Promise((resolve) => setTimeout(resolve, 5000)); //임시
 
         const token = localStorage.getItem('accessToken') || '';
         const result = await getMyReservations(token, {
@@ -123,7 +124,11 @@ export default function ReservationPage() {
       {/* 예약 리스트 */}
       <div className="desktop:gap-[24px] flex w-full flex-col gap-[50px] px-[24px]">
         {loading && items.length === 0 ? (
-          <div>불러오는 중...</div>
+          <>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <ReservationCardSkeleton key={index} />
+            ))}
+          </>
         ) : error && items.length === 0 ? (
           <div>{error}</div>
         ) : items.length === 0 ? (
@@ -153,9 +158,13 @@ export default function ReservationPage() {
 
         {error && items.length > 0 && <div>{error}</div>}
 
-        {hasMore && <div ref={sentinelRef} className="h-10" />}
+        {hasMore && <div ref={sentinelRef} />}
         {loading && items.length > 0 && (
-          <div className="text-center text-sm text-gray-400">불러오는 중...</div>
+          <>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <ReservationCardSkeleton key={index} />
+            ))}
+          </>
         )}
       </div>
     </>

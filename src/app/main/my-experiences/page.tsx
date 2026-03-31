@@ -9,6 +9,7 @@ import { deleteMyExperience, getMyExperiences } from '@/lib/api/my-experiences';
 import type { MyActivityItem } from '@/types/my-experiences';
 import { useModal } from '@/hooks/use-modal';
 import useInfiniteScroll from '@/hooks/use-infinite-scroll';
+import ReservationCardSkeleton from '@/components/reservations/reservation-card-skeleton';
 
 export default function MyExperiencesPage() {
   const router = useRouter();
@@ -89,7 +90,11 @@ export default function MyExperiencesPage() {
       {/* 체험관리 리스트 */}
       <div className="desktop:gap-6 flex w-full flex-col gap-[30px] px-6">
         {loading && items.length === 0 ? (
-          <div>불러오는 중...</div>
+          <>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <ReservationCardSkeleton key={index} />
+            ))}
+          </>
         ) : error && items.length === 0 ? (
           <div>{error}</div>
         ) : items.length === 0 ? (
@@ -112,9 +117,13 @@ export default function MyExperiencesPage() {
 
         {error && items.length > 0 && <div>{error}</div>}
 
-        {hasMore && <div ref={sentinelRef} className="h-10" />}
+        {hasMore && <div ref={sentinelRef} />}
         {loading && items.length > 0 && (
-          <div className="text-center text-sm text-gray-400">불러오는 중...</div>
+          <>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <ReservationCardSkeleton key={index} />
+            ))}
+          </>
         )}
       </div>
     </>
