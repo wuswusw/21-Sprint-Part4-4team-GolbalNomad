@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Gnb from "@/components/common/gnb/gnb";
 import Footer from "@/components/common/Footer";
 import HomeBanner from "@/components/home/home-banner";
@@ -68,6 +68,24 @@ function subscribe(callback: () => void) {
 }
 
 export default function HomePage() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const previous = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+    const rafId = window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.history.scrollRestoration = previous;
+    };
+  }, []);
+
   const auth = useSyncExternalStore(
     subscribe,
     getClientSnapshot,
