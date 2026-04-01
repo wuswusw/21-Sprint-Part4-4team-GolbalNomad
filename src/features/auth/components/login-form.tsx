@@ -26,7 +26,7 @@ export default function LoginForm() {
     formState: { errors, isValid },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   const openModal = (message: string) => {
