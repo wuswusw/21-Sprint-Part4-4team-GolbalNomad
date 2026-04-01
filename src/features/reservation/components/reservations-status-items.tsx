@@ -37,6 +37,10 @@ function ReservationsStatusItems({
   const { data: dailySchedules = [], isLoading: isDailySchedulesLoading } =
     useDailySchedule(dateKey);
   const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
+  const [pendingAction, setPendingAction] = useState<{
+    reservationId: number;
+    action: "approve" | "reject";
+  } | null>(null);
 
   useEffect(() => {
     if (dailySchedules.length > 0) {
@@ -109,19 +113,23 @@ function ReservationsStatusItems({
   }, [filteredReservations]);
 
   const handleApprove = (reservationId: number) => {
+    setPendingAction({ reservationId, action: "approve" });
     updateStatus(
       { reservationId, status: "confirmed" },
       {
         onSuccess: () => onTabNavigate?.("승인"),
+        onSettled: () => setPendingAction(null),
       }
     );
   };
 
   const handleReject = (reservationId: number) => {
+    setPendingAction({ reservationId, action: "reject" });
     updateStatus(
       { reservationId, status: "declined" },
       {
         onSuccess: () => onTabNavigate?.("거절"),
+        onSettled: () => setPendingAction(null),
       }
     );
   };
@@ -180,7 +188,10 @@ function ReservationsStatusItems({
                         onClick={() => handleApprove(reservation.id)}
                         className="text-gray-600 ring ring-gray-50 px-[10px] py-[6px] rounded-lg rounded-lg text-14 font-bold hover:bg-primary-600 transition-colors disabled:opacity-60"
                       >
-                        승인하기
+                        {pendingAction?.reservationId === reservation.id &&
+                        pendingAction.action === "approve"
+                          ? "처리중..."
+                          : "승인하기"}
                       </button>
                       <button
                         type="button"
@@ -188,7 +199,10 @@ function ReservationsStatusItems({
                         onClick={() => handleReject(reservation.id)}
                         className="bg-gray-50 text-gray-600 px-4 py-2 rounded-lg rounded-lg text-14 font-bold hover:bg-primary-50 transition-colors disabled:opacity-60"
                       >
-                        거절하기
+                        {pendingAction?.reservationId === reservation.id &&
+                        pendingAction.action === "reject"
+                          ? "처리중..."
+                          : "거절하기"}
                       </button>
                     </>
                   )}
