@@ -24,6 +24,10 @@ export default function useInfiniteScroll({
   const onIntersectRef = useRef(onIntersect);
 
   useEffect(() => {
+    onIntersectRef.current = onIntersect;
+  }, [onIntersect]);
+
+  useEffect(() => {
     const target = targetRef.current;
     if (!target || !enabled) return;
 
