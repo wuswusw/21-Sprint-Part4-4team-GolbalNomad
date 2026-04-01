@@ -10,6 +10,7 @@ import type { MyActivityItem } from '@/types/my-experiences';
 import { useModal } from '@/hooks/use-modal';
 import useInfiniteScroll from '@/hooks/use-infinite-scroll';
 import ReservationCardSkeleton from '@/components/reservations/reservation-card-skeleton';
+import EmptyState from '@/components/common/empty/empty-state';
 
 export default function MyExperiencesPage() {
   const router = useRouter();
@@ -30,8 +31,6 @@ export default function MyExperiencesPage() {
       try {
         setLoading(true);
         setError(null);
-
-        await new Promise((resolve) => setTimeout(resolve, 3500)); //임시
 
         const token = localStorage.getItem('accessToken') || '';
         const result = await getMyExperiences(token, {
@@ -98,7 +97,7 @@ export default function MyExperiencesPage() {
         ) : error && items.length === 0 ? (
           <div>{error}</div>
         ) : items.length === 0 ? (
-          <div>내역이 없습니다.</div>
+          <EmptyState title="아직 등록한 체험이 없어요" />
         ) : (
           <>
             {items.map((item) => (
