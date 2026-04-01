@@ -2,21 +2,13 @@
 
 import { usePathname } from 'next/navigation';
 import Sidemenu from '@/components/common/Sidemenu';
-
-const SIDEBAR_PATHS = [
-  '/main/profile',
-  '/main/reservations',
-  '/main/my-experiences',
-  '/main/reservations-status',
-];
-
-const EXCLUDE_PATHS = ['/main/my-experiences/create'];
+import { SIDEBAR_INCLUDE_PATHS, SIDEBAR_EXCLUDE_PATHS } from '@/constants/route';
 
 export default function ConditionalSidebar() {
   const pathname = usePathname();
   const showSidebar =
-    SIDEBAR_PATHS.some((path) => pathname.startsWith(path)) &&
-    !EXCLUDE_PATHS.some((path) => pathname.startsWith(path));
+    SIDEBAR_INCLUDE_PATHS.some((path) => pathname.startsWith(path)) &&
+    !SIDEBAR_EXCLUDE_PATHS.some((path) => pathname.startsWith(path));
 
   if (!showSidebar) return null;
 
