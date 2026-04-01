@@ -24,18 +24,50 @@ export default function ScheduleSection({
   
   const LABEL_COMMON_CLASSES = "mb-4 text-16 font-bold text-gray-950";
 
+  const validateAndSync = (index: number, updatedSchedule: Schedule) => {
+    const { date, startTime, endTime } = updatedSchedule;
+
+    if (startTime && endTime) {
+      const startHour = parseInt(startTime.id as string);
+      const endHour = parseInt(endTime.id as string);
+      
+      if (endHour <= startHour) {
+        alert("종료 시간은 시작 시간보다 늦어야 합니다.");
+        return; 
+      }
+    }
+
+    const isDuplicate = schedules.some((s, i) => {
+      if (i === index) return false;
+      return (
+        s.date === date && 
+        s.startTime?.id === startTime?.id && 
+        s.endTime?.id === endTime?.id
+      );
+    });
+
+    if (isDuplicate) {
+      alert("이미 동일한 날짜와 시간대가 등록되어 있습니다.");
+      return; 
+    }
+
+    const newSchedules = [...schedules];
+    newSchedules[index] = updatedSchedule;
+    setSchedules(newSchedules);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <label className={LABEL_COMMON_CLASSES}>예약 가능한 시간대</label>
       {schedules.map((schedule, index) => (
         <div key={schedule.id} className="flex flex-col gap-2">
           {index === 0 && (
-            <div className="flex gap-2 text-14 font-medium text-[#4B4B4B]">
+            <div className="flex gap-2 text-14 font-medium text-[#4B4B4B] px-1">
               <div className="flex-[1.5]">날짜</div>
               <div className="flex-1">시작 시간</div>
               <div className="w-5"></div>
               <div className="flex-1">종료 시간</div>
-              <div className="w-[56px]"></div>
+              <div className="w-[42px]"></div>
             </div>
           )}
 
@@ -43,12 +75,11 @@ export default function ScheduleSection({
             <div className="flex-[1.5]">
               <input
                 type="date"
-                className="w-full h-[56px] rounded-lg border border-[#E0E0E5] px-4 outline-none"
+                className="w-full h-[56px] rounded-lg border border-[#E0E0E5] px-4 outline-none focus:border-black transition"
                 value={schedule.date}
                 onChange={(e) => {
-                  const newSchedules = [...schedules];
-                  newSchedules[index].date = e.target.value;
-                  setSchedules(newSchedules);
+                  const updated = { ...schedule, date: e.target.value };
+                  validateAndSync(index, updated);
                 }}
               />
             </div>
@@ -58,9 +89,8 @@ export default function ScheduleSection({
                 items={TIME_ITEMS} 
                 selectedItem={schedule.startTime} 
                 onSelect={(item) => {
-                  const newSchedules = [...schedules];
-                  newSchedules[index].startTime = item;
-                  setSchedules(newSchedules);
+                  const updated = { ...schedule, startTime: item };
+                  validateAndSync(index, updated);
                 }} 
                 placeholder="0:00" 
               />
@@ -73,9 +103,8 @@ export default function ScheduleSection({
                 items={TIME_ITEMS} 
                 selectedItem={schedule.endTime} 
                 onSelect={(item) => {
-                  const newSchedules = [...schedules];
-                  newSchedules[index].endTime = item;
-                  setSchedules(newSchedules);
+                  const updated = { ...schedule, endTime: item };
+                  validateAndSync(index, updated);
                 }} 
                 placeholder="0:00" 
               />
@@ -95,7 +124,7 @@ export default function ScheduleSection({
                 type="button"
                 variant="secondary"
                 onClick={() => removeSchedule(schedule.id)}
-                className="!w-[42px] !h-[42px] !p-0 !min-w-[42px] rounded-full flex-shrink-0 !text-[#000000] !border-[#000000]"
+                className="!w-[42px] !h-[42px] !p-0 !min-w-[42px] rounded-full flex-shrink-0 !text-black !border-black"
               >
                 <span className="text-21">-</span>
               </Button>
