@@ -8,7 +8,7 @@ interface ExperienceCardProps {
 
 function ExperienceCard({ experience }: ExperienceCardProps) {
   return (
-    <Link href={`/activities/${experience.id}`} className="block w-full">
+    <Link href={`/main/experiences/${experience.id}`} className="block w-full">
       <article className="flex w-full flex-col overflow-hidden rounded-[24px] shadow-[0_6px_16px_rgba(156,180,202,0.18)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(156,180,202,0.24)]">
         <div className="relative h-[290px] w-full overflow-hidden rounded-[24px]">
           <Image

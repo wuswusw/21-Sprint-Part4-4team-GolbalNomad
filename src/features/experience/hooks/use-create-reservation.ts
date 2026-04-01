@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useModal } from "@/hooks/use-modal";
 import { createReservation } from "../api/experience-detail.api";
+import { experienceQueryKeys } from "../lib/experience-detail-query-keys";
 import type { CreateReservationRequest } from "../types/experience-detail.type";
 
 export function useCreateReservation(activityId: number) {
@@ -20,12 +21,16 @@ export function useCreateReservation(activityId: number) {
       });
       queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
       queryClient.invalidateQueries({
-        queryKey: ["activities", activityId, "available-schedule"],
+        queryKey: experienceQueryKeys.availableSchedule.root(activityId),
       });
     },
     onError: (error, variables) => {
+      const description =
+        error instanceof Error && error.message.trim().length > 0
+          ? error.message
+          : "예약에 실패했습니다.";
       openModal("alert", {
-        description: "예약에 실패했습니다.",
+        description,
         confirmText: "확인",
       });
       console.error("에러 발생 상세:", error);

@@ -3,11 +3,15 @@
 import { useEffect, useRef } from "react";
 import Script from "next/script";
 
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
+type WindowWithKakao = Window & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 카카오맵 JS SDK
+  kakao?: any;
+};
+
+const KAKAO_MAP_SCRIPT_SRC =
+  "//dapi.kakao.com/v2/maps/sdk.js?appkey=" +
+  (process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY ?? "") +
+  "&libraries=services&autoload=false";
 
 interface MapProps {
   address?: string;
@@ -17,29 +21,30 @@ function Map({ address }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const initMap = () => {
-    if (!window.kakao || !mapRef.current) return;
+    const { kakao } = window as WindowWithKakao;
+    if (!kakao || !mapRef.current) return;
 
-    window.kakao.maps.load(() => {
-      const geocoder = new window.kakao.maps.services.Geocoder();
+    kakao.maps.load(() => {
+      const geocoder = new kakao.maps.services.Geocoder();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       geocoder.addressSearch(address, (result: any, status: any) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+        if (status === kakao.maps.services.Status.OK) {
+          const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-          const map = new window.kakao.maps.Map(mapRef.current, {
+          const map = new kakao.maps.Map(mapRef.current, {
             center: coords,
             level: 3,
           });
 
-          new window.kakao.maps.Marker({ map, position: coords });
+          new kakao.maps.Marker({ map, position: coords });
         }
       });
     });
   };
 
-  // 스크립트가 이미 캐시된 경우 대비
   useEffect(() => {
-    if (window.kakao) {
+    if ((window as WindowWithKakao).kakao) {
       initMap();
     }
   }, []);
@@ -47,7 +52,7 @@ function Map({ address }: MapProps) {
   return (
     <div>
       <Script
-        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services&autoload=false`}
+        src={KAKAO_MAP_SCRIPT_SRC}
         strategy="afterInteractive"
         onLoad={initMap}
       />

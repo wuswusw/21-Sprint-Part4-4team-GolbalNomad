@@ -99,7 +99,7 @@ function ReservationCard({
   };
 
   const desktopCard = (
-    <div className="p-[30px] rounded-3xl shadow-[0px_4px_24px_0px_#9CB4CA33]">
+    <div className="w-full min-w-0 p-[30px] rounded-3xl shadow-[0px_4px_24px_0px_#9CB4CA33]">
       <div className="flex justify-start items-center gap-1 mb-6">
         <h2 className="text-24 font-bold">₩ {price?.toLocaleString()}</h2>
         <p className="text-20 font-medium text-[#79747E]"> / 인</p>

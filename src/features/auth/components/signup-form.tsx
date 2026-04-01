@@ -28,7 +28,7 @@ export default function SignupForm() {
     formState: { errors, isValid },
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   const nickname = useWatch({

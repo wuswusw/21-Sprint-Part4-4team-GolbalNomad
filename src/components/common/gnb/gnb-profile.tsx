@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRef, useCallback } from "react";
 import useClickOutside from "@/hooks/useClickOutside";
 
@@ -10,7 +11,7 @@ interface GnbProfileProps {
   profileImage?: string;
   isOpen: boolean;
   onToggle: () => void;
-  onLogout: () => void;
+  onLogout: () => void | Promise<void>;
 }
 
 function GnbProfile({
@@ -20,6 +21,7 @@ function GnbProfile({
   onToggle,
   onLogout,
 }: GnbProfileProps) {
+  const router = useRouter();
   const profileRef = useRef<HTMLDivElement>(null);
 
   const close = useCallback(() => {
@@ -27,6 +29,11 @@ function GnbProfile({
   }, [isOpen, onToggle]);
 
   useClickOutside(profileRef, close, isOpen);
+
+  const handleLogout = async () => {
+    await onLogout();
+    router.push("/");
+  };
 
   return (
     <div className="flex items-center">
@@ -51,7 +58,7 @@ function GnbProfile({
               <li>
                 <button
                   className="w-full flex items-center justify-center text-14 py-[15px] hover:ring-primary-100 hover:ring-2 hover:text-gray-950 rounded-xl"
-                  onClick={onLogout}
+                  onClick={handleLogout}
                 >
                   로그아웃
                 </button>
