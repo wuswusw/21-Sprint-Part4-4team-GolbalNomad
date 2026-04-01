@@ -9,18 +9,34 @@ export interface Schedule {
 }
 
 export function useActivityForm() {
+  const [title, setTitle] = useState(""); 
+  const [description, setDescription] = useState("");
+  const [address, setAddress] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<DropdownItem | null>(null);
-  const [price, setPrice] = useState<number>(0);
-
+  const [price, setPrice] = useState<number | null>(null);
   const [schedules, setSchedules] = useState<Schedule[]>([
     { id: String(Number(new Date())), date: "", startTime: null, endTime: null }
   ]);
-
   const [bannerImg, setBannerImg] = useState<string | null>(null);
   const [introImgs, setIntroImgs] = useState<string[]>([]);
 
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const introInputRef = useRef<HTMLInputElement>(null);
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length <= 50) {
+      setTitle(e.target.value);
+    }
+  };
+
+  const isFormValid = 
+    title.trim().length > 0 &&
+    selectedCategory !== null &&
+    description.trim().length > 0 &&
+    price !== null &&
+    address.trim().length > 0 &&
+    schedules.length > 0 &&
+    bannerImg !== null;
 
   const addSchedule = () => {
     setSchedules([...schedules, { 
@@ -56,10 +72,11 @@ export function useActivityForm() {
   };
 
   return {
-    state: { selectedCategory, price, schedules, bannerImg, introImgs }, 
+    state: { title, description, address, selectedCategory, price, schedules, bannerImg, introImgs, isFormValid },
     actions: { 
+      setTitle, handleTitleChange, setDescription, setAddress, 
       setSelectedCategory, setPrice, setSchedules, setBannerImg, setIntroImgs,
-      addSchedule, removeSchedule, handleBannerChange, handleIntroChange 
+      addSchedule, removeSchedule, handleBannerChange, handleIntroChange
     },
     refs: { bannerInputRef, introInputRef }
   };
