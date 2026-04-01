@@ -20,7 +20,7 @@ function ReservationsStatusTabs<T extends string>({
                     onClick={() => setActiveTab(tab)}
                     className={`py-2 px-4 text-14 w-full desktop:w-auto font-medium transition-colors
                         ${activeTab === tab
-                            ? "border-b-2 border-primary-500 text-primary-500 -mb-px"
+                            ? "border-b border-primary-500 text-primary-500 -mb-px"
                             : "text-gray-500 hover:text-gray-950"
                         }`}
                 >

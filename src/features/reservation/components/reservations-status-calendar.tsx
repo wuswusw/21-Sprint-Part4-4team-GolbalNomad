@@ -67,6 +67,7 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
         <ReservationsStatusDetail
           activityId={activityId}
           selectedDate={date}
+          disableOutsideClose
           onClose={() => {
             closeModal();
             onDateChange(null);

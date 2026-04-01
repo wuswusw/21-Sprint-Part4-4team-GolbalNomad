@@ -35,10 +35,6 @@ export function useMyActivityManagement(activityId: number) {
         reservationsStatusApi.updateReservationStatus({ activityId, reservationId, status }),
         onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["myActivities", activityId] });
-        openModal("alert", {
-            description: "상태가 성공적으로 변경되었습니다.",
-            confirmText: "확인",
-        });
         },
         onError: (error: Error) => {
         openModal("alert", {
