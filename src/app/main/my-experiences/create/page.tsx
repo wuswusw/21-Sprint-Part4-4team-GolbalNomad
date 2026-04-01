@@ -9,7 +9,7 @@ export default function CreatePage() {
       <Header />
 
       <main className="flex-grow py-10">
-        <div className="container mx-auto bg-white shadow-sm rounded-xl">
+        <div className="w-full max-w-[700px] mx-auto px-4 md:px-0">
           <ActivityForm mode="create" />
         </div>
       </main>

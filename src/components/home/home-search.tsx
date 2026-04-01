@@ -35,7 +35,7 @@ function HomeSearch({
           iconWrapperClassName="left-[34px]"
           iconClassName="h-6 w-6"
           inputClassName="h-[70px] w-full rounded-[20px] border border-gray-200 bg-white pl-[68px] pr-[144px] text-[18px] font-medium text-black placeholder:text-[18px] placeholder:font-medium placeholder:text-gray-400"
-          buttonClassName="absolute right-[12px] top-1/2 flex h-[50px] w-[120px] -translate-y-1/2 items-center justify-center rounded-[14px] bg-blue-500 text-[16px] font-medium text-white hover:bg-blue-600"
+          buttonClassName="absolute right-[12px] top-1/2 flex h-[50px] w-[120px] -translate-y-1/2 items-center justify-center rounded-[14px] bg-primary-500 text-[16px] font-medium text-white hover:bg-blue-500"
         />
       </div>
     </section>

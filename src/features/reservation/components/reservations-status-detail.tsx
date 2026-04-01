@@ -47,6 +47,7 @@ function ReservationsStatusDetail({ activityId, selectedDate, onClose }: Reserva
                 selectedDate={selectedDate || new Date()}
                 activeTab={activeTab}
                 onTabCountsChange={setTabCounts}
+                onTabNavigate={setActiveTab}
             />
         </div>
     );
