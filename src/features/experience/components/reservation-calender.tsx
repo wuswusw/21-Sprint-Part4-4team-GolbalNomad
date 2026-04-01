@@ -20,10 +20,16 @@ const CustomCaption = ({ calendarMonth }: MonthCaptionProps) => {
     <div className="w-full flex items-center justify-between mb-2">
       <p className="text-body-16 font-bold">{format(calendarMonth.date, "MMMM yyyy")}</p>
       <div className="flex justify-center gap-3">
-        <button onClick={() => previousMonth && goToMonth(previousMonth)}>
+        <button
+          type="button"
+          onClick={() => previousMonth && goToMonth(previousMonth)}
+        >
           <Image src="/assets/icons/arrowLeft.svg" alt="arrowLeft" width={24} height={24} />
         </button>
-        <button onClick={() => nextMonth && goToMonth(nextMonth)}>
+        <button
+          type="button"
+          onClick={() => nextMonth && goToMonth(nextMonth)}
+        >
           <Image src="/assets/icons/arrowRight.svg" alt="arrowRight" width={24} height={24} />
         </button>
       </div>

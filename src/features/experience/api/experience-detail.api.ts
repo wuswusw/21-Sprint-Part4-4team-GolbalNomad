@@ -25,11 +25,15 @@ export async function getExperienceDetail(
   return response.json();
 }
 
-export async function getReservationAvailableDays(
-  activityId: number,
-  year: string,
-  month: string
-): Promise<ReservationAvailableDaysResponse> {
+export async function getReservationAvailableDays({
+  activityId,
+  year,
+  month,
+}: {
+  activityId: number;
+  year: string;
+  month: string;
+}): Promise<ReservationAvailableDaysResponse> {
   const params = new URLSearchParams({ year, month });
   const url = `${getApiUrl(`/activities/${activityId}/available-schedule`)}?${params.toString()}`;
 
@@ -51,11 +55,15 @@ export async function getReservationAvailableDays(
   return response.json();
 }
 
-export async function getReviews(
-  activityId: number,
-  page: number,
-  size: number
-): Promise<ReviewResponse> {
+export async function getReviews({
+  activityId,
+  page,
+  size,
+}: {
+  activityId: number;
+  page: number;
+  size: number;
+}): Promise<ReviewResponse> {
   const params = new URLSearchParams({
     page: String(page),
     size: String(size),
@@ -94,20 +102,29 @@ export async function createReservation(
   );
 
   if (!response.ok) {
-    switch (response.status) {
-      case 400:
-        throw new Error("입력 형식이 잘못되었습니다. (scheduleId 확인)");
-      case 401:
-        throw new Error("로그인이 필요한 서비스입니다.");
-      case 404:
-        throw new Error("존재하지 않는 체험입니다.");
-      case 409:
-        throw new Error(
-          "해당 시간대는 이미 확정된 예약이 있어 예약할 수 없습니다."
-        );
-      default:
-        await parseError(response);
+    if (response.status === 400) {
+      throw new Error("입력 형식이 잘못되었습니다. (scheduleId 확인)");
     }
+    if (response.status === 401) {
+      try {
+        const err: { message?: string } = await response.clone().json();
+        if (err?.message) {
+          console.warn("[예약] 401 서버 응답:", err.message);
+        }
+      } catch {
+        /* 응답 본문 없음 */
+      }
+      throw new Error("토큰이 만료되었습니다. 다시 로그인해 주세요.");
+    }
+    if (response.status === 404) {
+      throw new Error("존재하지 않는 체험입니다.");
+    }
+    if (response.status === 409) {
+      throw new Error(
+        "해당 시간대는 이미 확정된 예약이 있어 예약할 수 없습니다."
+      );
+    }
+    await parseError(response);
   }
 
   return response.json();

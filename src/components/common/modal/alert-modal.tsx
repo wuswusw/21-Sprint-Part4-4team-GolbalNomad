@@ -1,5 +1,4 @@
 'use client';
-'use client';
 
 import { AlertModalProps } from '@/types/modal';
 import Image from 'next/image';
@@ -49,7 +48,6 @@ export default function AlertModal({
           />
         )}
 
-        {description && <p className="text-18 text-center font-bold">{description}</p>}
         {description && <p className="text-18 text-center font-bold">{description}</p>}
 
         <div className="flex items-center justify-center gap-3">
