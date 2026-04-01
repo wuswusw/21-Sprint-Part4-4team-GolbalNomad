@@ -1,3 +1,4 @@
+import Script from "next/script";
 import React, { useState } from "react";
 import DaumPostcodeEmbed, { Address } from "react-daum-postcode";
 import Input from "@/components/ui/input";
@@ -33,6 +34,7 @@ export default function ActivityForm({ mode, initialData }: ActivityFormProps) {
   const { state, actions, refs } = useActivityForm();
 
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   const handleAddressComplete = (data: Address) => {
     actions.setAddress(data.address); 
@@ -50,6 +52,12 @@ export default function ActivityForm({ mode, initialData }: ActivityFormProps) {
 
   return (
     <div className="mx-auto w-full max-w-[700px] min-w-[320px] md:min-w-[700px]">
+      <Script
+        src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
+        strategy="afterInteractive"
+        onLoad={() => setIsScriptLoaded(true)}
+      />
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-10">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col">
@@ -107,12 +115,12 @@ export default function ActivityForm({ mode, initialData }: ActivityFormProps) {
               placeholder="주소를 입력해 주세요"
               value={state.address}
               readOnly
-              onClick={() => setIsPostcodeOpen(!isPostcodeOpen)}
+              onClick={() => isScriptLoaded && setIsPostcodeOpen(!isPostcodeOpen)}
               className={`${INPUT_COMMON_CLASSES} cursor-pointer`}
               label=""
             />
             
-            {isPostcodeOpen && (
+            {isScriptLoaded && isPostcodeOpen && (
               <div className="absolute top-[100%] left-0 z-50 w-full mt-2 border border-[#E0E0E5] bg-white shadow-xl rounded-xl overflow-hidden">
                 <div className="flex justify-end p-2 bg-gray-50 border-b">
                   <button 
