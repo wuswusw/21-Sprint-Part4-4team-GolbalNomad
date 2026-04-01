@@ -7,6 +7,8 @@ import Button from "@/components/common/Button";
 import { useActivityForm } from "@/hooks/use-activity-form";
 import ScheduleSection from "./schedule-section";
 import ImageUploadSection from "./image-upload-section";
+import { uploadActivityImage, createActivity, CreateActivityRequest } from "@/features/activity/api/activity.api";
+import { useRouter } from "next/navigation"; 
 
 interface ActivityData {
   title?: string;
@@ -30,6 +32,7 @@ const CATEGORY_ITEMS: DropdownItem[] = [
 ];
 
 export default function ActivityForm({ mode, initialData }: ActivityFormProps) {
+  const router = useRouter();
   const isEdit = mode === "edit";
   const { state, actions, refs } = useActivityForm();
 
@@ -45,9 +48,45 @@ export default function ActivityForm({ mode, initialData }: ActivityFormProps) {
     "w-full rounded-xl border border-[#E0E0E5] py-3 px-4 outline-none transition focus:border-black placeholder:text-gray-400 shadow-[0_2px_6px_rgba(0,0,0,0.02)]";
   const LABEL_COMMON_CLASSES = "mb-4 text-16 font-bold text-gray-950";
 
-  const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("제출 데이터:", state);
+    if (!state.isFormValid) return;
+
+    try {
+      let bannerImageUrl = "";
+      if (state.bannerImg?.file) {
+        bannerImageUrl = await uploadActivityImage(state.bannerImg.file);
+      }
+
+      const subImageUrls = await Promise.all(
+        state.introImgs.map((img) => uploadActivityImage(img.file))
+      );
+
+      const finalData: CreateActivityRequest = {
+        title: state.title,
+        category: state.selectedCategory?.label || "", 
+        description: state.description,
+        address: state.address,
+        price: Number(state.price),
+        schedules: state.schedules.map((s) => ({
+          date: s.date,
+          startTime: s.startTime?.label || "", 
+          endTime: s.endTime?.label || "",
+        })),
+        bannerImageUrl: bannerImageUrl,
+        subImageUrls: subImageUrls,
+      };
+
+      await createActivity(finalData);
+
+      alert("체험이 성공적으로 등록되었습니다!");
+      
+      router.push("/"); 
+
+    } catch (error) {
+      console.error("등록 중 오류 발생:", error);
+      alert("등록에 실패했습니다. 다시 시도해 주세요.");
+    }
   };
 
   return (

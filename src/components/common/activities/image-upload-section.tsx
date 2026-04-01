@@ -1,15 +1,29 @@
 import React from "react";
 import Image from "next/image";
 
+// 1. 이미지 객체 타입 정의 (훅의 상태와 일치시킴)
+interface ImageFile {
+  preview: string;
+  file: File;
+}
+
+// 소개 이미지는 삭제 등을 위해 id가 포함된 구조
+interface IntroImageFile extends ImageFile {
+  id: string;
+}
+
 interface ImageUploadSectionProps {
-  bannerImg: string | null;
-  introImgs: string[];
+  // string | null -> ImageFile | null 로 변경
+  bannerImg: ImageFile | null; 
+  // string[] -> IntroImageFile[] 로 변경
+  introImgs: IntroImageFile[]; 
   bannerInputRef: React.RefObject<HTMLInputElement | null>; 
   introInputRef: React.RefObject<HTMLInputElement | null>;
   handleBannerChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleIntroChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  setBannerImg: (img: string | null) => void;
-  setIntroImgs: React.Dispatch<React.SetStateAction<string[]>>;
+  // 함수 타입들도 변경된 상태 구조에 맞게 수정
+  setBannerImg: (img: ImageFile | null) => void;
+  setIntroImgs: React.Dispatch<React.SetStateAction<IntroImageFile[]>>;
 }
 
 export default function ImageUploadSection({
@@ -48,6 +62,7 @@ export default function ImageUploadSection({
 
   return (
     <div className="flex flex-col gap-10">
+      {/* 배너 이미지 섹션 */}
       <div className="flex flex-col">
         <label className={LABEL_COMMON_CLASSES}>배너 이미지 등록</label>
         <div className="flex flex-wrap gap-4 items-center">
@@ -61,8 +76,9 @@ export default function ImageUploadSection({
 
           {bannerImg && (
             <div className={PREVIEW_CONTAINER_CLASSES}>
+              {/* bannerImg.preview를 사용합니다 */}
               <Image 
-                src={bannerImg} 
+                src={bannerImg.preview} 
                 alt="Banner" 
                 fill 
                 className="object-cover rounded-2xl" 
@@ -79,6 +95,7 @@ export default function ImageUploadSection({
         </div>
       </div>
 
+      {/* 소개 이미지 섹션 */}
       <div className="flex flex-col">
         <label className={LABEL_COMMON_CLASSES}>소개 이미지 등록</label>
         <div className="flex flex-wrap gap-4">
@@ -88,10 +105,11 @@ export default function ImageUploadSection({
           </div>
           <input type="file" ref={introInputRef} onChange={handleIntroChange} accept="image/*" multiple className="hidden" />
 
-          {introImgs.map((url, idx) => (
-            <div key={idx} className={PREVIEW_CONTAINER_CLASSES}>
+          {introImgs.map((img, idx) => (
+            <div key={img.id || idx} className={PREVIEW_CONTAINER_CLASSES}>
+              {/* img.preview를 사용합니다 */}
               <Image 
-                src={url} 
+                src={img.preview} 
                 alt={`Intro ${idx}`} 
                 fill 
                 className="object-cover rounded-2xl" 
