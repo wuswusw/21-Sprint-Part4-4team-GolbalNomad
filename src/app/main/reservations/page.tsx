@@ -9,6 +9,8 @@ import { getMyReservations } from '@/lib/api/reservations';
 import type { ReservationItem } from '@/types/reservations';
 import useInfiniteScroll from '@/hooks/use-infinite-scroll';
 import ReservationCardSkeleton from '@/components/reservations/reservation-card-skeleton';
+import EmptyState from '@/components/common/empty/empty-state';
+import { Button } from '@/components/ui/button';
 
 const STATUS_FILTERS: { label: string; value: BadgeStatus }[] = [
   { label: '예약 신청', value: 'pending' },
@@ -49,8 +51,6 @@ export default function ReservationPage() {
       try {
         setLoading(true);
         setError(null);
-
-        await new Promise((resolve) => setTimeout(resolve, 5000)); //임시
 
         const token = localStorage.getItem('accessToken') || '';
         const result = await getMyReservations(token, {
@@ -132,7 +132,7 @@ export default function ReservationPage() {
         ) : error && items.length === 0 ? (
           <div>{error}</div>
         ) : items.length === 0 ? (
-          <div>내역이 없습니다.</div>
+          <EmptyState title="아직 예약한 체험이 없어요." buttonText="둘러보기" buttonHref="/" />
         ) : (
           <>
             {items.map((item) => (
