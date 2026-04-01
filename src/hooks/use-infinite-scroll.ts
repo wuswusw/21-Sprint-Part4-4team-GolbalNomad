@@ -21,6 +21,7 @@ export default function useInfiniteScroll({
   threshold = 0,
 }: UseInfiniteScrollParams) {
   const fetchingRef = useRef(false);
+  const onIntersectRef = useRef(onIntersect);
 
   useEffect(() => {
     const target = targetRef.current;
@@ -34,7 +35,7 @@ export default function useInfiniteScroll({
 
         fetchingRef.current = true;
         try {
-          await onIntersect();
+          await onIntersectRef.current();
         } finally {
           fetchingRef.current = false;
         }
@@ -48,5 +49,5 @@ export default function useInfiniteScroll({
     return () => {
       observer.disconnect();
     };
-  }, [targetRef, enabled, root, rootMargin, threshold, onIntersect]);
+  }, [targetRef, enabled, root, rootMargin, threshold]);
 }
