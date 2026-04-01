@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Sidemenu from '@/components/common/Sidemenu';
+import Sidemenu from '@/components/common/side-menu';
 import { SIDEBAR_INCLUDE_PATHS, SIDEBAR_EXCLUDE_PATHS } from '@/constants/route';
 
 export default function ConditionalSidebar() {

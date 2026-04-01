@@ -39,3 +39,13 @@ export function buildAuthHeaders(): HeadersInit {
   }
   return headers;
 }
+
+/** multipart 요청용 — `Content-Type`을 두면 boundary가 깨지므로 Authorization만 붙입니다. */
+export function buildAuthHeadersMultipart(): HeadersInit {
+  const headers: Record<string, string> = {};
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("accessToken");
+    if (token) headers.Authorization = `Bearer ${token}`;
+  }
+  return headers;
+}
