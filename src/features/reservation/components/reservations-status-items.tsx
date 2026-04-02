@@ -3,8 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { format } from "date-fns";
 import Dropdown, { type DropdownItem } from "@/components/common/Dropdown";
-import { MOCK_DAILY_SCHEDULES, MOCK_RESERVATIONS } from "@/features/reservation/reservations-status-mock-data";
-import type { ActivityReservationDetail } from "@/features/reservation/types/reservations-status.type";
+import { useMyActivityManagement } from "@/features/reservation/hooks/use-my-activity-management";
+import type { ReservationStatus } from "@/features/reservation/types/reservations-status.type";
 
 type Tab = "신청" | "승인" | "거절";
 
@@ -29,27 +29,26 @@ function ReservationsStatusItems({
   onTabNavigate,
 }: itemProps) {
   const dateKey = format(selectedDate, "yyyy-MM-dd");
-  const scheduleKey = `${activityId}-${dateKey}`;
-
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const isPast = selectedDate < today;
-
-  const dailySchedules = MOCK_DAILY_SCHEDULES[scheduleKey] || [];
+  const { useDailySchedule, useActivityReservations, updateStatus, isUpdating } =
+    useMyActivityManagement(activityId);
+  const { data: dailySchedules = [], isLoading: isDailySchedulesLoading } =
+    useDailySchedule(dateKey);
   const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
-
-  const [reservationsBySchedule, setReservationsBySchedule] = useState<
-    Record<number, ActivityReservationDetail[]>
-  >(() => structuredClone(MOCK_RESERVATIONS));
+  const [pendingAction, setPendingAction] = useState<{
+    reservationId: number;
+    action: "approve" | "reject";
+  } | null>(null);
 
   useEffect(() => {
-    const schedules = MOCK_DAILY_SCHEDULES[scheduleKey] || [];
-    if (schedules.length > 0) {
-      setSelectedScheduleId(schedules[0].scheduleId);
+    if (dailySchedules.length > 0) {
+      setSelectedScheduleId(dailySchedules[0].scheduleId);
     } else {
       setSelectedScheduleId(null);
     }
-  }, [scheduleKey]);
+  }, [dailySchedules]);
 
   const scheduleDropdownItems: DropdownItem[] = dailySchedules.map((s) => ({
     id: s.scheduleId,
@@ -64,29 +63,31 @@ function ReservationsStatusItems({
       }
     : null;
 
-  const allReservations = selectedScheduleId ? reservationsBySchedule[selectedScheduleId] || [] : [];
-
-  const getDisplayStatus = (status: string) => {
-    if (isPast && status !== "declined") return "completed";
-    return status;
-  };
-
-  const statusMap: Record<Tab, string> = {
+  const statusMap: Record<Tab, ReservationStatus> = {
     신청: "pending",
     승인: isPast ? "completed" : "confirmed",
     거절: "declined",
   };
+  const activeStatus = statusMap[activeTab];
+  const { data: reservationsResponse, isLoading: isReservationsLoading } =
+    useActivityReservations(selectedScheduleId ?? 0, activeStatus);
+  const allReservations = useMemo(
+    () => reservationsResponse?.reservations ?? [],
+    [reservationsResponse]
+  );
 
   const tabCounts = useMemo(() => {
-    const counts: Record<Tab, number> = { 신청: 0, 승인: 0, 거절: 0 };
-    for (const r of allReservations) {
-      const d = getDisplayStatus(r.status);
-      if (d === statusMap["신청"]) counts["신청"]++;
-      else if (d === statusMap["승인"]) counts["승인"]++;
-      else if (d === statusMap["거절"]) counts["거절"]++;
-    }
-    return counts;
-  }, [allReservations, isPast]);
+    const selectedSchedule = dailySchedules.find((s) => s.scheduleId === selectedScheduleId);
+    const pending = selectedSchedule?.count.pending ?? 0;
+    const confirmed = selectedSchedule?.count.confirmed ?? 0;
+    const declined = selectedSchedule?.count.declined ?? 0;
+
+    return {
+      신청: pending,
+      승인: isPast ? pending + confirmed : confirmed,
+      거절: declined,
+    };
+  }, [dailySchedules, isPast, selectedScheduleId]);
 
   useEffect(() => {
     onTabCountsChange?.(tabCounts);
@@ -95,9 +96,11 @@ function ReservationsStatusItems({
   const filteredReservations = useMemo(
     () =>
       allReservations.filter(
-        (reservation) => getDisplayStatus(reservation.status) === statusMap[activeTab]
+        (reservation) =>
+          (isPast && reservation.status !== "declined" ? "completed" : reservation.status) ===
+          activeStatus
       ),
-    [allReservations, activeTab, isPast]
+    [allReservations, activeStatus, isPast]
   );
 
   const sortedFilteredReservations = useMemo(() => {
@@ -109,29 +112,37 @@ function ReservationsStatusItems({
     });
   }, [filteredReservations]);
 
-  const handleApprove = (scheduleId: number, reservationId: number) => {
-    setReservationsBySchedule((prev) => {
-      const list = [...(prev[scheduleId] || [])];
-      const next = list.map((reservation) => {
-        if (reservation.id === reservationId) return { ...reservation, status: "confirmed" as const };
-        if (reservation.status === "pending") return { ...reservation, status: "declined" as const };
-        return reservation;
-      });
-      return { ...prev, [scheduleId]: next };
-    });
-    onTabNavigate?.("승인");
+  const handleApprove = (reservationId: number) => {
+    setPendingAction({ reservationId, action: "approve" });
+    updateStatus(
+      { reservationId, status: "confirmed" },
+      {
+        onSuccess: () => onTabNavigate?.("승인"),
+        onSettled: () => setPendingAction(null),
+      }
+    );
   };
 
-  const handleReject = (scheduleId: number, reservationId: number) => {
-    setReservationsBySchedule((prev) => {
-      const list = [...(prev[scheduleId] || [])];
-      const next = list.map((reservation) =>
-        reservation.id === reservationId ? { ...reservation, status: "declined" as const } : reservation
-      );
-      return { ...prev, [scheduleId]: next };
-    });
-    onTabNavigate?.("거절");
+  const handleReject = (reservationId: number) => {
+    setPendingAction({ reservationId, action: "reject" });
+    updateStatus(
+      { reservationId, status: "declined" },
+      {
+        onSuccess: () => onTabNavigate?.("거절"),
+        onSettled: () => setPendingAction(null),
+      }
+    );
   };
+
+  const isLoading = isDailySchedulesLoading || isReservationsLoading;
+
+  if (isLoading) {
+    return (
+      <div className="flex h-40 items-center justify-center text-gray-400 text-14">
+        예약 정보를 불러오는 중입니다.
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full min-h-0 flex-col gap-[30px] tablet:flex-row desktop:flex-col">
@@ -169,21 +180,29 @@ function ReservationsStatusItems({
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  {activeTab === "신청" && selectedScheduleId != null && (
+                  {activeTab === "신청" && (
                     <>
                       <button
                         type="button"
-                        onClick={() => handleApprove(selectedScheduleId, reservation.id)}
-                        className="text-gray-600 ring ring-gray-50 px-[10px] py-[6px] rounded-lg rounded-lg text-14 font-bold hover:bg-primary-600 transition-colors"
+                        disabled={isUpdating}
+                        onClick={() => handleApprove(reservation.id)}
+                        className="text-gray-600 ring ring-gray-50 px-[10px] py-[6px] rounded-lg rounded-lg text-14 font-bold hover:bg-primary-600 transition-colors disabled:opacity-60"
                       >
-                        승인하기
+                        {pendingAction?.reservationId === reservation.id &&
+                        pendingAction.action === "approve"
+                          ? "처리중..."
+                          : "승인하기"}
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleReject(selectedScheduleId, reservation.id)}
-                        className="bg-gray-50 text-gray-600 px-4 py-2 rounded-lg rounded-lg text-14 font-bold hover:bg-primary-50 transition-colors"
+                        disabled={isUpdating}
+                        onClick={() => handleReject(reservation.id)}
+                        className="bg-gray-50 text-gray-600 px-4 py-2 rounded-lg rounded-lg text-14 font-bold hover:bg-primary-50 transition-colors disabled:opacity-60"
                       >
-                        거절하기
+                        {pendingAction?.reservationId === reservation.id &&
+                        pendingAction.action === "reject"
+                          ? "처리중..."
+                          : "거절하기"}
                       </button>
                     </>
                   )}

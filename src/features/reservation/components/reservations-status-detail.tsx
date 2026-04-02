@@ -14,9 +14,15 @@ interface ReservationsStatusDetailProps {
     activityId: number;
     selectedDate: Date | null;
     onClose: () => void;
+    disableOutsideClose?: boolean;
 }
 
-function ReservationsStatusDetail({ activityId, selectedDate, onClose }: ReservationsStatusDetailProps) {
+function ReservationsStatusDetail({
+    activityId,
+    selectedDate,
+    onClose,
+    disableOutsideClose = false,
+}: ReservationsStatusDetailProps) {
     const [activeTab, setActiveTab] = useState<Tab>("신청");
     const [tabCounts, setTabCounts] = useState<Record<Tab, number>>({
         신청: 0,
@@ -26,7 +32,7 @@ function ReservationsStatusDetail({ activityId, selectedDate, onClose }: Reserva
     void activityId;
 
     const detailRef = useRef<HTMLDivElement>(null);
-    useOutsideClick(detailRef, onClose, true);
+    useOutsideClick(detailRef, disableOutsideClose ? () => {} : onClose, true);
 
     return (
         <div ref={detailRef} className="desktop:w-85 w-full px-6 py-[30px] bg-white rounded-3xl flex flex-col gap-[30px] shadow-[0_4px_24px_0_#9CB4CA33] text-gray-950">
