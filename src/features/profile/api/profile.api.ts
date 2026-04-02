@@ -16,6 +16,10 @@ export async function getMyProfile(): Promise<MyProfile> {
     headers: buildAuthHeaders(),
   });
 
+  if (response.status === 401) {
+    throw new Error("UNAUTHORIZED");
+  }
+
   if (!response.ok) {
     await parseError(response);
   }
@@ -31,6 +35,10 @@ export async function updateMyProfile(
     headers: buildAuthHeaders(),
     body: JSON.stringify(payload),
   });
+
+  if (response.status === 401) {
+    throw new Error("UNAUTHORIZED");
+  }
 
   if (!response.ok) {
     await parseError(response);

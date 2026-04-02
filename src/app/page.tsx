@@ -159,7 +159,7 @@ export default function HomePage() {
               onSearch={handleSearch}
             />
 
-            <PopularExperiences />
+            {!keyword && <PopularExperiences />}
 
             <AllExperiences
               category={category}
