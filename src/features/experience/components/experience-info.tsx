@@ -5,8 +5,6 @@ import Link from "next/link";
 import useOpenOutsideClick from "@/hooks/use-click-outside";
 import { useModal } from "@/hooks/use-modal";
 
-const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID ?? "";
-
 interface ExperienceInfoProps {
     className?: string;
     activityId?: number;
@@ -48,9 +46,10 @@ function ExperienceInfo({
     const handleDeleteClick = () => {
         closeDropdown();
         openModal("alert", {
-            description: "체험을 삭제하시겠습니까?",
-            cancelText: "아니요",
-            confirmText: "네",
+            imageSrc: "/assets/images/img-warning.png",
+            description: "체험을 삭제하시겠어요?",
+            confirmText: "삭제하기",
+            cancelText: "아니오",
             onConfirm: () => {
                 // TODO: 체험 삭제 API 연동
             },
