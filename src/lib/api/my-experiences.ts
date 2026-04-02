@@ -1,5 +1,6 @@
 // 내 체험 관리 API
 import type { GetMyExperiencesResponse } from '@/types/my-experiences';
+import type { Activity } from '@/features/activity/types/activity.type';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID;
@@ -59,4 +60,43 @@ export async function deleteMyExperience(token: string, activityId: number): Pro
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData?.message || '체험 삭제에 실패했습니다.');
   }
+}
+
+export type UpdateActivityRequest = {
+  title: string;
+  category: string;
+  description: string;
+  address: string;
+  price: number;
+  schedules: {
+    date: string;
+    startTime: string;
+    endTime: string;
+  }[];
+  bannerImageUrl: string;
+  subImageUrls: string[];
+};
+
+export async function updateActivity(
+  token: string,
+  activityId: number,
+  data: UpdateActivityRequest,
+): Promise<Activity> {
+  if (!token) throw new Error('토큰이 없습니다.');
+
+  const response = await fetch(getApiUrl(`/my-activities/${activityId}`), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.message || '체험 수정에 실패했습니다.');
+  }
+
+  return response.json();
 }

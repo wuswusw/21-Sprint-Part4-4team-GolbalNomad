@@ -12,6 +12,7 @@ export interface CardVerticalProps {
 
 export interface CardReservationProps {
   id: number | string;
+  activityId?: number;
   imageUrl: string;
   status: BadgeStatus;
   title: string;

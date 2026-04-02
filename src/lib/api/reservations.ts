@@ -65,6 +65,30 @@ export async function cancelReservation(token: string, reservationId: number | s
   }
 }
 
+export async function updateReservationSchedule(
+  token: string,
+  reservationId: number | string,
+  data: { scheduleId: number; headCount: number },
+): Promise<void> {
+  if (!token) throw new Error('토큰이 없습니다.');
+
+  const response = await fetch(getApiUrl(`/my-reservations/${reservationId}/application`), {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('예약 변경 실패:', response.status, errorText);
+    throw new Error(`예약 변경 실패: ${response.status}`);
+  }
+}
+
 export async function postReview(
   token: string,
   reservationId: string | number,
