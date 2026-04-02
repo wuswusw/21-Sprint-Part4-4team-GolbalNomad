@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRef, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { getRelativeTime } from "@/lib/utils";
 import type { Notifications as NotificationType } from "../types/notifications.type";
@@ -69,6 +70,9 @@ interface NotificationsProps {
     totalCount: number;
     isLoading: boolean;
     onDelete: (id: number) => void;
+    fetchNextPage: () => void;
+    hasNextPage: boolean;
+    isFetchingNextPage: boolean;
 }
 
 function NotificationItem({
@@ -119,7 +123,32 @@ function Notifications({
     totalCount,
     isLoading,
     onDelete,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
 }: NotificationsProps) {
+    const scrollRootRef = useRef<HTMLDivElement>(null);
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const root = scrollRootRef.current;
+        const sentinel = sentinelRef.current;
+        if (!root || !sentinel) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const hit = entries[0]?.isIntersecting;
+                if (hit && hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                }
+            },
+            { root, rootMargin: "120px", threshold: 0 }
+        );
+
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [fetchNextPage, hasNextPage, isFetchingNextPage, notifications.length]);
+
     return (
         <div
             className={`${LOCATION_STYLE} flex flex-col w-[327px] tablet:w-[368px] shadow-[0px_2px_8px_0px_#78748640] rounded-[10px] pb-2`}
@@ -136,7 +165,10 @@ function Notifications({
                 </button>
             </div>
 
-            <div className="max-h-[400px] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div
+                ref={scrollRootRef}
+                className="max-h-[400px] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
                 {isLoading ? (
                     <div className="flex justify-center py-10">
                         <Loader2 className="animate-spin text-gray-400" size={24} />
@@ -146,17 +178,32 @@ function Notifications({
                         새로운 알림이 없습니다
                     </p>
                 ) : (
-                    notifications.map((notification: NotificationType) => (
-                        <NotificationItem
-                            key={notification.id}
-                            notification={notification}
-                            isNew={
-                                !lastReadAt ||
-                                new Date(notification.createdAt) > new Date(lastReadAt)
-                            }
-                            onDelete={onDelete}
-                        />
-                    ))
+                    <>
+                        {notifications.map((notification: NotificationType) => (
+                            <NotificationItem
+                                key={notification.id}
+                                notification={notification}
+                                isNew={
+                                    !lastReadAt ||
+                                    new Date(notification.createdAt) >
+                                        new Date(lastReadAt)
+                                }
+                                onDelete={onDelete}
+                            />
+                        ))}
+                        <div
+                            ref={sentinelRef}
+                            className="flex min-h-6 justify-center py-2"
+                            aria-hidden
+                        >
+                            {isFetchingNextPage && (
+                                <Loader2
+                                    className="animate-spin text-gray-400"
+                                    size={20}
+                                />
+                            )}
+                        </div>
+                    </>
                 )}
             </div>
         </div>

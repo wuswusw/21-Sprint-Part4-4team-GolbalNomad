@@ -16,8 +16,15 @@ interface GnbNotificationProps {
 function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
   const notificationRef = useRef<HTMLDivElement>(null);
   const [lastReadAt, setLastReadAt] = useState<string | null>(null);
-  const { notifications, totalCount, isLoading, deleteNotification } =
-    useNotifications();
+  const {
+    notifications,
+    totalCount,
+    isLoading,
+    deleteNotification,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useNotifications();
 
   useEffect(() => {
     setLastReadAt(localStorage.getItem(LAST_READ_KEY));
@@ -72,6 +79,9 @@ function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
           totalCount={totalCount}
           isLoading={isLoading}
           onDelete={deleteNotification}
+          fetchNextPage={fetchNextPage}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
         />
       )}
     </div>
