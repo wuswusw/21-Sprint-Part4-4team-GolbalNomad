@@ -85,7 +85,7 @@ function NotificationItem({
 }) {
     return (
         <div
-            className={`relative flex flex-col gap-1 px-5 py-4 ${highlightBackground ? "bg-primary-100" : ""}`}
+            className={`relative flex flex-col border-b border-gray-100 px-5 py-4 ${highlightBackground ? "bg-primary-100" : ""}`}
         >
             <div className="flex items-start gap-2">
                 <p className="flex-1 text-14 leading-relaxed text-gray-950">
@@ -146,7 +146,7 @@ function Notifications({
 
     return (
         <div
-            className={`${LOCATION_STYLE} flex flex-col w-[327px] tablet:w-[368px] shadow-[0px_2px_8px_0px_#78748640] rounded-[10px] pb-2`}
+            className={`${LOCATION_STYLE} flex flex-col w-[327px] tablet:w-62 shadow-[0px_2px_8px_0px_#78748640] rounded-[10px] pb-2`}
         >
             <div className="flex justify-between items-center px-5 py-[18.5px] border-b border-gray-100">
                 <h1 className="text-16 font-bold">알림 {totalCount}개</h1>
