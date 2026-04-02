@@ -57,12 +57,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
           id={id}
           type="search"
           {...props}
-          className={`
-            w-full
-            outline-none
-            transition
-            ${inputClassName}
-          `}
+          className={`w-full outline-none transition search-input ${inputClassName}`}
         />
 
         <button

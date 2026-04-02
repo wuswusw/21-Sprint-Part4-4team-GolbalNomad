@@ -14,11 +14,21 @@ import { startKakaoAuth } from "../lib/kakao";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import type { LoginResponse } from "../types/auth.type";
 
+function clearAuthStorage() {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("nickname");
+  localStorage.removeItem("profileImage");
+  window.dispatchEvent(new Event("auth-change"));
+}
+
 export default function LoginForm() {
   const router = useRouter();
   const { mutate, isPending } = useLogin();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [shouldRedirectToLogin, setShouldRedirectToLogin] = useState(false);
 
   const {
     register,
@@ -29,14 +39,22 @@ export default function LoginForm() {
     mode: "onChange",
   });
 
-  const openModal = (message: string) => {
+  const openModal = (message: string, redirectToLogin = false) => {
     setModalMessage(message);
+    setShouldRedirectToLogin(redirectToLogin);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+
+    if (shouldRedirectToLogin) {
+      clearAuthStorage();
+      router.push("/auth/login");
+    }
+
     setModalMessage("");
+    setShouldRedirectToLogin(false);
   };
 
   const onSubmit = (values: LoginFormValues) => {
@@ -50,6 +68,14 @@ export default function LoginForm() {
         router.push("/");
       },
       onError: (error: Error) => {
+        if (
+          error.message === "UNAUTHORIZED" ||
+          error.message === "Unauthorized"
+        ) {
+          openModal("로그인이 만료되었습니다. 다시 로그인해 주세요.", true);
+          return;
+        }
+
         openModal(error.message);
       },
     });
@@ -63,6 +89,12 @@ export default function LoginForm() {
         error instanceof Error
           ? error.message
           : "카카오 로그인 준비 중 오류가 발생했습니다.";
+
+      if (message === "UNAUTHORIZED" || message === "Unauthorized") {
+        openModal("로그인이 만료되었습니다. 다시 로그인해 주세요.", true);
+        return;
+      }
+
       openModal(message);
     }
   };
@@ -113,7 +145,9 @@ export default function LoginForm() {
             containerClassName="gap-0"
             errorClassName="m-0 mt-[6px] pl-1 text-12 font-medium leading-none text-red-500"
             className={`h-[54px] w-full rounded-2xl bg-white px-5 text-16 font-medium text-gray-950 shadow-[0_6px_6px_rgba(0,0,0,0.02)] placeholder:text-16 placeholder:font-medium placeholder:text-gray-400 ${
-              errors.password ? "border border-red-500" : "border border-gray-100"
+              errors.password
+                ? "border border-red-500"
+                : "border border-gray-100"
             }`}
           />
         </div>

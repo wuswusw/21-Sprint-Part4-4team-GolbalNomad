@@ -1,5 +1,4 @@
 import {
-  AuthErrorResponse,
   LoginRequest,
   LoginResponse,
   OAuthAppRequest,
@@ -30,6 +29,10 @@ function getApiUrl(path: string) {
 }
 
 async function parseError(response: Response): Promise<never> {
+  if (response.status === 401) {
+    throw new Error("UNAUTHORIZED");
+  }
+
   let errorMessage = "요청 처리 중 오류가 발생했습니다.";
 
   try {
@@ -40,7 +43,7 @@ async function parseError(response: Response): Promise<never> {
     console.log("에러 message:", errorData?.message);
     console.log("에러 전체:", JSON.stringify(errorData, null, 2));
 
-    errorMessage = errorData.message || errorMessage;
+    errorMessage = errorData?.message || errorMessage;
   } catch {
     errorMessage = "서버 오류가 발생했습니다.";
   }

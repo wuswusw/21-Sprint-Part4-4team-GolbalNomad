@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import Input from "@/components/ui/input";
 import AlertModal from "@/components/common/modal/alert-modal";
 import { useUpdateProfile } from "../hooks/use-update-profile";
@@ -19,6 +20,7 @@ interface ProfileFormValues {
 }
 
 export default function ProfileForm({ initialData }: ProfileFormProps) {
+  const router = useRouter();
   const { mutateAsync, isPending } = useUpdateProfile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,6 +157,12 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         error instanceof Error
           ? error.message
           : "내 정보 수정에 실패했습니다.";
+
+      if (message === "UNAUTHORIZED" || message === "Unauthorized") {
+        router.push("/login");
+        return;
+      }
+
       openModal(message);
     }
   };
@@ -246,7 +254,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
 
                   if (!password && !value) return true;
                   if (value !== password) {
-                    return "비밀번호가 일치하지않습니다";
+                    return "비밀번호가 일치하지 않습니다.";
                   }
                   return true;
                 },

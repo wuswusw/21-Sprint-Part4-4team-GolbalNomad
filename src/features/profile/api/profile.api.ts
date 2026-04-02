@@ -14,8 +14,18 @@ if (!TEAM_ID) {
   throw new Error("NEXT_PUBLIC_TEAM_ID가 설정되지 않았습니다.");
 }
 
-export async function getMyProfile(): Promise<MyProfile> {
+function getAccessTokenOrThrow() {
   const accessToken = localStorage.getItem("accessToken");
+
+  if (!accessToken) {
+    throw new Error("UNAUTHORIZED");
+  }
+
+  return accessToken;
+}
+
+export async function getMyProfile(): Promise<MyProfile> {
+  const accessToken = getAccessTokenOrThrow();
 
   const response = await fetch(`${BASE_URL}/${TEAM_ID}/users/me`, {
     method: "GET",
@@ -24,6 +34,10 @@ export async function getMyProfile(): Promise<MyProfile> {
       Authorization: `Bearer ${accessToken}`,
     },
   });
+
+  if (response.status === 401) {
+    throw new Error("UNAUTHORIZED");
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
@@ -36,7 +50,7 @@ export async function getMyProfile(): Promise<MyProfile> {
 export async function updateMyProfile(
   payload: UpdateMyProfileRequest
 ): Promise<MyProfile> {
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = getAccessTokenOrThrow();
 
   const response = await fetch(`${BASE_URL}/${TEAM_ID}/users/me`, {
     method: "PATCH",
@@ -46,6 +60,10 @@ export async function updateMyProfile(
     },
     body: JSON.stringify(payload),
   });
+
+  if (response.status === 401) {
+    throw new Error("UNAUTHORIZED");
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
