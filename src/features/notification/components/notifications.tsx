@@ -136,7 +136,7 @@ function Notifications({
                 </button>
             </div>
 
-            <div className="max-h-[400px] overflow-y-auto">
+            <div className="max-h-[400px] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {isLoading ? (
                     <div className="flex justify-center py-10">
                         <Loader2 className="animate-spin text-gray-400" size={24} />
