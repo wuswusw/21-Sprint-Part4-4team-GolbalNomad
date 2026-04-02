@@ -5,6 +5,21 @@ import { Loader2 } from "lucide-react";
 import { getRelativeTime } from "@/lib/utils";
 import type { Notifications as NotificationType } from "../types/notifications.type";
 
+function splitNotificationContent(content: string): {
+    title: string;
+    dateLine: string;
+    body: string;
+} | null {
+    const open = content.indexOf("(");
+    if (open === -1) return null;
+    const close = content.indexOf(")", open);
+    if (close === -1) return null;
+    const title = content.slice(0, open).trim();
+    const dateLine = content.slice(open, close + 1).trim();
+    const body = content.slice(close + 1).trim();
+    return { title, dateLine, body };
+}
+
 function colorNotificationContent(content: string) {
     const colorWords = content.split(/(승인|거절)/);
     return colorWords.map((colorWord, index) => {
@@ -28,6 +43,20 @@ function colorNotificationContent(content: string) {
             </span>
         );
     });
+}
+
+function NotificationContent({ content }: { content: string }) {
+    const entireContent = splitNotificationContent(content);
+    if (!entireContent) {
+        return <div>{colorNotificationContent(content)}</div>;
+    }
+    return (
+        <div className="flex flex-col gap-1">
+            {entireContent.title ? <span>{entireContent.title}</span> : null}
+            <span className="text-gray-600">{entireContent.dateLine}</span>
+            <span>{colorNotificationContent(entireContent.body)}</span>
+        </div>
+    );
 }
 
 const LOCATION_STYLE =
@@ -60,7 +89,7 @@ function NotificationItem({
                     <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary-500" />
                 )}
                 <p className="flex-1 text-14 leading-relaxed text-gray-950">
-                    {colorNotificationContent(notification.content)}
+                    <NotificationContent content={notification.content} />
                 </p>
                 <button
                     type="button"
