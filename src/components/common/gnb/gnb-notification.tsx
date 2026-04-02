@@ -1,21 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useCallback, useState, useEffect } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import useClickOutside from "@/hooks/use-click-outside";
 import Notifications from "@/features/notification/components/notifications";
 import { useNotifications } from "@/features/notification/hooks/use-notifications";
-
-const LAST_READ_KEY = "lastNotificationReadAt";
+import { isNotificationJustNow } from "@/lib/utils";
 
 interface GnbNotificationProps {
   isOpen: boolean;
   onToggle: () => void;
 }
 
+const JUST_NOW_UI_TICK_MS = 10_000;
+
 function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
   const notificationRef = useRef<HTMLDivElement>(null);
-  const [lastReadAt, setLastReadAt] = useState<string | null>(null);
+  const [, setJustNowTick] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(
+      () => setJustNowTick((n) => n + 1),
+      JUST_NOW_UI_TICK_MS
+    );
+    return () => window.clearInterval(id);
+  }, []);
+
   const {
     notifications,
     totalCount,
@@ -24,11 +34,8 @@ function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useNotifications();
-
-  useEffect(() => {
-    setLastReadAt(localStorage.getItem(LAST_READ_KEY));
-  }, []);
 
   const close = useCallback(() => {
     if (isOpen) onToggle();
@@ -36,21 +43,16 @@ function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
 
   const handleToggle = useCallback(() => {
     if (!isOpen) {
-      const now = new Date().toISOString();
-      localStorage.setItem(LAST_READ_KEY, now);
-      setLastReadAt(now);
+      void refetch();
     }
     onToggle();
-  }, [isOpen, onToggle]);
+  }, [isOpen, onToggle, refetch]);
 
   useClickOutside(notificationRef, close, isOpen);
 
-  const hasUnread =
-    notifications.length > 0 &&
-    (!lastReadAt ||
-      notifications.some(
-        (notification) => new Date(notification.createdAt) > new Date(lastReadAt)
-      ));
+  const showRedDot = notifications.some((n) =>
+    isNotificationJustNow(n.createdAt)
+  );
 
   return (
     <div className="relative" ref={notificationRef}>
@@ -62,7 +64,7 @@ function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
         onClick={handleToggle}
         className="w-[24px] h-[24px] cursor-pointer"
       />
-      {hasUnread && (
+      {showRedDot && (
         <Image
           src="/assets/icons/statusDot.svg"
           alt="stateDot"
@@ -74,7 +76,6 @@ function GnbNotification({ isOpen, onToggle }: GnbNotificationProps) {
       {isOpen && (
         <Notifications
           onClose={close}
-          lastReadAt={lastReadAt}
           notifications={notifications}
           totalCount={totalCount}
           isLoading={isLoading}

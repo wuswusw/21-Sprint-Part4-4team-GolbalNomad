@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { getRelativeTime } from "@/lib/utils";
+import { getRelativeTime, isNotificationJustNow } from "@/lib/utils";
 import type { Notifications as NotificationType } from "../types/notifications.type";
 
 function splitNotificationContent(content: string): {
@@ -65,7 +65,6 @@ const LOCATION_STYLE =
 
 interface NotificationsProps {
     onClose: () => void;
-    lastReadAt: string | null;
     notifications: NotificationType[];
     totalCount: number;
     isLoading: boolean;
@@ -77,21 +76,18 @@ interface NotificationsProps {
 
 function NotificationItem({
     notification,
-    isNew,
+    highlightBackground,
     onDelete,
 }: {
     notification: NotificationType;
-    isNew: boolean;
+    highlightBackground: boolean;
     onDelete: (id: number) => void;
 }) {
     return (
         <div
-            className={`relative flex flex-col gap-1 px-5 py-4 ${isNew ? "bg-primary-100" : ""}`}
+            className={`relative flex flex-col gap-1 px-5 py-4 ${highlightBackground ? "bg-primary-100" : ""}`}
         >
             <div className="flex items-start gap-2">
-                {isNew && (
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary-500" />
-                )}
                 <p className="flex-1 text-14 leading-relaxed text-gray-950">
                     <NotificationContent content={notification.content} />
                 </p>
@@ -118,7 +114,6 @@ function NotificationItem({
 
 function Notifications({
     onClose,
-    lastReadAt,
     notifications,
     totalCount,
     isLoading,
@@ -183,11 +178,9 @@ function Notifications({
                             <NotificationItem
                                 key={notification.id}
                                 notification={notification}
-                                isNew={
-                                    !lastReadAt ||
-                                    new Date(notification.createdAt) >
-                                        new Date(lastReadAt)
-                                }
+                                highlightBackground={isNotificationJustNow(
+                                    notification.createdAt
+                                )}
                                 onDelete={onDelete}
                             />
                         ))}

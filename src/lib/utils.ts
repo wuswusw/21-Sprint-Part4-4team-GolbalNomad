@@ -6,6 +6,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function isNotificationJustNow(dateString: string): boolean {
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return false;
+  const minutes = differenceInMinutes(new Date(), date);
+  return minutes < 1;
+}
+
 export function getRelativeTime(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();
