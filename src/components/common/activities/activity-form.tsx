@@ -300,7 +300,8 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
         </div>
 
         <ScheduleSection schedules={state.schedules} removeSchedule={actions.removeSchedule} setSchedules={actions.setSchedules} />
-        <ImageUploadSection bannerImg={state.bannerImg} introImgs={state.introImgs} bannerInputRef={refs.bannerInputRef} introInputRef={refs.introInputRef} handleBannerChange={actions.handleBannerChange} handleIntroChange={actions.handleIntroChange} setBannerImg={actions.setBannerImg} setIntroImgs={actions.setIntroImgs} />
+        <ImageUploadSection bannerImg={state.bannerImg} introImgs={state.introImgs} bannerInputRef={refs.bannerInputRef} introInputRef={refs.introInputRef} handleBannerChange={actions.handleBannerChange} handleIntroChange={actions.handleIntroChange} setBannerImg={actions.setBannerImg as any} 
+  setIntroImgs={actions.setIntroImgs as any}/>
 
         <div className="mt-10 flex justify-center">
           <Button 
