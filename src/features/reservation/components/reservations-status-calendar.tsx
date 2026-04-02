@@ -133,7 +133,7 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
     const getDetailPosition = () => {
       const date = day.date;
       const dayOfWeek = date.getDay(); 
-      const isRightSide = dayOfWeek >= 4; // 목, 금, 토요일이면 왼쪽으로 띄우기
+      const isRightSide = dayOfWeek >= 4;
       
 
       const isBottomHalf = date.getDate() > 20; 
@@ -203,7 +203,7 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
   };
 
   return (
-    <div ref={containerRef} className="relative h-[779px] shadow-[0_4px_24px_0_#9CB4CA33] rounded-3xl py-6 flex flex-col">
+    <div ref={containerRef} className="relative h-[779px] shadow-none tablet:shadow-[0_4px_24px_0_#9CB4CA33] shadow-[0_4px_12px_0_#9CB4CA33] rounded-3xl py-6 flex flex-col">
       <DayPicker
         mode="single"
         month={currentMonth}
