@@ -23,6 +23,31 @@ if (!TEAM_ID) {
   throw new Error("NEXT_PUBLIC_TEAM_ID가 설정되지 않았습니다.");
 }
 
+export interface ActivityDetail {
+  id: number;
+  userId: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  address: string;
+  bannerImageUrl: string;
+  rating: number;
+  reviewCount: number;
+  createdAt: string;
+  updatedAt: string;
+  subImages: {
+    id: number;
+    imageUrl: string;
+  }[];
+  schedules: {
+    id: number;
+    date: string;
+    startTime: string;
+    endTime: string;
+  }[];
+}
+
 export interface CreateActivityRequest {
   title: string;
   category: string;
@@ -153,7 +178,7 @@ export async function updateActivity(
 ): Promise<unknown> {
   const token = getAccessToken();
 
-  const response = await fetch(`${BASE_URL}/${TEAM_ID}/activities/${activityId}`, {
+  const response = await fetch(`${BASE_URL}/${TEAM_ID}/my-activities/${activityId}`, {
     method: "PATCH", 
     headers: {
       "Content-Type": "application/json",
@@ -169,3 +194,18 @@ export async function updateActivity(
 
   return response.json();
 }
+
+export async function getActivity(activityId: number): Promise<ActivityDetail> {
+  const response = await fetch(`${BASE_URL}/${TEAM_ID}/activities/${activityId}`, {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.message || "체험 상세 정보를 불러오는데 실패했습니다.");
+  }
+
+  return response.json();
+}
+

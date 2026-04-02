@@ -50,13 +50,13 @@ export default function PageHeader() {
   return (
     <div className="flex w-full justify-between gap-4 px-[24px]">
       <div className="flex flex-1 flex-col items-start gap-[10px]">
-        <h3 className="text-18 font-bold">{config.title}</h3>
-        {config.description && (
-          <p className="text-14 font-medium text-gray-500">{config.description}</p>
+        <h3 className="text-18 font-bold">{config?.title}</h3>
+        {config?.description && (
+          <p className="text-14 font-medium text-gray-500">{config?.description}</p>
         )}
       </div>
 
-      {config.buttonText && config.buttonHref && (
+      {config?.buttonText && config.buttonHref && (
         <button
           className="text-16 flex-shrink-0 rounded-xl bg-[var(--color-primary-500)] px-4 py-2.5 font-bold text-white"
           onClick={() => router.push(config.buttonHref!)}
