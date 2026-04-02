@@ -5,6 +5,31 @@ import { Loader2 } from "lucide-react";
 import { getRelativeTime } from "@/lib/utils";
 import type { Notifications as NotificationType } from "../types/notifications.type";
 
+function colorNotificationContent(content: string) {
+    const colorWords = content.split(/(승인|거절)/);
+    return colorWords.map((colorWord, index) => {
+        if (colorWord === "승인") {
+            return (
+                <span key={index} className="text-primary-500">
+                    {colorWord}
+                </span>
+            );
+        }
+        if (colorWord === "거절") {
+            return (
+                <span key={index} className="text-red-500">
+                    {colorWord}
+                </span>
+            );
+        }
+        return (
+            <span key={index}>
+                {colorWord}
+            </span>
+        );
+    });
+}
+
 const LOCATION_STYLE =
     "fixed left-1/2 -translate-x-1/2 tablet:translate-x-0 tablet:left-auto top-13 tablet:absolute tablet:top-9 tablet:right-0 z-50 bg-white";
 
@@ -34,7 +59,9 @@ function NotificationItem({
                 {isNew && (
                     <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary-500" />
                 )}
-                <p className="flex-1 text-14 leading-relaxed">{notification.content}</p>
+                <p className="flex-1 text-14 leading-relaxed text-gray-950">
+                    {colorNotificationContent(notification.content)}
+                </p>
                 <button
                     type="button"
                     onClick={() => onDelete(notification.id)}
