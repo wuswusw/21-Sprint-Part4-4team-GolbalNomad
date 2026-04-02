@@ -25,7 +25,8 @@ function ExperienceDetailPage() {
   const experienceId = Number(params?.experienceId);
   const isValidId = params?.experienceId && !isNaN(experienceId);
 
-  const { data: currentUser } = useCurrentUser();
+  const { data: currentUser, isPending: isCurrentUserPending } =
+    useCurrentUser();
   const initialCalendar = toCalendarYearMonthStrings(new Date());
   const [currentYear, setCurrentYear] = useState(initialCalendar.year);
   const [currentMonth, setCurrentMonth] = useState(initialCalendar.month);
@@ -58,8 +59,20 @@ function ExperienceDetailPage() {
   const experienceDetail = detailData;
   const availableDays = schedules ?? [];
 
+  const token =
+    typeof window !== "undefined"
+      ? localStorage.getItem("accessToken")
+      : null;
+
+  // 상세는 먼저 끝나도 /users/me는 늦게 올 수 있음 → 그동안 currentUser 없어 isOwner가 false로 떨어져 예약 카드가 잠깐(또는 계속) 보이는 문제 방지
+  const ownershipReady = !token || !isCurrentUserPending;
+
   const isOwner =
-    !!currentUser && experienceDetail != null && experienceDetail.userId === currentUser.id;
+    !!currentUser &&
+    experienceDetail != null &&
+    Number(experienceDetail.userId) === Number(currentUser.id);
+
+  const showReservationCard = ownershipReady && !isOwner;
 
   const isInitialLoad =
     isExperienceDetailLoading || isReviewsLoading;
@@ -105,7 +118,7 @@ function ExperienceDetailPage() {
     <div className="w-full min-w-0">
       <div className="mx-auto w-full min-w-0 desktop:mt-22 tablet:mt-[34px] mt-[30px] desktop:mb-45 mb-[75px] mb-[30px] flex justify-center pb-[168px] desktop:pb-0">
         <div
-          className={`w-full min-w-0 px-10 tablet:px-0 grid grid-cols-1 gap-10 ${!isOwner ? "desktop:grid-cols-[minmax(0,1fr)_410px]" : ""}`}
+          className={`w-full min-w-0 px-10 tablet:px-0 grid grid-cols-1 gap-10 ${showReservationCard ? "desktop:grid-cols-[minmax(0,1fr)_410px]" : ""}`}
         >
           <section className="w-full min-w-0 flex flex-col gap-6 tablet:gap-[30px] desktop:gap-10 text-gray-950">
             <ImageGallery
@@ -113,7 +126,9 @@ function ExperienceDetailPage() {
               subImages={experienceDetail.subImages}
             />
             <ExperienceInfo
-              className={isOwner ? "" : "desktop:hidden"}
+              className={
+                isOwner || (token && isCurrentUserPending) ? "" : "desktop:hidden"
+              }
               activityId={experienceDetail.id ?? experienceId}
               title={experienceDetail.title}
               category={experienceDetail.category}
@@ -128,7 +143,7 @@ function ExperienceDetailPage() {
             <ExperienceDesc description={experienceDetail.description} />
             <hr className="w-full border-[#E0E0E5]" />
             <Map address={experienceDetail.address} />
-            {!isOwner && (
+            {showReservationCard && (
               <div className="min-w-0 desktop:hidden">
                 <ReservationCard
                   activityId={experienceId}
@@ -148,7 +163,7 @@ function ExperienceDetailPage() {
               isFetchingNextPage={isFetchingNextPage}
             />
           </section>
-          {!isOwner && (
+          {showReservationCard && (
             <section className="hidden w-full min-w-0 desktop:block text-gray-950">
               <ExperienceInfo
                 activityId={experienceDetail.id ?? experienceId}
