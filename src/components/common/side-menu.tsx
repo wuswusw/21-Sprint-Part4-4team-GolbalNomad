@@ -8,6 +8,7 @@ import AlertModal from "@/components/common/modal/alert-modal";
 import { SIDE_MENU_ITEMS } from "@/constants/side-menu";
 import { useMyProfile } from "@/features/profile/hooks/use-my-profile";
 import { useUpdateProfileImage } from "@/features/profile/hooks/use-update-profile-image";
+import { validateProfileImageFile } from "@/features/profile/utils/validate-profile-image-file";
 
 const DEFAULT_PROFILE_IMG = "/assets/images/default profile.png";
 
@@ -28,11 +29,13 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
             ? profile.profileImageUrl
             : null;
     const resolvedServerUrl =
-        externalImg || profileImageUrl || DEFAULT_PROFILE_IMG;
+        profileImageUrl ?? externalImg ?? DEFAULT_PROFILE_IMG;
 
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    const [errorModalMessage, setErrorModalMessage] = useState<string | null>(null);
 
     const closeSuccessModal = () => setIsSuccessModalOpen(false);
+    const closeErrorModal = () => setErrorModalMessage(null);
 
     const handleEditProfileIconClick = () => {
         if (isPending) return;
@@ -43,6 +46,13 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
         const input = e.target;
         if (!imgFile) return;
 
+        const validationError = validateProfileImageFile(imgFile);
+        if (validationError) {
+            setErrorModalMessage(validationError);
+            input.value = "";
+            return;
+        }
+
         try {
             await uploadProfileImage(imgFile);
             onImageChange?.(imgFile);
@@ -50,7 +60,7 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
         } catch (err) {
             const message =
                 err instanceof Error ? err.message : "프로필 이미지를 변경할 수 없습니다.";
-            alert(message);
+            setErrorModalMessage(message);
         } finally {
             input.value = "";
         }
@@ -74,7 +84,13 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
                         className="rounded-full w-[70px] h-[70px] desktop:w-[120px] desktop:h-[120px]"
                     />
                     <Image src="/assets/icons/editButton.svg" alt="editProfileIcon" width={24} height={24} onClick={handleEditProfileIconClick} className={`absolute bottom-1 right-0 w-6 h-6 desktop:w-[30px] desktop:h-[30px] ${isPending ? "cursor-wait opacity-60 pointer-events-none" : "cursor-pointer"}`} />
-                    <input type="file" ref={imgInputRef} onChange={handleProfileImgChange} accept="image/*" className="hidden" />
+                    <input
+                        type="file"
+                        ref={imgInputRef}
+                        onChange={handleProfileImgChange}
+                        accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
+                        className="hidden"
+                    />
                 </div>
                 <ul className="w-full flex flex-col desktop:gap-[14px] gap-2 justify-center text-16 text-gray-600">
                     {SIDE_MENU_ITEMS.map((list) => {
@@ -96,6 +112,15 @@ function Sidemenu({ profileImg: externalImg, onImageChange }: SidemenuProps) {
                     confirmText="확인"
                     onClose={closeSuccessModal}
                     onConfirm={closeSuccessModal}
+                    size="sm"
+                />
+            )}
+            {errorModalMessage && (
+                <AlertModal
+                    description={errorModalMessage}
+                    confirmText="확인"
+                    onClose={closeErrorModal}
+                    onConfirm={closeErrorModal}
                     size="sm"
                 />
             )}
