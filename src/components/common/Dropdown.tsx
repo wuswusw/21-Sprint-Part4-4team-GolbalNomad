@@ -58,7 +58,7 @@ export default function Dropdown({
 
       {isOpen && (
         <div className="absolute left-0 z-50 mt-2 w-full min-w-[120px] overflow-hidden rounded-lg bg-white ring-1 ring-black ring-opacity-5">
-          <div className="py-1">
+          <div className="py-1 max-h-[240px] overflow-y-auto custom-scrollbar">
             {items.map((item) => (
               <button
                 key={item.id}
