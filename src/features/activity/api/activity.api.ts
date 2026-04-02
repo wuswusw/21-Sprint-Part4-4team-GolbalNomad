@@ -3,6 +3,8 @@ import type {
   GetActivitiesResponse,
 } from "../types/activity.type";
 
+
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID;
 
@@ -34,6 +36,23 @@ export interface CreateActivityRequest {
   }[];
   bannerImageUrl: string;
   subImageUrls: string[];
+}
+
+export interface UpdateActivityRequest {
+  title: string;
+  category: string;
+  description: string;
+  address: string;
+  price: number;
+  bannerImageUrl: string;
+  subImageUrlsToAdd: string[]; 
+  subImageIdsToRemove: number[]; 
+  schedulesToAdd: {
+    date: string;
+    startTime: string;
+    endTime: string;
+  }[]; 
+  scheduleIdsToRemove: number[];
 }
 
 export async function getActivities(
@@ -85,7 +104,6 @@ export async function getActivities(
   return response.json();
 }
 
-// 2. 이미지 업로드 API (인증 헤더 추가)
 export async function uploadActivityImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("image", file); 
@@ -109,7 +127,6 @@ export async function uploadActivityImage(file: File): Promise<string> {
   return data.activityImageUrl; 
 }
 
-// 3. 체험 등록 API (인증 헤더 추가)
 export async function createActivity(activityData: CreateActivityRequest): Promise<unknown> {
   const token = getAccessToken();
 
@@ -125,6 +142,29 @@ export async function createActivity(activityData: CreateActivityRequest): Promi
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
     throw new Error(errorData?.message || "체험 등록에 실패했습니다.");
+  }
+
+  return response.json();
+}
+
+export async function updateActivity(
+  activityId: number, 
+  activityData: UpdateActivityRequest
+): Promise<unknown> {
+  const token = getAccessToken();
+
+  const response = await fetch(`${BASE_URL}/${TEAM_ID}/activities/${activityId}`, {
+    method: "PATCH", 
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+    body: JSON.stringify(activityData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.message || "체험 수정에 실패했습니다.");
   }
 
   return response.json();
