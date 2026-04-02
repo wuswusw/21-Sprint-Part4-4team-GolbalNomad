@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { DayPicker, useDayPicker, type MonthCaptionProps } from "react-day-picker";
 import { format } from "date-fns";
 import ReservationsStatusDetail from "@/features/reservation/components/reservations-status-detail";
 import { useModal } from "@/hooks/use-modal";
-
-import { MOCK_MONTHLY_SCHEDULES } from "@/features/reservation/reservations-status-mock-data"; //추후 삭제 예정
+import { useMyActivityManagement } from "@/features/reservation/hooks/use-my-activity-management";
 
 interface Props {
   activityId: number;
@@ -48,6 +47,14 @@ function CustomMonthCaption({ calendarMonth }: MonthCaptionProps) {
 function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }: Props ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModal();
+  const [currentMonth, setCurrentMonth] = useState<Date>(selectedDate ?? new Date());
+  const { useMonthlySchedule } = useMyActivityManagement(activityId);
+  const year = format(currentMonth, "yyyy");
+  const month = format(currentMonth, "MM");
+  const { data: monthlySchedule = [] } = useMonthlySchedule(year, month);
+  const monthlyReservationsByDate = useMemo(() => {
+    return Object.fromEntries(monthlySchedule.map((item) => [item.date, item.reservations]));
+  }, [monthlySchedule]);
 
   const isDesktop = () =>
     typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
@@ -60,6 +67,7 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
         <ReservationsStatusDetail
           activityId={activityId}
           selectedDate={date}
+          disableOutsideClose
           onClose={() => {
             closeModal();
             onDateChange(null);
@@ -77,6 +85,11 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
   }, [selectedDate, activityId]);
 
   useEffect(() => {
+    if (!selectedDate) return;
+    setCurrentMonth(selectedDate);
+  }, [selectedDate]);
+
+  useEffect(() => {
     if (typeof window === "undefined") return;
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
 
@@ -92,14 +105,9 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
     };
   }, [closeModal, onDateChange]);
 
-  const CustomDayButton = ({ day, modifiers, onClick, ...props }: React.ComponentProps<"button"> & { day: { date: Date }; modifiers: Record<string, boolean> }) => {
+  const CustomDayButton = ({ day, ...props }: React.ComponentProps<"button"> & { day: { date: Date }; modifiers: Record<string, boolean> }) => {
     const dateKey = format(day.date, "yyyy-MM-dd");
-    const monthKey = format(day.date, "yyyy-MM");
-    const mockKey = `${activityId}-${monthKey}`;
-    
-    const monthlySchedule = MOCK_MONTHLY_SCHEDULES[mockKey] || [];
-    const dailySchedule = monthlySchedule?.find((schedule) => schedule.date === dateKey);
-    const rawReservations = dailySchedule?.reservations ?? { completed: 0, confirmed: 0, pending: 0 };
+    const rawReservations = monthlyReservationsByDate[dateKey] ?? { completed: 0, confirmed: 0, pending: 0 };
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -124,7 +132,7 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
 
     const getDetailPosition = () => {
       const date = day.date;
-      const dayOfWeek = date.getDay(); // 0: 일, 1: 월, ..., 6: 토
+      const dayOfWeek = date.getDay(); 
       const isRightSide = dayOfWeek >= 4; // 목, 금, 토요일이면 왼쪽으로 띄우기
       
 
@@ -132,18 +140,16 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
   
       let positionClass = "absolute z-50 ";
   
-      // 가로 위치 결정
       if (isRightSide) {
-        positionClass += "right-full mr-2 "; // 오른쪽에 있으면 왼쪽으로
+        positionClass += "right-full mr-2 ";
       } else {
-        positionClass += "left-full ml-2 ";  // 왼쪽에 있으면 오른쪽으로
+        positionClass += "left-full ml-2 ";
       }
   
-      // 세로 위치 결정 (하단 날짜 클릭 시 위로 띄우기)
       if (isBottomHalf) {
-        positionClass += "bottom-0 "; // 아래쪽 날짜면 위로 솟구치게
+        positionClass += "bottom-0 ";
       } else {
-        positionClass += "top-0 ";    // 위쪽 날짜면 아래로 떨어지게
+        positionClass += "top-0 ";
       }
   
       return positionClass;
@@ -155,7 +161,6 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
         {...props}
         onClick={() => {
           onDateChange(day.date);
-          if (!isDesktop()) openDetailSheet(day.date);
         }}
         className={`w-full h-full relative flex flex-col items-center pt-[18px] px-2 text-16 transition-colors cursor-pointer
           `}
@@ -201,6 +206,8 @@ function ReservationsStatusCalendar( { activityId, selectedDate, onDateChange }:
     <div ref={containerRef} className="relative h-[779px] shadow-[0_4px_24px_0_#9CB4CA33] rounded-3xl py-6 flex flex-col">
       <DayPicker
         mode="single"
+        month={currentMonth}
+        onMonthChange={setCurrentMonth}
         selected={selectedDate ?? undefined}
         onSelect={(date) => date && onDateChange(date)}
         showOutsideDays
