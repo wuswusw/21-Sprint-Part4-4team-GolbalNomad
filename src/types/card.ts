@@ -16,9 +16,14 @@ export interface CardReservationProps {
   status: BadgeStatus;
   title: string;
   scheduledDate: string;
+  date: string;
+  startTime: string;
+  endTime: string;
   price: number;
   people: number;
   onCancelSuccess?: () => void;
+  onReviewSuccess?: () => void;
+  reviewSubmitted?: boolean;
 }
 
 export interface CardExperiencesProps {

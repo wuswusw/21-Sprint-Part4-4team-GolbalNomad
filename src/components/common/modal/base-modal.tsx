@@ -4,8 +4,8 @@
 import { ReactNode } from 'react';
 
 const sizeClass = {
-  sm: 'max-w-[385px]',
-  md: 'max-w-[400px]',
+  sm: 'tablet:max-w-[385px] max-w-[320px]',
+  md: 'tablet:max-w-[400px] max-w-[320px]',
   lg: 'max-w-[560px]',
 };
 
@@ -45,9 +45,9 @@ export default function BaseModal({
         onClick={(e) => e.stopPropagation()}
       >
         {onClose && (
-          <div className="absolute top-6 right-7.5">
-            <button onClick={onClose} className="text-gray-700 hover:opacity-70" aria-label="닫기">
-              ✕
+          <div className="absolute top-6 right-[30px] flex items-center justify-center">
+            <button onClick={onClose} className="h-6 w-6 text-gray-700" aria-label="닫기">
+              <span className="absolute top-1/2 left-1/2 h-[2px] w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-black before:absolute before:top-0 before:left-0 before:h-full before:w-full before:bg-black before:content-[''] after:absolute after:top-0 after:left-0 after:h-full after:w-full after:rotate-90 after:bg-black after:content-['']"></span>
             </button>
           </div>
         )}

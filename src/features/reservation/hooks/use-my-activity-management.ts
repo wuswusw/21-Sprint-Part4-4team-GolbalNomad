@@ -1,9 +1,13 @@
+"use client";
+
 import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
 import * as reservationsStatusApi from "../api/reservations-status.api";
 import {ReservationStatus} from "../types/reservations-status.type";
+import { useModal } from "@/hooks/use-modal";
 
 export function useMyActivityManagement(activityId: number) {
     const queryClient = useQueryClient();
+    const { openModal } = useModal();
 
     const useMonthlySchedule = (year: string, month: string) =>
         useQuery({
@@ -31,10 +35,12 @@ export function useMyActivityManagement(activityId: number) {
         reservationsStatusApi.updateReservationStatus({ activityId, reservationId, status }),
         onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["myActivities", activityId] });
-        alert("상태가 성공적으로 변경되었습니다.");
         },
         onError: (error: Error) => {
-        alert(error.message);
+        openModal("alert", {
+            description: error.message,
+            confirmText: "확인",
+        });
         },
     });
 
