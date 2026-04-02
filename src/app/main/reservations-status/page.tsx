@@ -8,35 +8,28 @@ import Dropdown, { type DropdownItem } from "@/components/common/Dropdown";
 import { useMyActivities } from "@/features/reservation/hooks/use-my-activities";
 import ReservationsStatusSkeleton from "@/features/reservation/components/reservations-status-skeleton";
 
-import { MOCK_MY_ACTIVITIES } from "@/features/reservation/reservations-status-mock-data"; //추후 삭제 예정
-
 function ReservationsStatusPage() {
     const router = useRouter();
-    const [isAuthChecked, setIsAuthChecked] = useState(false);
+    const [isAuthChecked] = useState(() => {
+        if (typeof window === "undefined") return false;
+        return !!localStorage.getItem("accessToken");
+    });
 
     useEffect(() => {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
+        if (!isAuthChecked) {
             router.replace("/auth/login");
-        } else {
-            setIsAuthChecked(true);
         }
-    }, [router]);
+    }, [isAuthChecked, router]);
 
     const {data, isLoading} = useMyActivities(100);
-    const activities = MOCK_MY_ACTIVITIES; //추후 데이터 생기면 data?.pages.flatMap((page) => page.activities) ?? []; 로 변경
+    const activities = data?.pages.flatMap((page) => page.activities) ?? [];
     const dropdownItems: DropdownItem[] = activities.map((activity) => ({
         id: activity.id.toString(),
         label:activity.title,
     }))
     const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null)
     const [selectedDate, setSelectedDate] = useState<Date | null>(null)
-
-    useEffect(() => {
-        if(dropdownItems.length > 0 && !selectedItem) {
-            setSelectedItem(dropdownItems[0])
-        }
-    }, [dropdownItems, selectedItem])
+    const currentSelectedItem = selectedItem ?? dropdownItems[0] ?? null;
 
     if (!isAuthChecked || isLoading) {
         return <ReservationsStatusSkeleton />;
@@ -54,15 +47,15 @@ function ReservationsStatusPage() {
                             <div className="tablet:px-0 px-6 mb-[30px]">
                                 <Dropdown
                                     items={dropdownItems}
-                                    selectedItem={selectedItem || {id: "", label: "체험을 선택해 주세요"}}
+                                    selectedItem={currentSelectedItem || {id: "", label: "체험을 선택해 주세요"}}
                                     onSelect={setSelectedItem}
                                 />
                             </div>
         
-                            {selectedItem && (
+                            {currentSelectedItem && (
                                 <div>
                                     <ReservationsStatusCalendar
-                                        activityId={Number(selectedItem.id)}
+                                        activityId={Number(currentSelectedItem.id)}
                                         selectedDate={selectedDate}
                                         onDateChange={setSelectedDate}
                                     />                                </div>

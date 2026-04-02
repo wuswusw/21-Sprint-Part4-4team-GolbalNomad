@@ -3,21 +3,25 @@
 
 import CardExperiences from '@/components/common/card/card-experiences';
 import PageHeader from '@/components/common/PageHeader';
-import { useCallback, useEffect, useState } from 'react';
-import {
-  deleteMyExperience,
-  getMyExperiences,
-  type MyActivityItem,
-} from '@/lib/api/my-experiences';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { deleteMyExperience, getMyExperiences } from '@/lib/api/my-experiences';
+import type { MyActivityItem } from '@/types/my-experiences';
 import { useModal } from '@/hooks/use-modal';
+import useInfiniteScroll from '@/hooks/use-infinite-scroll';
+import ReservationCardSkeleton from '@/components/reservations/reservation-card-skeleton';
+import EmptyState from '@/components/common/empty/empty-state';
 
 export default function MyExperiencesPage() {
+  const router = useRouter();
   const { openModal } = useModal();
   const [items, setItems] = useState<MyActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cursorId, setCursorId] = useState<number | null>(null);
   const [hasMore, setHasMore] = useState(false);
+
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const fetchExperiences = useCallback(
     async ({
@@ -55,11 +59,21 @@ export default function MyExperiencesPage() {
         setItems((prev) => prev.filter((item) => item.id !== activityId));
       } catch (err) {
         const message = err instanceof Error ? err.message : '체험 삭제에 실패했습니다.';
+        if (message === 'Unauthorized') {
+          router.push('/auth/login');
+          return;
+        }
         openModal('alert', { description: message, confirmText: '확인' });
       }
     },
     [openModal],
   );
+
+  useInfiniteScroll({
+    targetRef: sentinelRef,
+    enabled: hasMore && !loading,
+    onIntersect: () => fetchExperiences({ append: true, nextCursorId: cursorId }),
+  });
 
   useEffect(() => {
     fetchExperiences();
@@ -73,13 +87,17 @@ export default function MyExperiencesPage() {
       </div>
 
       {/* 체험관리 리스트 */}
-      <div className="flex w-full flex-col gap-6">
+      <div className="desktop:gap-6 flex w-full flex-col gap-[30px] px-6">
         {loading && items.length === 0 ? (
-          <div>불러오는 중...</div>
+          <>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <ReservationCardSkeleton key={index} />
+            ))}
+          </>
         ) : error && items.length === 0 ? (
           <div>{error}</div>
         ) : items.length === 0 ? (
-          <div>내역이 없습니다.</div>
+          <EmptyState title="아직 등록한 체험이 없어요" />
         ) : (
           <>
             {items.map((item) => (
@@ -98,14 +116,13 @@ export default function MyExperiencesPage() {
 
         {error && items.length > 0 && <div>{error}</div>}
 
-        {hasMore && (
-          <button
-            onClick={() => fetchExperiences({ append: true, nextCursorId: cursorId })}
-            disabled={loading}
-            className="rounded-lg border border-[var(--color-primary-500)] px-4 py-2.5 text-[var(--color-primary-500)] transition-colors hover:bg-[var(--color-primary-500)] hover:text-white disabled:opacity-50"
-          >
-            더 보기
-          </button>
+        {hasMore && <div ref={sentinelRef} />}
+        {loading && items.length > 0 && (
+          <>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <ReservationCardSkeleton key={index} />
+            ))}
+          </>
         )}
       </div>
     </>

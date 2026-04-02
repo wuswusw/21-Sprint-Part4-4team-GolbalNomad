@@ -12,3 +12,7 @@ export interface UpdateMyProfileRequest {
   profileImageUrl?: string;
   newPassword?: string;
 }
+
+export interface UpdateProfileImageResponse {
+  profileImageUrl: string;
+}

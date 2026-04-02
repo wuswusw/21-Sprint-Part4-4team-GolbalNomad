@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { AlertModalProps } from "@/types/modal";
+import { AlertModalProps } from '@/types/modal';
+import Image from 'next/image';
+import Button from '@/components/common/Button';
 
 const sizeClass = {
-  sm: "max-w-[320px] md:max-w-[400px]",
-  md: "max-w-[320px] md:max-w-[400px]",
-  lg: "max-w-[320px] md:max-w-[400px]",
+  sm: 'max-w-[320px] md:max-w-[400px]',
+  md: 'max-w-[320px] md:max-w-[400px]',
+  lg: 'max-w-[320px] md:max-w-[400px]',
 };
 
 interface Props extends AlertModalProps {
@@ -21,7 +22,7 @@ export default function AlertModal({
   cancelText,
   onConfirm,
   onClose,
-  size = "sm",
+  size = 'sm',
 }: Props) {
   const handleConfirm = async () => {
     await onConfirm?.();
@@ -38,33 +39,34 @@ export default function AlertModal({
         onClick={(e) => e.stopPropagation()}
       >
         {imageSrc && (
-          <div className="relative mx-auto h-[88px] w-[88px] overflow-hidden rounded-xl">
-            <Image src={imageSrc} alt="" fill className="object-cover" />
-          </div>
+          <Image
+            src={imageSrc}
+            alt="alert"
+            width={88}
+            height={88}
+            className="mx-auto w-full max-w-[88px] rounded-xl object-cover"
+          />
         )}
 
-        {description && (
-          <p className="text-18 text-center font-bold">{description}</p>
-        )}
+        {description && <p className="text-18 text-center font-bold">{description}</p>}
 
         <div className="flex items-center justify-center gap-3">
           {cancelText && (
-            <button
+            <Button
+              variant="outline"
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-[var(--color-gray-700)] px-4 py-2 text-[var(--color-gray-700)]"
+              // className="rounded-lg border border-[var(--color-gray-700)] px-4 py-2 text-[var(--color-gray-700)]"
             >
               {cancelText}
-            </button>
+            </Button>
           )}
-
-          <button
-            type="button"
+          <Button
             onClick={handleConfirm}
-            className="h-[41px] w-[180px] rounded-lg bg-[var(--color-primary-500)] text-white md:h-[47px] md:w-[200px]"
+            // className="rounded-lg bg-[var(--color-primary-500)] px-4 py-2 text-white"
           >
-            {confirmText ?? "확인"}
-          </button>
+            {confirmText ?? '확인'}
+          </Button>
         </div>
       </div>
     </div>
