@@ -11,6 +11,7 @@ export type ReservationItem = {
   headCount: number;
   reviewSubmitted?: boolean;
   activity?: {
+    id?: number;
     title?: string;
     bannerImageUrl?: string;
   };
