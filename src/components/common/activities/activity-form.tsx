@@ -142,7 +142,7 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
     }
 
     try {
-      let bannerImageUrl = state.bannerImg?.imageUrl || "";
+      let bannerImageUrl = (state.bannerImg as any)?.imageUrl || "";
       if (state.bannerImg?.file) {
         bannerImageUrl = await uploadActivityImage(state.bannerImg.file);
       }

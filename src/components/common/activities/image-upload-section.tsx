@@ -3,7 +3,7 @@ import Image from "next/image";
 
 interface ImageFile {
   preview: string;
-  file: File;
+  file: File | null;
   imageUrl?: string;
 }
 
