@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import Script from "next/script";
 
 type WindowWithKakao = Window & {
@@ -19,35 +19,73 @@ interface MapProps {
 
 function Map({ address }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
+  const pollRef = useRef<number | null>(null);
 
-  const initMap = () => {
-    const { kakao } = window as WindowWithKakao;
-    if (!kakao || !mapRef.current) return;
+  const initMap = useCallback(() => {
+    if (!mapRef.current || !address?.trim()) return;
 
-    kakao.maps.load(() => {
-      const geocoder = new kakao.maps.services.Geocoder();
+    if (pollRef.current != null) {
+      window.clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      geocoder.addressSearch(address, (result: any, status: any) => {
-        if (status === kakao.maps.services.Status.OK) {
-          const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+    const run = () => {
+      const { kakao } = window as WindowWithKakao;
+      const el = mapRef.current;
+      // autoload=false 일 때 스크립트 onLoad 직후에는 kakao는 있어도 maps가 아직 없을 수 있음
+      if (!kakao?.maps?.load || !el) return false;
 
-          const map = new kakao.maps.Map(mapRef.current, {
-            center: coords,
-            level: 3,
-          });
+      kakao.maps.load(() => {
+        if (!mapRef.current) return;
+        const geocoder = new kakao.maps.services.Geocoder();
 
-          new kakao.maps.Marker({ map, position: coords });
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        geocoder.addressSearch(address, (result: any, status: any) => {
+          if (status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+            const map = new kakao.maps.Map(mapRef.current, {
+              center: coords,
+              level: 3,
+            });
+
+            new kakao.maps.Marker({ map, position: coords });
+          }
+        });
       });
-    });
-  };
+      return true;
+    };
+
+    if (run()) return;
+
+    let attempts = 0;
+    const maxAttempts = 60;
+    pollRef.current = window.setInterval(() => {
+      attempts += 1;
+      if (run() || attempts >= maxAttempts) {
+        if (pollRef.current != null) {
+          window.clearInterval(pollRef.current);
+          pollRef.current = null;
+        }
+      }
+    }, 50);
+  }, [address]);
 
   useEffect(() => {
-    if ((window as WindowWithKakao).kakao) {
+    return () => {
+      if (pollRef.current != null) {
+        window.clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const { kakao } = window as WindowWithKakao;
+    if (kakao?.maps?.load) {
       initMap();
     }
-  }, []);
+  }, [address, initMap]);
 
   return (
     <div>

@@ -2,10 +2,10 @@
 
 import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import useOpenOutsideClick from "@/hooks/use-click-outside";
 import { useModal } from "@/hooks/use-modal";
-
-const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID ?? "";
+import { useDeleteMyExperience } from "@/features/experience/hooks/use-delete-my-experience";
 
 interface ExperienceInfoProps {
     className?: string;
@@ -32,7 +32,9 @@ function ExperienceInfo({
 }: ExperienceInfoProps) {
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
+    const router = useRouter();
     const { openModal } = useModal();
+    const { mutateAsync: deleteExperience } = useDeleteMyExperience();
 
     const summary = description?.split('.')[0] + '.';
 
@@ -45,15 +47,36 @@ function ExperienceInfo({
         setIsOpen((prev) => !prev);
     };
 
+    const handleConfirmDelete = useCallback(() => {
+        if (activityId == null) return;
+        void (async () => {
+            try {
+                await deleteExperience(activityId);
+                openModal("alert", { 
+                    description: "체험이 삭제되었습니다.",confirmText: "확인" });
+                router.push("/main/my-experiences");
+                
+            } catch (err) {
+                const message =
+                    err instanceof Error ? err.message : "체험 삭제에 실패했습니다.";
+                if (message === "Unauthorized") {
+                    router.push("/auth/login");
+                    return;
+                }
+                openModal("alert", { description: message, confirmText: "확인" });
+            }
+        })();
+    }, [activityId, deleteExperience, router, openModal]);
+
     const handleDeleteClick = () => {
         closeDropdown();
+        if (activityId == null) return;
         openModal("alert", {
-            description: "체험을 삭제하시겠습니까?",
-            cancelText: "아니요",
-            confirmText: "네",
-            onConfirm: () => {
-                // TODO: 체험 삭제 API 연동
-            },
+            imageSrc: "/assets/images/img-warning.png",
+            description: "체험을 삭제하시겠어요?",
+            confirmText: "삭제하기",
+            cancelText: "아니오",
+            onConfirm: handleConfirmDelete,
         });
     };
 

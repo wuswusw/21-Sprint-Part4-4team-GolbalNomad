@@ -15,16 +15,27 @@ interface ImageGalleryProps {
 }
 
 function ImageGallery({ bannerImageUrl, subImages }: ImageGalleryProps) {
-  const banner = bannerImageUrl ?? "";
-  const subs = subImages ?? [];
-  const allImages = [banner, ...subs.map((item) => item.imageUrl)];
+  const banner = bannerImageUrl?.trim();
+  const urls: string[] = [];
+  if (banner) urls.push(banner);
+  for (const item of subImages ?? []) {
+    const trimmedImageUrl = item.imageUrl?.trim();
+    if (trimmedImageUrl && !urls.includes(trimmedImageUrl)) {
+      urls.push(trimmedImageUrl);
+    }
+  }
+  const allImages =
+    urls.length > 0 ? urls : [bannerImageUrl?.trim() ?? ""];
+
+  const hasMultipleSlides = allImages.filter(Boolean).length > 1;
+  const lockNav = !hasMultipleSlides;
 
   return (
     <div className="w-full aspect-video tablet:aspect-auto tablet:h-100 rounded-3xl overflow-hidden">
       <Carousel className="w-full h-full">
         <CarouselContent className="h-full">
           {allImages.map((src, index) => (
-            <CarouselItem key={index} className="h-full">
+            <CarouselItem key={`${src}-${index}`} className="h-full">
               <div className="relative w-full h-full">
                 <Image
                   src={src}
@@ -37,8 +48,14 @@ function ImageGallery({ bannerImageUrl, subImages }: ImageGalleryProps) {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="left-4 border-none text-gray-700 hover:text-primary-500" />
-        <CarouselNext className="right-4 border-none text-gray-700 hover:text-primary-500" />
+        <CarouselPrevious
+          className="left-4 border-none text-gray-700 hover:text-primary-500 disabled:pointer-events-none disabled:opacity-40"
+          {...(lockNav ? { disabled: true } : {})}
+        />
+        <CarouselNext
+          className="right-4 border-none text-gray-700 hover:text-primary-500 disabled:pointer-events-none disabled:opacity-40"
+          {...(lockNav ? { disabled: true } : {})}
+        />
       </Carousel>
     </div>
   );

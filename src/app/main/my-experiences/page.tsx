@@ -5,7 +5,8 @@ import CardExperiences from '@/components/common/card/card-experiences';
 import PageHeader from '@/components/common/PageHeader';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { deleteMyExperience, getMyExperiences } from '@/lib/api/my-experiences';
+import { getMyExperiences } from '@/lib/api/my-experiences';
+import { useDeleteMyExperience } from '@/features/experience/hooks/use-delete-my-experience';
 import type { MyActivityItem } from '@/types/my-experiences';
 import { useModal } from '@/hooks/use-modal';
 import useInfiniteScroll from '@/hooks/use-infinite-scroll';
@@ -15,6 +16,7 @@ import EmptyState from '@/components/common/empty/empty-state';
 export default function MyExperiencesPage() {
   const router = useRouter();
   const { openModal } = useModal();
+  const { mutateAsync: deleteExperience } = useDeleteMyExperience();
   const [items, setItems] = useState<MyActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,8 +56,7 @@ export default function MyExperiencesPage() {
   const handleDelete = useCallback(
     async (activityId: number) => {
       try {
-        const token = localStorage.getItem('accessToken') || '';
-        await deleteMyExperience(token, activityId);
+        await deleteExperience(activityId);
         setItems((prev) => prev.filter((item) => item.id !== activityId));
       } catch (err) {
         const message = err instanceof Error ? err.message : '체험 삭제에 실패했습니다.';
@@ -66,7 +67,7 @@ export default function MyExperiencesPage() {
         openModal('alert', { description: message, confirmText: '확인' });
       }
     },
-    [openModal],
+    [deleteExperience, openModal, router],
   );
 
   useInfiniteScroll({
