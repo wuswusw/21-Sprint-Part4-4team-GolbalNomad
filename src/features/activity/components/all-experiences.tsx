@@ -133,7 +133,7 @@ function AllExperiences({
         </div>
       </div>
 
-      <div className="mt-4 flex items-start justify-between gap-3 tablet:mt-5 tablet:gap-6">
+      <div className="mt-4 flex items-center justify-between gap-3 tablet:mt-5 tablet:gap-6">
         <div className="min-w-0 flex-1 overflow-hidden">
           <div
             className="
