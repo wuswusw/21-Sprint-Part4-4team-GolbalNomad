@@ -16,6 +16,7 @@ import {
 } from "@/features/activity/api/activity.api";
 import { useRouter } from "next/navigation"; 
 import BaseModal from "@/components/common/modal/base-modal";
+import { CATEGORY_ITEMS } from "@/constants/category";
 
 interface ActivityData {
   id: number;
@@ -35,13 +36,7 @@ interface ActivityFormProps {
   activityId?: number;
 }
 
-const CATEGORY_ITEMS: DropdownItem[] = [
-  { id: "culture", label: "문화 · 예술" },
-  { id: "food", label: "식음료" },
-  { id: "sports", label: "스포츠" },
-  { id: "tour", label: "투어" },
-  { id: "sightseeing", label: "관광" },
-];
+
 
 export default function ActivityForm({ mode, initialData, activityId }: ActivityFormProps) {
   const router = useRouter();
@@ -216,7 +211,7 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
       if (statusCode === 400) errorMessage = "입력 데이터가 올바르지 않습니다.";
       else if (statusCode === 401) errorMessage = "로그인 세션이 만료되었습니다.";
       else if (statusCode === 409) errorMessage = "이미 등록된 정보와 중복됩니다.\n(예: 동일 시간대 존재)";
-      else if (error.message?.includes("시간대")) errorMessage = error.message; // 서버 에러 메시지 직접 노출
+      else if (error.message?.includes("시간대")) errorMessage = error.message; 
 
       setModalState({
         isOpen: true,
@@ -303,7 +298,7 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
 
         <ScheduleSection schedules={state.schedules} removeSchedule={actions.removeSchedule} setSchedules={actions.setSchedules} />
         <ImageUploadSection bannerImg={state.bannerImg} introImgs={state.introImgs} bannerInputRef={refs.bannerInputRef} introInputRef={refs.introInputRef} handleBannerChange={actions.handleBannerChange} handleIntroChange={actions.handleIntroChange} setBannerImg={actions.setBannerImg as any} 
-  setIntroImgs={actions.setIntroImgs as any}/>
+        setIntroImgs={actions.setIntroImgs as any}/>
 
         <div className="mt-10 flex justify-center">
           <Button 
