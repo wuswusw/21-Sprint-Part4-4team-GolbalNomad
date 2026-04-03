@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useModal } from '@/hooks/use-modal';
 import type { CardReservationProps } from '@/types/card';
 import { cancelReservation } from '@/lib/api/reservations';
@@ -7,10 +6,10 @@ import Badge from './badge';
 
 export default function CardReservation({
   id,
+  activityId,
   imageUrl,
   status,
   title,
-  scheduledDate,
   date,
   startTime,
   endTime,
@@ -20,7 +19,6 @@ export default function CardReservation({
   onReviewSuccess,
   reviewSubmitted,
 }: CardReservationProps) {
-  const router = useRouter();
   const { openModal } = useModal();
   const showEdit = status === 'pending';
   const showCancel = status === 'pending';
@@ -30,7 +28,15 @@ export default function CardReservation({
     <div className="flex w-full gap-3">
       {showEdit && (
         <button
-          onClick={() => router.push(`/main/reservations/${id}/edit`)}
+          onClick={() => {
+            if (!activityId) return;
+            openModal('edit', {
+              reservationId: id,
+              activityId,
+              price: Math.round(price / people),
+              onConfirm: onCancelSuccess,
+            });
+          }}
           className="desktop:py-[6px] text-14 flex-1 rounded-sm border border-[var(--color-gray-50)] p-[10px] font-medium text-[var(--color-gray-600)]"
         >
           예약 변경

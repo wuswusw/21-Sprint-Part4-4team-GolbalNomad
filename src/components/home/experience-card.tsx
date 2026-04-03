@@ -17,7 +17,7 @@ function ExperienceCard({
 
   return (
     <Link
-      href={`/experiences/${experience.id}`}
+      href={`/main/experiences/${experience.id}`}
       className={`block w-full ${isPopular ? "h-full" : ""}`}
     >
       <article

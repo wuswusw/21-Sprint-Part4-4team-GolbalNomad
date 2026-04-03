@@ -139,6 +139,7 @@ export default function ReservationPage() {
               <CardReservation
                 key={item.id}
                 id={item.id}
+                activityId={item.activity?.id}
                 imageUrl={item.activity?.bannerImageUrl || '/images/default-thumb.png'}
                 status={item.status}
                 title={item.activity?.title ?? '체험명 없음'}
