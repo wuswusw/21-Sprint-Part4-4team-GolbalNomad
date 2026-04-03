@@ -79,6 +79,7 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
 
           if (data.bannerImageUrl) {
             actions.setBannerImg({ 
+              preview: data.bannerImageUrl, 
               imageUrl: data.bannerImageUrl, 
               file: null 
             } as any);
@@ -87,6 +88,7 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
           if (data.subImages) {
             actions.setIntroImgs(data.subImages.map((img: any) => ({
               id: img.id,
+              preview: img.imageUrl,
               imageUrl: img.imageUrl,
               file: null
             })) as any);
@@ -308,7 +310,7 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
             variant={state.isFormValid ? "primary" : "secondary"} 
             type="submit" 
             disabled={!state.isFormValid} 
-            className="!w-[120px] !h-[42x] !rounded-lg !text-16 !font-bold"
+            className="!w-[120px] !h-[42px] !rounded-lg !text-16 !font-bold"
           >
             {isEdit ? "수정하기" : "등록하기"}
           </Button>
