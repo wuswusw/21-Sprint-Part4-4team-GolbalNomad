@@ -11,16 +11,9 @@ import Button from "@/components/common/Button";
 import AlertModal from "@/components/common/modal/alert-modal";
 import { useLogin } from "../hooks/use-login";
 import { startKakaoAuth } from "../lib/kakao";
+import { clearAuthSession, setAuthSession } from "../lib/auth-storage";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import type { LoginResponse } from "../types/auth.type";
-
-function clearAuthStorage() {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("nickname");
-  localStorage.removeItem("profileImage");
-  window.dispatchEvent(new Event("auth-change"));
-}
 
 export default function LoginForm() {
   const router = useRouter();
@@ -49,7 +42,7 @@ export default function LoginForm() {
     setIsModalOpen(false);
 
     if (shouldRedirectToLogin) {
-      clearAuthStorage();
+      clearAuthSession();
       router.push("/auth/login");
     }
 
@@ -60,11 +53,13 @@ export default function LoginForm() {
   const onSubmit = (values: LoginFormValues) => {
     mutate(values, {
       onSuccess: (data: LoginResponse) => {
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("refreshToken", data.refreshToken);
-        localStorage.setItem("nickname", data.user.nickname);
-        localStorage.setItem("profileImage", data.user.profileImageUrl ?? "");
-        window.dispatchEvent(new Event("auth-change"));
+        setAuthSession({
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+          nickname: data.user.nickname,
+          profileImage: data.user.profileImageUrl ?? "",
+        });
+
         router.push("/");
       },
       onError: (error: Error) => {
