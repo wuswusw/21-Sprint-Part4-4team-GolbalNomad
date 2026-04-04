@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "@/features/auth/types/auth.type";
 import { getApiUrl, buildAuthHeaders } from "@/lib/api-client";
+import { getAccessToken } from "@/features/auth/lib/auth-storage";
 
 async function getCurrentUser(): Promise<User> {
   const response = await fetch(getApiUrl("/users/me"), {
@@ -16,11 +17,6 @@ async function getCurrentUser(): Promise<User> {
   }
 
   return response.json();
-}
-
-function readAccessToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("accessToken");
 }
 
 function subscribeAuth(callback: () => void) {
@@ -39,7 +35,7 @@ function getServerAccessToken(): null {
 export function useCurrentUser() {
   const accessToken = useSyncExternalStore(
     subscribeAuth,
-    readAccessToken,
+    getAccessToken,
     getServerAccessToken
   );
 

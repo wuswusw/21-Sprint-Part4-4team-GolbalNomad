@@ -33,8 +33,8 @@ export default function Dropdown({
     : "flex cursor-pointer items-center gap-1 text-16 font-medium text-gray-900";
 
   const menuClasses = isInputType
-    ? "absolute left-0 z-50 mt-2 w-full min-w-[120px] overflow-hidden rounded-lg bg-white ring-1 ring-black ring-opacity-5"
-    : "absolute right-0 z-50 mt-2 min-w-[120px] overflow-hidden rounded-lg bg-white ring-1 ring-black ring-opacity-5";
+    ? "absolute left-0 z-50 mt-2 w-full min-w-[120px] rounded-lg bg-white ring-1 ring-black ring-opacity-5"
+    : "absolute right-0 z-50 mt-2 min-w-[120px] rounded-lg bg-white ring-1 ring-black ring-opacity-5";
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -74,7 +74,7 @@ export default function Dropdown({
 
       {isOpen && (
         <div className={menuClasses}>
-          <div className="py-1">
+          <div className="py-1 max-h-[240px] overflow-y-auto custom-scrollbar">
             {items.map((item) => (
               <button
                 key={item.id}

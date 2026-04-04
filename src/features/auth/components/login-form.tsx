@@ -16,6 +16,14 @@ import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import type { LoginResponse } from "../types/auth.type";
 import { setAuthMessage } from "@/features/auth/lib/auth-message";
 
+function clearAuthStorage() {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("nickname");
+  localStorage.removeItem("profileImage");
+  window.dispatchEvent(new Event("auth-change"));
+}
+
 export default function LoginForm() {
   const router = useRouter();
   const { mutate, isPending } = useLogin();
