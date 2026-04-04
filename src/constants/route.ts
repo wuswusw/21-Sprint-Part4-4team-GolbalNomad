@@ -8,4 +8,7 @@ export const SIDEBAR_INCLUDE_PATHS = [
   '/main/reservations-status',
 ];
 
-export const SIDEBAR_EXCLUDE_PATHS = ['/main/my-experiences/create'];
+export const SIDEBAR_EXCLUDE_PATHS = [
+  '/main/my-experiences/create',
+  '/main/my-experiences/edit',
+];

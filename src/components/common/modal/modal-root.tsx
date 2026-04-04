@@ -6,6 +6,7 @@ import { useModal } from '@/hooks/use-modal';
 import AlertModal from '@/components/common/modal/alert-modal';
 import ReviewModal from '@/components/common/modal/review-modal';
 import SlideModal from '@/components/common/modal/slide-modal';
+import EditReservationModal from '@/app/main/reservations/components/edit-modal';
 
 export default function ModalRoot() {
   const { modal, closeModal } = useModal();
@@ -19,6 +20,8 @@ export default function ModalRoot() {
       return <ReviewModal onClose={closeModal} {...modal.payload} />;
     case 'slide':
       return <SlideModal onClose={closeModal} {...modal.payload} />;
+    case 'edit':
+      return <EditReservationModal onClose={closeModal} {...modal.payload} />;
     default:
       return null;
   }

@@ -268,11 +268,15 @@ function PopularExperiences() {
         </div>
       )}
 
-      {isFetchingNextPage && (
-        <p className="mt-4 text-center text-sm text-gray-500">
+      <div className="mt-4 flex h-5 items-center justify-center">
+        <p
+          className={`text-center text-sm text-gray-500 transition-opacity duration-200 ${
+            isFetchingNextPage ? "opacity-100" : "opacity-0"
+          }`}
+        >
           더 불러오는 중...
         </p>
-      )}
+      </div>
     </section>
   );
 }

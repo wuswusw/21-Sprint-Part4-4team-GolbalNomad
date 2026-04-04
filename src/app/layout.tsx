@@ -7,6 +7,9 @@ import QueryProvider from "./providers";
 export const metadata: Metadata = {
   title: "GlobalNomad",
   description: "GlobalNomad",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

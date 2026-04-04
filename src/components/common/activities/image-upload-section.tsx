@@ -1,27 +1,23 @@
 import React from "react";
 import Image from "next/image";
 
-// 1. 이미지 객체 타입 정의 (훅의 상태와 일치시킴)
 interface ImageFile {
   preview: string;
-  file: File;
+  file: File | null;
+  imageUrl?: string;
 }
 
-// 소개 이미지는 삭제 등을 위해 id가 포함된 구조
 interface IntroImageFile extends ImageFile {
   id: string;
 }
 
 interface ImageUploadSectionProps {
-  // string | null -> ImageFile | null 로 변경
   bannerImg: ImageFile | null; 
-  // string[] -> IntroImageFile[] 로 변경
   introImgs: IntroImageFile[]; 
   bannerInputRef: React.RefObject<HTMLInputElement | null>; 
   introInputRef: React.RefObject<HTMLInputElement | null>;
   handleBannerChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleIntroChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  // 함수 타입들도 변경된 상태 구조에 맞게 수정
   setBannerImg: (img: ImageFile | null) => void;
   setIntroImgs: React.Dispatch<React.SetStateAction<IntroImageFile[]>>;
 }
