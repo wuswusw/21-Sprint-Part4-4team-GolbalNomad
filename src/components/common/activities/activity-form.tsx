@@ -238,7 +238,7 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
           subImageUrls: subImageUrls.filter((url) => !!url),
         };
 
-        const response = await createActivity(createData);
+        const response = (await createActivity(createData)) as any;
         const newId = response.id;
 
         setModalState({
