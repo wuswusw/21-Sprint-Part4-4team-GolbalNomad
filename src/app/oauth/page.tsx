@@ -50,7 +50,6 @@ export default function KakaoOAuthPage() {
       }
       window.__kakaoProcessedCode = code;
 
-      // 주소창에서 code 제거
       window.history.replaceState({}, "", "/oauth");
 
       const redirectUri = getKakaoRedirectUri();
@@ -69,7 +68,7 @@ export default function KakaoOAuthPage() {
 
         sessionStorage.removeItem("socialAuthMode");
         sessionStorage.removeItem("socialSignupNickname");
-        router.replace("/");
+        router.replace("/?authMessage=login");
         return;
       }
 
@@ -95,11 +94,10 @@ export default function KakaoOAuthPage() {
 
       sessionStorage.removeItem("socialAuthMode");
       sessionStorage.removeItem("socialSignupNickname");
-      router.replace("/");
+      router.replace("/?authMessage=login");
     };
 
     run().catch((error: unknown) => {
-      console.error("[KAKAO OAUTH ERROR]", error);
       const message =
         error instanceof Error
           ? error.message

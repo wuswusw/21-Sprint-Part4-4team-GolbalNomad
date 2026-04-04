@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Gnb from "@/components/common/gnb/gnb";
 import Footer from "@/components/common/Footer";
 import HomeBanner from "@/components/home/home-banner";
 import HomeSearch from "@/components/home/home-search";
 import PopularExperiences from "@/features/activity/components/popular-experiences";
 import AllExperiences from "@/features/activity/components/all-experiences";
+import AlertModal from "@/components/common/modal/alert-modal";
+import { logout } from "@/features/auth/lib/logout";
 import type {
   ActivityCategory,
   ActivitySort,
@@ -68,6 +71,9 @@ function subscribe(callback: () => void) {
 }
 
 export default function HomePage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -98,12 +104,19 @@ export default function HomePage() {
   const [sort, setSort] = useState<ActivitySort>("latest");
   const [page, setPage] = useState(1);
 
+  const authMessage = searchParams.get("authMessage");
+
+  const modalMessage =
+    authMessage === "login"
+      ? "로그인 되었습니다."
+      : authMessage === "logout"
+        ? "로그아웃 되었습니다."
+        : "";
+
+  const isModalOpen = !!modalMessage;
+
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("nickname");
-    localStorage.removeItem("profileImage");
-    window.dispatchEvent(new Event("auth-change"));
+    logout();
   };
 
   const handleSearch = () => {
@@ -132,6 +145,10 @@ export default function HomePage() {
     setCategory(undefined);
     setSort("latest");
     setPage(1);
+  };
+
+  const closeModal = () => {
+    router.replace("/");
   };
 
   return (
@@ -173,6 +190,16 @@ export default function HomePage() {
       </div>
 
       <Footer />
+
+      {isModalOpen && (
+        <AlertModal
+          description={modalMessage}
+          confirmText="확인"
+          onClose={closeModal}
+          onConfirm={closeModal}
+          size="sm"
+        />
+      )}
     </div>
   );
 }
