@@ -3,7 +3,8 @@ export type ActivityCategory =
   | "식음료"
   | "투어"
   | "관광"
-  | "웰빙";
+  | "웰빙"
+  | "스포츠";
 
 export type ActivitySort =
   | "most_reviewed"

@@ -6,6 +6,8 @@ interface HomePaginationProps {
   onPageChange: (page: number) => void;
 }
 
+const PAGE_GROUP_SIZE = 5;
+
 function HomePagination({
   currentPage,
   totalPages,
@@ -13,7 +15,14 @@ function HomePagination({
 }: HomePaginationProps) {
   if (totalPages < 1) return null;
 
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+  const currentGroup = Math.ceil(currentPage / PAGE_GROUP_SIZE);
+  const startPage = (currentGroup - 1) * PAGE_GROUP_SIZE + 1;
+  const endPage = Math.min(startPage + PAGE_GROUP_SIZE - 1, totalPages);
+
+  const pages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, index) => startPage + index
+  );
 
   const isPrevDisabled = currentPage === 1;
   const isNextDisabled = currentPage === totalPages;
@@ -24,7 +33,7 @@ function HomePagination({
         type="button"
         disabled={isPrevDisabled}
         onClick={() => onPageChange(currentPage - 1)}
-        className="flex h-10 w-10 items-center justify-center"
+        className="flex h-10 w-10 items-center justify-center disabled:cursor-not-allowed"
       >
         <Image
           src={
@@ -61,7 +70,7 @@ function HomePagination({
         type="button"
         disabled={isNextDisabled}
         onClick={() => onPageChange(currentPage + 1)}
-        className="flex h-10 w-10 items-center justify-center"
+        className="flex h-10 w-10 items-center justify-center disabled:cursor-not-allowed"
       >
         <Image
           src={

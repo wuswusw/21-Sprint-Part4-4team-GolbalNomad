@@ -122,9 +122,6 @@ export default function HomePage() {
   };
 
   const handleSortChange = (value: ActivitySort) => {
-    setKeyword("");
-    setInputKeyword("");
-    setCategory(undefined);
     setPage(1);
     setSort(value);
   };
