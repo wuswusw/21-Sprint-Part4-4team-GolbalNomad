@@ -79,17 +79,6 @@ export default function ProfileForm({
 
   const isNicknameChanged = nickname !== initialData.nickname;
   const isPasswordChanged = (newPassword ?? "").trim().length > 0;
-  const isPasswordMismatch =
-    touchedFields.newPasswordConfirm && !!errors.newPasswordConfirm;
-
-  const isSubmitEnabled =
-    !isPending &&
-    ((isNicknameChanged && !errors.nickname) ||
-      (isPasswordChanged &&
-        (newPasswordConfirm ?? "").trim().length > 0 &&
-        !errors.newPassword &&
-        !errors.newPasswordConfirm &&
-        isValid));
 
   const inputClassName = isMobile
     ? "h-[54px] w-[327px] rounded-[16px] border border-[#E0E0E5] bg-white pl-5 pr-12 text-[16px] font-medium text-black shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400"
@@ -99,10 +88,52 @@ export default function ProfileForm({
     ? "h-[54px] w-[327px] rounded-[16px] border border-[#E0E0E5] bg-[#F7F8FA] pl-5 pr-12 text-[16px] font-medium text-gray-400 shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400 cursor-not-allowed"
     : "h-[56px] w-[640px] tablet:w-[420px] desktop:w-[640px] rounded-[16px] border border-[#E0E0E5] bg-[#F7F8FA] pl-5 pr-12 text-[16px] font-medium text-gray-400 shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400 cursor-not-allowed";
 
-  const errorInputClassName = "border-red-500";
   const labelClassName = "mb-[10px] text-[16px] font-medium text-black";
   const errorClassName =
     "mt-[6px] pl-1 text-[12px] font-medium leading-none text-red-500";
+
+  const isNewPasswordTouched =
+    !!touchedFields.newPassword || (newPassword ?? "").length > 0;
+  const isNewPasswordValid =
+    isNewPasswordTouched &&
+    (newPassword ?? "").length >= 8 &&
+    !errors.newPassword;
+
+  const isNewPasswordConfirmTouched =
+    !!touchedFields.newPasswordConfirm || (newPasswordConfirm ?? "").length > 0;
+  const isNewPasswordConfirmValid =
+    isNewPasswordConfirmTouched &&
+    !!newPassword &&
+    newPasswordConfirm === newPassword &&
+    !errors.newPasswordConfirm;
+
+  const getNicknameClassName = () => {
+    if (errors.nickname) return `${inputClassName} border-red-500`;
+    if (isNicknameChanged) return `${inputClassName} border-primary-500`;
+    return inputClassName;
+  };
+
+  const getNewPasswordClassName = () => {
+    if (errors.newPassword) return `${inputClassName} border-red-500`;
+    if (isNewPasswordValid) return `${inputClassName} border-primary-500`;
+    return inputClassName;
+  };
+
+  const getNewPasswordConfirmClassName = () => {
+    if (errors.newPasswordConfirm) return `${inputClassName} border-red-500`;
+    if (isNewPasswordConfirmValid)
+      return `${inputClassName} border-primary-500`;
+    return inputClassName;
+  };
+
+  const isSubmitEnabled =
+    !isPending &&
+    ((isNicknameChanged && !errors.nickname) ||
+      (isPasswordChanged &&
+        (newPasswordConfirm ?? "").trim().length > 0 &&
+        !errors.newPassword &&
+        !errors.newPasswordConfirm &&
+        isValid));
 
   const onSubmit = async (values: ProfileFormValues) => {
     const payload: {
@@ -205,9 +236,7 @@ export default function ProfileForm({
               label="닉네임"
               labelClassName={labelClassName}
               errorClassName={errorClassName}
-              className={`${inputClassName} ${
-                errors.nickname ? errorInputClassName : ""
-              }`}
+              className={getNicknameClassName()}
               error={errors.nickname?.message}
               containerClassName="gap-0"
               {...register("nickname", {
@@ -232,11 +261,7 @@ export default function ProfileForm({
               label="비밀번호"
               labelClassName={labelClassName}
               errorClassName={errorClassName}
-              className={`${inputClassName} ${
-                errors.newPassword || isPasswordMismatch
-                  ? errorInputClassName
-                  : ""
-              }`}
+              className={getNewPasswordClassName()}
               error={errors.newPassword?.message}
               containerClassName="gap-0"
               isPassword
@@ -258,12 +283,10 @@ export default function ProfileForm({
             />
 
             <Input
-              label="비밀번호"
+              label="비밀번호 확인"
               labelClassName={labelClassName}
               errorClassName={errorClassName}
-              className={`${inputClassName} ${
-                isPasswordMismatch ? errorInputClassName : ""
-              }`}
+              className={getNewPasswordConfirmClassName()}
               error={errors.newPasswordConfirm?.message}
               containerClassName="gap-0"
               isPassword
@@ -278,7 +301,7 @@ export default function ProfileForm({
                   }
                   return true;
                 },
-                onBlur: async () => {
+                onChange: async () => {
                   await trigger("newPasswordConfirm");
                 },
               })}
