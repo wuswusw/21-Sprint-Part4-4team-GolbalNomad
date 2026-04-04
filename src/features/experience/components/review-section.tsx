@@ -32,7 +32,7 @@ function ReviewSection({
         </div>
         <div className="w-full mx-auto flex flex-col items-center mb-[30px]">
             <span className="text-32 font-bold">{rating}</span>
-            <span className="text-body-16">매우 만족</span>
+            <span className="text-body-16">{satisfactionLabel} </span>
             <div className="flex justify-center gap-[2px] items-center">
                 <img src="/assets/icons/star.svg" alt="star" className="w-4 h-4" />
                 <span className="text-body-14 text-[#79747E]">{totalReviews}개 후기</span>

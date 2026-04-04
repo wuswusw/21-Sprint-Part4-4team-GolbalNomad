@@ -8,6 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { getValidImages } from "../utils/imageGallery";
 
 interface ImageGalleryProps {
   bannerImageUrl?: string;
@@ -15,49 +16,48 @@ interface ImageGalleryProps {
 }
 
 function ImageGallery({ bannerImageUrl, subImages }: ImageGalleryProps) {
-  const banner = bannerImageUrl?.trim();
-  const urls: string[] = [];
-  if (banner) urls.push(banner);
-  for (const item of subImages ?? []) {
-    const trimmedImageUrl = item.imageUrl?.trim();
-    if (trimmedImageUrl && !urls.includes(trimmedImageUrl)) {
-      urls.push(trimmedImageUrl);
-    }
-  }
-  const allImages =
-    urls.length > 0 ? urls : [bannerImageUrl?.trim() ?? ""];
+  const allImages = getValidImages(bannerImageUrl, subImages);
+  const hasMultipleSlides = allImages.length > 1;
 
-  const hasMultipleSlides = allImages.filter(Boolean).length > 1;
-  const lockNav = !hasMultipleSlides;
+  const handleNavigationClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
 
-  return (
-    <div className="w-full aspect-video tablet:aspect-auto tablet:h-100 rounded-3xl overflow-hidden">
-      <Carousel className="w-full h-full">
-        <CarouselContent className="h-full">
-          {allImages.map((src, index) => (
-            <CarouselItem key={`${src}-${index}`} className="h-full">
-              <div className="relative w-full h-full">
-                <Image
-                  src={src}
-                  alt={`체험 이미지 ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 744px) 327px, (max-width: 1199px) 684px, 670px"
-                />
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious
-          className="left-4 border-none text-gray-700 hover:text-primary-500 disabled:pointer-events-none disabled:opacity-40"
-          {...(lockNav ? { disabled: true } : {})}
-        />
-        <CarouselNext
-          className="right-4 border-none text-gray-700 hover:text-primary-500 disabled:pointer-events-none disabled:opacity-40"
-          {...(lockNav ? { disabled: true } : {})}
-        />
-      </Carousel>
-    </div>
+return (
+  <div className="group relative w-full aspect-video tablet:aspect-auto tablet:h-100 rounded-3xl overflow-hidden">
+    <Carousel opts={{ loop: false }} className="w-full h-full">
+      <CarouselContent className="h-full">
+        {allImages.map((src, index) => (
+          <CarouselItem key={`${src}-${index}`} className="h-full">
+            <div className="relative w-full h-full pointer-events-none">
+              <Image
+                src={src}
+                alt={`체험 이미지 ${index + 1}`}
+                fill
+                className="object-cover "
+                priority={index === 0}
+                sizes="(max-width: 744px) 100vw, (max-width: 1199px) 100vw, 1200px"
+              />
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+
+      {hasMultipleSlides && (
+        <div 
+          className="absolute inset-0 pointer-events-none z-[50]" 
+          onClick={handleNavigationClick}
+        > 
+          <CarouselPrevious
+            className="left-4 pointer-events-auto flex items-center justify-center border-none bg-white/70 hover:bg-white text-gray-700 shadow-md transition-all active:scale-95 disabled:opacity-20"
+          />
+          <CarouselNext
+            className="right-4 pointer-events-auto flex items-center justify-center border-none bg-white/70 hover:bg-white text-gray-700 shadow-md transition-all active:scale-95 disabled:opacity-20"
+          />
+        </div>
+      )}
+    </Carousel>
+  </div>
   );
 }
 
