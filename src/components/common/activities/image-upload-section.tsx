@@ -1,5 +1,5 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
 interface ImageFile {
   preview: string;
@@ -12,9 +12,9 @@ interface IntroImageFile extends ImageFile {
 }
 
 interface ImageUploadSectionProps {
-  bannerImg: ImageFile | null; 
-  introImgs: IntroImageFile[]; 
-  bannerInputRef: React.RefObject<HTMLInputElement | null>; 
+  bannerImg: ImageFile | null;
+  introImgs: IntroImageFile[];
+  bannerInputRef: React.RefObject<HTMLInputElement | null>;
   introInputRef: React.RefObject<HTMLInputElement | null>;
   handleBannerChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleIntroChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -30,11 +30,10 @@ export default function ImageUploadSection({
   handleBannerChange,
   handleIntroChange,
   setBannerImg,
-  setIntroImgs
+  setIntroImgs,
 }: ImageUploadSectionProps) {
-  
-  const LABEL_COMMON_CLASSES = "mb-4 text-16 font-bold text-gray-950";
-  
+  const LABEL_COMMON_CLASSES = 'mb-4 text-16 font-bold text-gray-950';
+
   const UPLOAD_BOX_CLASSES = `
     h-[128px] w-[128px] cursor-pointer rounded-2xl 
     border border-[#E0E0E5] 
@@ -58,61 +57,70 @@ export default function ImageUploadSection({
 
   return (
     <div className="flex flex-col gap-10">
-      {/* 배너 이미지 섹션 */}
       <div className="flex flex-col">
         <label className={LABEL_COMMON_CLASSES}>배너 이미지 등록</label>
-        <div className="flex flex-wrap gap-4 items-center">
+        <div className="flex flex-wrap items-center gap-4">
           {!bannerImg && (
             <div onClick={() => bannerInputRef.current?.click()} className={UPLOAD_BOX_CLASSES}>
               <Image src="/assets/icons/editButton.svg" alt="Upload" width={32} height={32} />
-              <p className="mt-2 text-14 text-[#787486]">이미지 등록</p>
+              <p className="text-14 mt-2 text-[#787486]">이미지 등록</p>
             </div>
           )}
-          <input type="file" ref={bannerInputRef} onChange={handleBannerChange} accept="image/*" className="hidden" />
+          <input
+            type="file"
+            ref={bannerInputRef}
+            onChange={handleBannerChange}
+            accept="image/*"
+            className="hidden"
+          />
 
           {bannerImg && (
             <div className={PREVIEW_CONTAINER_CLASSES}>
-              {/* bannerImg.preview를 사용합니다 */}
-              <Image 
-                src={bannerImg.preview} 
-                alt="Banner" 
-                fill 
-                className="object-cover rounded-2xl" 
+              <Image
+                src={bannerImg.preview}
+                alt="Banner"
+                fill
+                className="rounded-2xl object-cover"
               />
               <button
                 type="button"
                 onClick={() => setBannerImg(null)}
                 className={DELETE_BTN_CLASSES}
               >
-                <span className="text-xl leading-none">✕</span> 
+                <span className="text-xl leading-none">✕</span>
               </button>
             </div>
-          )}  
+          )}
         </div>
       </div>
 
-      {/* 소개 이미지 섹션 */}
       <div className="flex flex-col">
         <label className={LABEL_COMMON_CLASSES}>소개 이미지 등록</label>
         <div className="flex flex-wrap gap-4">
           <div onClick={() => introInputRef.current?.click()} className={UPLOAD_BOX_CLASSES}>
             <Image src="/assets/icons/editButton.svg" alt="Add" width={32} height={32} />
-            <p className="mt-2 text-14 text-[#787486]">{introImgs.length}/4</p>
+            <p className="text-14 mt-2 text-[#787486]">{introImgs.length}/4</p>
           </div>
-          <input type="file" ref={introInputRef} onChange={handleIntroChange} accept="image/*" multiple className="hidden" />
+          <input
+            type="file"
+            ref={introInputRef}
+            onChange={handleIntroChange}
+            accept="image/*"
+            multiple
+            className="hidden"
+          />
 
           {introImgs.map((img, idx) => (
             <div key={img.id || idx} className={PREVIEW_CONTAINER_CLASSES}>
-              {/* img.preview를 사용합니다 */}
-              <Image 
-                src={img.preview} 
-                alt={`Intro ${idx}`} 
-                fill 
-                className="object-cover rounded-2xl" 
+              <Image
+                src={img.preview}
+                alt={`Intro ${idx}`}
+                fill
+                className="rounded-2xl object-cover"
               />
               <button
                 type="button"
-                onClick={() => setIntroImgs(prev => prev.filter((_, i) => i !== idx))}
+                onClick={() => setIntroImgs((prev) => prev.filter((_, i) => i !== idx))}
                 className={DELETE_BTN_CLASSES}
               >
                 <span className="text-xl leading-none">✕</span>
