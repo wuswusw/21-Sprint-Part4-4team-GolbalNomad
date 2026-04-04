@@ -59,6 +59,23 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
   });
 
   useEffect(() => {
+    const { daum } = window as any;
+
+    if (daum && daum.Postcode) {
+      setIsScriptLoaded(true);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    script.async = true;
+    script.onload = () => {
+      setIsScriptLoaded(true);
+    };
+    document.head.appendChild(script);
+  }, []);
+
+  useEffect(() => {
     if (mode === 'edit' && activityId && !isDataLoaded) {
       const loadActivityData = async () => {
         try {
@@ -254,12 +271,6 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
 
   return (
     <div className="mx-auto w-full max-w-[700px] min-w-[320px] md:min-w-[700px]">
-      <Script
-        src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
-        strategy="afterInteractive"
-        onLoad={() => setIsScriptLoaded(true)}
-      />
-
       <form onSubmit={handleSubmit} className="flex flex-col gap-10 pb-20">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col">
