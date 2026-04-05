@@ -100,8 +100,8 @@ export default function ReservationPage() {
         <PageHeader />
 
         {/* 상태 */}
-        <div className="w-full overflow-x-hidden px-[24px]">
-          <div className="-mx-[24px] overflow-x-auto overscroll-x-contain pr-0 pl-[24px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="tablet:px-0 w-full overflow-x-hidden px-[24px]">
+          <div className="overflow-x-auto overscroll-x-contain pr-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <div className="flex w-max gap-2">
               {STATUS_FILTERS.map(({ label, value }) => (
                 <button
@@ -122,7 +122,7 @@ export default function ReservationPage() {
       </div>
 
       {/* 예약 리스트 */}
-      <div className="desktop:gap-[24px] flex w-full flex-col gap-[50px] px-[24px]">
+      <div className="desktop:gap-[24px] tablet:px-0 flex w-full flex-col gap-[50px] px-[24px]">
         {loading && items.length === 0 ? (
           <>
             {Array.from({ length: 3 }).map((_, index) => (

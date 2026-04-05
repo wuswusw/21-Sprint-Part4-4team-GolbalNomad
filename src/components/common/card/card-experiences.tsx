@@ -43,7 +43,7 @@ export default function CardExperiences({
   );
 
   return (
-    <div className="desktop:p-9 flex w-full justify-between gap-3 rounded-xl p-6 shadow-[0_4px_24px_rgba(156,180,202,0.2)]">
+    <div className="desktop:py-9 desktop:px-7.5 flex w-full justify-between gap-3 rounded-xl p-6 shadow-[0_4px_24px_rgba(156,180,202,0.2)]">
       {/* 내용 */}
       <div className="desktop:gap-5 desktop:gap-5 flex flex-1 flex-col gap-3">
         <div className="desktop:gap-3 flex flex-col gap-[10px]">
