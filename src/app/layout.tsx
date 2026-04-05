@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { pretendard } from "@/lib/fonts";
 import { ModalProvider } from "@/components/common/modal/modal-provider";
+import AuthMessageListener from "@/components/common/auth-message-listener";
 import QueryProvider from "./providers";
 
 export const metadata: Metadata = {
@@ -21,10 +22,12 @@ export default function RootLayout({
     <html lang="ko" className={pretendard.variable}>
       <body>
         <QueryProvider>
-          <ModalProvider>{children}</ModalProvider>
+          <ModalProvider>
+            {children}
+            <AuthMessageListener />
+          </ModalProvider>
         </QueryProvider>
       </body>
-
     </html>
   );
 }

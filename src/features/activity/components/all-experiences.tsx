@@ -19,6 +19,7 @@ const categories: {
 }[] = [
   { label: "문화 · 예술", icon: "/assets/icons/icon_art.svg", emoji: "🎨" },
   { label: "식음료", icon: "/assets/icons/icon_food.svg", emoji: "🍽️" },
+  { label: "스포츠", icon: "/assets/icons/icon_sport.svg", emoji: "⚽" },
   { label: "투어", icon: "/assets/icons/icon_tour.svg", emoji: "🧳" },
   { label: "관광", icon: "/assets/icons/icon_bus.svg", emoji: "🚌" },
   { label: "웰빙", icon: "/assets/icons/icon_wellbeing.svg", emoji: "🌿" },
@@ -97,6 +98,10 @@ function AllExperiences({
     return "🛝 모든 체험";
   }, [keyword, selectedCategory]);
 
+  const resultText = !category && !keyword
+    ? `총 ${totalCount}개`
+    : `총 ${totalCount}개의 결과`;
+
   const handlePageChange = (nextPage: number) => {
     onPageChange(nextPage);
   };
@@ -116,11 +121,9 @@ function AllExperiences({
             {title}
           </h2>
 
-          {(keyword || category) && (
-            <p className="text-[12px] font-medium text-gray-500 tablet:text-[14px]">
-              총 {totalCount}개의 결과
-            </p>
-          )}
+          <p className="text-[12px] font-medium text-gray-500 tablet:text-[14px]">
+            {resultText}
+          </p>
         </div>
 
         <div className="shrink-0 desktop:hidden">
@@ -133,7 +136,7 @@ function AllExperiences({
         </div>
       </div>
 
-      <div className="mt-4 flex items-start justify-between gap-3 tablet:mt-5 tablet:gap-6">
+      <div className="mt-4 flex items-center justify-between gap-3 tablet:mt-5 tablet:gap-6">
         <div className="min-w-0 flex-1 overflow-hidden">
           <div
             className="

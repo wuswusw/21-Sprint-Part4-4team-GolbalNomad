@@ -11,8 +11,10 @@ import Button from "@/components/common/Button";
 import AlertModal from "@/components/common/modal/alert-modal";
 import { useLogin } from "../hooks/use-login";
 import { startKakaoAuth } from "../lib/kakao";
+import { clearAuthSession, setAuthSession } from "../lib/auth-storage";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import type { LoginResponse } from "../types/auth.type";
+import { setAuthMessage } from "@/features/auth/lib/auth-message";
 
 function clearAuthStorage() {
   localStorage.removeItem("accessToken");
@@ -49,7 +51,7 @@ export default function LoginForm() {
     setIsModalOpen(false);
 
     if (shouldRedirectToLogin) {
-      clearAuthStorage();
+      clearAuthSession();
       router.push("/auth/login");
     }
 
@@ -60,13 +62,16 @@ export default function LoginForm() {
   const onSubmit = (values: LoginFormValues) => {
     mutate(values, {
       onSuccess: (data: LoginResponse) => {
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("refreshToken", data.refreshToken);
-        localStorage.setItem("nickname", data.user.nickname);
-        localStorage.setItem("profileImage", data.user.profileImageUrl ?? "");
-        window.dispatchEvent(new Event("auth-change"));
-        router.push("/");
-      },
+          setAuthSession({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            nickname: data.user.nickname,
+            profileImage: data.user.profileImageUrl ?? "",
+          });
+
+          setAuthMessage("로그인 되었습니다.");
+          router.push("/");
+        },
       onError: (error: Error) => {
         if (
           error.message === "UNAUTHORIZED" ||

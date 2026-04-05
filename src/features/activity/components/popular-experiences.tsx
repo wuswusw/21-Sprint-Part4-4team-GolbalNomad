@@ -7,6 +7,7 @@ import ExperienceCardSkeleton from "@/components/home/experience-card-skeleton";
 import { usePopularActivities } from "@/features/activity/hooks/use-activities";
 
 const PAGE_SIZE = 4;
+const MAX_POPULAR_COUNT = 12;
 const SHADOW_SPACE_Y = 24;
 
 type DeviceType = "mobile" | "tablet" | "desktop";
@@ -71,9 +72,14 @@ function PopularExperiences() {
 
   const visibleCount = device === "desktop" ? 4 : 2;
 
-  const activities = useMemo(
+  const allActivities = useMemo(
     () => data?.pages.flatMap((page) => page.activities) ?? [],
     [data]
+  );
+
+  const activities = useMemo(
+    () => allActivities.slice(0, MAX_POPULAR_COUNT),
+    [allActivities]
   );
 
   const groupedActivities = useMemo(
@@ -83,11 +89,12 @@ function PopularExperiences() {
 
   const maxPage = Math.max(0, groupedActivities.length - 1);
   const safePage = Math.min(currentPage, maxPage);
+  const reachedLimit = activities.length >= MAX_POPULAR_COUNT;
 
   const canGoPrev = device !== "mobile" && safePage > 0;
   const canGoNext =
     device !== "mobile" &&
-    (safePage < maxPage || hasNextPage || isFetchingNextPage);
+    (safePage < maxPage || (!reachedLimit && hasNextPage) || isFetchingNextPage);
 
   const handlePrev = () => {
     if (!canGoPrev) return;
@@ -102,11 +109,12 @@ function PopularExperiences() {
       return;
     }
 
-    if (hasNextPage && !isFetchingNextPage) {
+    if (!reachedLimit && hasNextPage && !isFetchingNextPage) {
       const result = await fetchNextPage();
       const newActivities =
         result.data?.pages.flatMap((page) => page.activities) ?? [];
-      const newGroupedActivities = chunkArray(newActivities, visibleCount);
+      const limitedActivities = newActivities.slice(0, MAX_POPULAR_COUNT);
+      const newGroupedActivities = chunkArray(limitedActivities, visibleCount);
 
       if (nextPage < newGroupedActivities.length) {
         setCurrentPage(nextPage);
@@ -116,7 +124,7 @@ function PopularExperiences() {
 
   const handleMobileScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
     if (device !== "mobile") return;
-    if (!hasNextPage || isFetchingNextPage) return;
+    if (reachedLimit || !hasNextPage || isFetchingNextPage) return;
 
     const target = e.currentTarget;
     const remaining =
@@ -260,11 +268,15 @@ function PopularExperiences() {
         </div>
       )}
 
-      {isFetchingNextPage && (
-        <p className="mt-4 text-center text-sm text-gray-500">
+      <div className="mt-4 flex h-5 items-center justify-center">
+        <p
+          className={`text-center text-sm text-gray-500 transition-opacity duration-200 ${
+            isFetchingNextPage ? "opacity-100" : "opacity-0"
+          }`}
+        >
           더 불러오는 중...
         </p>
-      )}
+      </div>
     </section>
   );
 }

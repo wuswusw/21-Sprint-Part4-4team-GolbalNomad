@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AlertModal from "@/components/common/modal/alert-modal";
 import { kakaoSignIn, kakaoSignUp } from "@/features/auth/api/auth.api";
 import { getKakaoRedirectUri } from "@/features/auth/lib/kakao";
 
@@ -14,6 +15,25 @@ declare global {
 
 export default function KakaoOAuthPage() {
   const router = useRouter();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [redirectPath, setRedirectPath] = useState("/auth/login");
+
+  const openErrorModal = (message: string, nextPath = "/auth/login") => {
+    setModalMessage(message);
+    setRedirectPath(nextPath);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    const nextPath = redirectPath;
+
+    setModalMessage("");
+    setRedirectPath("/auth/login");
+    router.replace(nextPath);
+  };
 
   useEffect(() => {
     if (window.__kakaoOauthLock) return;
@@ -34,14 +54,12 @@ export default function KakaoOAuthPage() {
           | null);
 
       if (error) {
-        alert(errorDescription || "카카오 인증에 실패했습니다.");
-        router.replace("/auth/login");
+        openErrorModal(errorDescription || "카카오 인증에 실패했습니다.");
         return;
       }
 
       if (!code || !mode) {
-        alert("카카오 인증 정보가 올바르지 않습니다.");
-        router.replace("/auth/login");
+        openErrorModal("카카오 인증 정보가 올바르지 않습니다.");
         return;
       }
 
@@ -50,7 +68,6 @@ export default function KakaoOAuthPage() {
       }
       window.__kakaoProcessedCode = code;
 
-      // 주소창에서 code 제거
       window.history.replaceState({}, "", "/oauth");
 
       const redirectUri = getKakaoRedirectUri();
@@ -69,15 +86,17 @@ export default function KakaoOAuthPage() {
 
         sessionStorage.removeItem("socialAuthMode");
         sessionStorage.removeItem("socialSignupNickname");
-        router.replace("/");
+        router.replace("/?authMessage=login");
         return;
       }
 
       const nickname = sessionStorage.getItem("socialSignupNickname") || "";
 
       if (!nickname.trim()) {
-        alert("카카오 회원가입용 닉네임 정보가 없습니다.");
-        router.replace("/auth/signup");
+        openErrorModal(
+          "카카오 회원가입용 닉네임 정보가 없습니다.",
+          "/auth/signup"
+        );
         return;
       }
 
@@ -95,17 +114,15 @@ export default function KakaoOAuthPage() {
 
       sessionStorage.removeItem("socialAuthMode");
       sessionStorage.removeItem("socialSignupNickname");
-      router.replace("/");
+      router.replace("/?authMessage=login");
     };
 
     run().catch((error: unknown) => {
-      console.error("[KAKAO OAUTH ERROR]", error);
       const message =
         error instanceof Error
           ? error.message
           : "카카오 로그인 처리 중 오류가 발생했습니다.";
-      alert(message);
-      router.replace("/auth/login");
+      openErrorModal(message);
     });
 
     return () => {
@@ -114,10 +131,22 @@ export default function KakaoOAuthPage() {
   }, [router]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-25">
-      <p className="text-16 font-medium text-gray-600">
-        카카오 로그인 처리 중...
-      </p>
-    </main>
+    <>
+      <main className="flex min-h-screen items-center justify-center bg-gray-25">
+        <p className="text-16 font-medium text-gray-600">
+          카카오 로그인 처리 중...
+        </p>
+      </main>
+
+      {isModalOpen && (
+        <AlertModal
+          description={modalMessage}
+          confirmText="확인"
+          onClose={closeModal}
+          onConfirm={closeModal}
+          size="sm"
+        />
+      )}
+    </>
   );
 }

@@ -18,7 +18,7 @@ export default function CardExperiences({
   const buttons = (
     <div className="flex gap-2">
       <button
-        onClick={() => router.push(`/main/my-experiences/${id}/edit`)}
+        onClick={() => router.push(`/main/my-experiences/edit/${id}`)}
         className="text-14 rounded-sm border border-[var(--color-gray-50)] px-[10px] py-[6px] text-[var(--color-gray-600)]"
       >
         수정하기

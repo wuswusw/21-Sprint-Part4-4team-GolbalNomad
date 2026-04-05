@@ -9,11 +9,11 @@ export interface DropdownItem {
 }
 
 interface DropdownProps {
-  items: DropdownItem[];                
-  selectedItem?: DropdownItem | null;  
-  onSelect: (item: DropdownItem) => void; 
-  placeholder?: string;                
-  type?: "filter" | "input";          
+  items: DropdownItem[];
+  selectedItem?: DropdownItem | null;
+  onSelect: (item: DropdownItem) => void;
+  placeholder?: string;
+  type?: "filter" | "input";
 }
 
 export default function Dropdown({
@@ -27,23 +27,39 @@ export default function Dropdown({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isInputType = type === "input";
+
   const triggerClasses = isInputType
     ? "flex w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-4 py-3 text-16 text-gray-900 focus:border-primary-500"
-    : "flex items-center gap-1 text-16 font-medium text-gray-900 cursor-pointer";
+    : "flex cursor-pointer items-center gap-1 text-16 font-medium text-gray-900";
+
+  const menuClasses = isInputType
+    ? "absolute left-0 z-50 mt-2 w-full min-w-[120px] rounded-lg bg-white ring-1 ring-black ring-opacity-5"
+    : "absolute right-0 z-50 mt-2 min-w-[120px] rounded-lg bg-white ring-1 ring-black ring-opacity-5";
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-    <div ref={dropdownRef} className={`relative ${isInputType ? "w-full" : "inline-block"}`}>
-      <button type="button" onClick={() => setIsOpen(!isOpen)} className={triggerClasses}>
+    <div
+      ref={dropdownRef}
+      className={`relative ${isInputType ? "w-full" : "inline-block"}`}
+    >
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={triggerClasses}
+      >
         <span className={!selectedItem && isInputType ? "text-gray-400" : ""}>
           {selectedItem ? selectedItem.label : placeholder}
         </span>
@@ -57,7 +73,7 @@ export default function Dropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 z-50 mt-2 w-full min-w-[120px] overflow-hidden rounded-lg bg-white ring-1 ring-black ring-opacity-5">
+        <div className={menuClasses}>
           <div className="py-1 max-h-[240px] overflow-y-auto custom-scrollbar">
             {items.map((item) => (
               <button
@@ -67,7 +83,7 @@ export default function Dropdown({
                   onSelect(item);
                   setIsOpen(false);
                 }}
-                className="block w-full px-4 py-3 text-left text-14 text-gray-700 hover:bg-gray-100"
+                className="block w-full whitespace-nowrap px-4 py-3 text-left text-14 text-gray-700 hover:bg-gray-100"
               >
                 {item.label}
               </button>

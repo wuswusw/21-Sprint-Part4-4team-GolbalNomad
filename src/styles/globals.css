@@ -367,3 +367,14 @@
 .search-input::-webkit-search-cancel-button {
   cursor: pointer;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-gray-950) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--color-white) inset !important;
+  transition: background-color 9999s ease-out 0s;
+}

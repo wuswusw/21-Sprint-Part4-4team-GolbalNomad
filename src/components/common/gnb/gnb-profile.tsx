@@ -32,7 +32,7 @@ function GnbProfile({
 
   const handleLogout = async () => {
     await onLogout();
-    router.push("/");
+    router.push("/?authMessage=logout");
   };
 
   return (
@@ -43,21 +43,21 @@ function GnbProfile({
         width={30}
         height={30}
         unoptimized
-        className="w-[30px] h-[30px] rounded-full"
+        className="h-[30px] w-[30px] rounded-full"
       />
       <div className="relative" ref={profileRef}>
         <span
-          className="text-14 text-gray-950 ml-[10px] cursor-pointer"
+          className="ml-[10px] cursor-pointer text-14 text-gray-950"
           onClick={onToggle}
         >
           {nickname || "이름 없음"}
         </span>
         {isOpen && (
-          <div className="flex flex-col items-center justify-center w-32 px-[14px] py-4 rounded-xl shadow-[0px_2px_8px_0px_#78748640] absolute top-9 right-0 z-50 bg-white">
-            <ul className="w-full flex flex-col gap-[14px] justify-center text-16 text-gray-600">
+          <div className="absolute top-9 right-0 z-50 flex w-32 flex-col items-center justify-center rounded-xl bg-white px-[14px] py-4 shadow-[0px_2px_8px_0px_#78748640]">
+            <ul className="flex w-full flex-col justify-center gap-[14px] text-16 text-gray-600">
               <li>
                 <button
-                  className="w-full flex items-center justify-center text-14 py-[15px] hover:ring-primary-100 hover:ring-2 hover:text-gray-950 rounded-xl"
+                  className="hover:ring-primary-100 hover:text-gray-950 flex w-full items-center justify-center rounded-xl py-[15px] text-14 hover:ring-2"
                   onClick={handleLogout}
                 >
                   로그아웃
@@ -66,7 +66,7 @@ function GnbProfile({
               <li>
                 <Link
                   href="/main/profile"
-                  className="flex items-center justify-center text-14 py-[15px] hover:ring-primary-100 hover:ring-2 hover:text-gray-950 rounded-xl"
+                  className="hover:ring-primary-100 hover:text-gray-950 flex items-center justify-center rounded-xl py-[15px] text-14 hover:ring-2"
                 >
                   마이페이지
                 </Link>

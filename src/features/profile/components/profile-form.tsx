@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Input from "@/components/ui/input";
+import Button from "@/components/common/Button";
 import AlertModal from "@/components/common/modal/alert-modal";
 import { useUpdateProfile } from "../hooks/use-update-profile";
 import type { MyProfile } from "../types/profile.type";
 
 interface ProfileFormProps {
   initialData: MyProfile;
+  isMobile?: boolean;
+  onMobileCancel?: () => void;
 }
 
 interface ProfileFormValues {
@@ -19,7 +22,11 @@ interface ProfileFormValues {
   newPasswordConfirm: string;
 }
 
-export default function ProfileForm({ initialData }: ProfileFormProps) {
+export default function ProfileForm({
+  initialData,
+  isMobile = false,
+  onMobileCancel,
+}: ProfileFormProps) {
   const router = useRouter();
   const { mutateAsync, isPending } = useUpdateProfile();
 
@@ -63,16 +70,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     setIsModalOpen(true);
   };
 
-  const nickname = useWatch({
-    control,
-    name: "nickname",
-  });
-
-  const newPassword = useWatch({
-    control,
-    name: "newPassword",
-  });
-
+  const nickname = useWatch({ control, name: "nickname" });
+  const newPassword = useWatch({ control, name: "newPassword" });
   const newPasswordConfirm = useWatch({
     control,
     name: "newPasswordConfirm",
@@ -80,8 +79,52 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
 
   const isNicknameChanged = nickname !== initialData.nickname;
   const isPasswordChanged = (newPassword ?? "").trim().length > 0;
-  const isPasswordMismatch =
-    touchedFields.newPasswordConfirm && !!errors.newPasswordConfirm;
+
+  const inputClassName = isMobile
+    ? "h-[54px] w-[327px] rounded-[16px] border border-[#E0E0E5] bg-white pl-5 pr-12 text-[16px] font-medium text-black shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400"
+    : "h-[56px] w-[640px] tablet:w-[420px] desktop:w-[640px] rounded-[16px] border border-[#E0E0E5] bg-white pl-5 pr-12 text-[16px] font-medium text-black shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400";
+
+  const disabledInputClassName = isMobile
+    ? "h-[54px] w-[327px] rounded-[16px] border border-[#E0E0E5] bg-[#F7F8FA] pl-5 pr-12 text-[16px] font-medium text-gray-400 shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400 cursor-not-allowed"
+    : "h-[56px] w-[640px] tablet:w-[420px] desktop:w-[640px] rounded-[16px] border border-[#E0E0E5] bg-[#F7F8FA] pl-5 pr-12 text-[16px] font-medium text-gray-400 shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400 cursor-not-allowed";
+
+  const labelClassName = "mb-[10px] text-[16px] font-medium text-black";
+  const errorClassName =
+    "mt-[6px] pl-1 text-[12px] font-medium leading-none text-red-500";
+
+  const isNewPasswordTouched =
+    !!touchedFields.newPassword || (newPassword ?? "").length > 0;
+  const isNewPasswordValid =
+    isNewPasswordTouched &&
+    (newPassword ?? "").length >= 8 &&
+    !errors.newPassword;
+
+  const isNewPasswordConfirmTouched =
+    !!touchedFields.newPasswordConfirm || (newPasswordConfirm ?? "").length > 0;
+  const isNewPasswordConfirmValid =
+    isNewPasswordConfirmTouched &&
+    !!newPassword &&
+    newPasswordConfirm === newPassword &&
+    !errors.newPasswordConfirm;
+
+  const getNicknameClassName = () => {
+    if (errors.nickname) return `${inputClassName} border-red-500`;
+    if (isNicknameChanged) return `${inputClassName} border-primary-500`;
+    return inputClassName;
+  };
+
+  const getNewPasswordClassName = () => {
+    if (errors.newPassword) return `${inputClassName} border-red-500`;
+    if (isNewPasswordValid) return `${inputClassName} border-primary-500`;
+    return inputClassName;
+  };
+
+  const getNewPasswordConfirmClassName = () => {
+    if (errors.newPasswordConfirm) return `${inputClassName} border-red-500`;
+    if (isNewPasswordConfirmValid)
+      return `${inputClassName} border-primary-500`;
+    return inputClassName;
+  };
 
   const isSubmitEnabled =
     !isPending &&
@@ -91,15 +134,6 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         !errors.newPassword &&
         !errors.newPasswordConfirm &&
         isValid));
-
-  const inputClassName =
-    "h-[56px] w-[640px] rounded-[16px] border border-[#E0E0E5] bg-white pl-5 pr-12 text-[16px] font-medium text-black shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400";
-  const disabledInputClassName =
-    "h-[56px] w-[640px] rounded-[16px] border border-[#E0E0E5] bg-[#F7F8FA] pl-5 pr-12 text-[16px] font-medium text-gray-400 shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400 cursor-not-allowed";
-  const errorInputClassName = "border-red-500";
-  const labelClassName = "mb-[10px] text-[16px] font-medium text-black";
-  const errorClassName =
-    "mt-[6px] pl-1 text-[12px] font-medium leading-none text-red-500";
 
   const onSubmit = async (values: ProfileFormValues) => {
     const payload: {
@@ -111,13 +145,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     const nicknameChanged = values.nickname !== initialData.nickname;
     const passwordChanged = values.newPassword.trim().length > 0;
 
-    if (nicknameChanged) {
-      payload.nickname = values.nickname;
-    }
-
-    if (passwordChanged) {
-      payload.newPassword = values.newPassword;
-    }
+    if (nicknameChanged) payload.nickname = values.nickname;
+    if (passwordChanged) payload.newPassword = values.newPassword;
 
     if (Object.keys(payload).length === 0) {
       openModal("변경된 정보가 없습니다.");
@@ -128,10 +157,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
       const updatedProfile = await mutateAsync(payload);
 
       localStorage.setItem("nickname", updatedProfile.nickname);
-      localStorage.setItem(
-        "profileImage",
-        updatedProfile.profileImageUrl ?? ""
-      );
+      localStorage.setItem("profileImage", updatedProfile.profileImageUrl ?? "");
       window.dispatchEvent(new Event("auth-change"));
 
       let successMessage = "내 정보가 수정되었습니다.";
@@ -167,27 +193,50 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     }
   };
 
+  const handleCancel = () => {
+    if (isMobile && onMobileCancel) {
+      onMobileCancel();
+      return;
+    }
+
+    reset({
+      nickname: initialData.nickname,
+      email: initialData.email,
+      newPassword: "",
+      newPasswordConfirm: "",
+    });
+  };
+
   return (
     <>
-      <div className="w-[640px]">
-        <div>
+      <div
+        className={
+          isMobile
+            ? "w-[327px]"
+            : "w-[640px] tablet:w-[420px] desktop:w-[640px]"
+        }
+      >
+        <div className={isMobile ? "pt-[35px]" : ""}>
           <h1 className="text-[18px] font-bold leading-none text-black">
             내 정보
           </h1>
-          <p className="mt-1 text-[14px] font-medium leading-none text-gray-400">
+          <p className="mt-[8px] text-[14px] font-medium leading-none text-gray-400">
             닉네임과 비밀번호를 수정하실 수 있습니다.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
-          <div className="flex flex-col gap-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={isMobile ? "mt-[20px]" : "mt-6"}
+        >
+          <div
+            className={isMobile ? "flex flex-col gap-[18px]" : "flex flex-col gap-6"}
+          >
             <Input
               label="닉네임"
               labelClassName={labelClassName}
               errorClassName={errorClassName}
-              className={`${inputClassName} ${
-                errors.nickname ? errorInputClassName : ""
-              }`}
+              className={getNicknameClassName()}
               error={errors.nickname?.message}
               containerClassName="gap-0"
               {...register("nickname", {
@@ -212,11 +261,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
               label="비밀번호"
               labelClassName={labelClassName}
               errorClassName={errorClassName}
-              className={`${inputClassName} ${
-                errors.newPassword || isPasswordMismatch
-                  ? errorInputClassName
-                  : ""
-              }`}
+              className={getNewPasswordClassName()}
               error={errors.newPassword?.message}
               containerClassName="gap-0"
               isPassword
@@ -241,9 +286,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
               label="비밀번호 확인"
               labelClassName={labelClassName}
               errorClassName={errorClassName}
-              className={`${inputClassName} ${
-                isPasswordMismatch ? errorInputClassName : ""
-              }`}
+              className={getNewPasswordConfirmClassName()}
               error={errors.newPasswordConfirm?.message}
               containerClassName="gap-0"
               isPassword
@@ -258,26 +301,48 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
                   }
                   return true;
                 },
-                onBlur: async () => {
+                onChange: async () => {
                   await trigger("newPasswordConfirm");
                 },
               })}
             />
           </div>
 
-          <div className="mt-6 flex justify-center">
-            <button
-              type="submit"
-              disabled={!isSubmitEnabled}
-              className={`h-[41px] w-[120px] rounded-[12px] text-[14px] font-bold text-white transition-all duration-200 disabled:cursor-not-allowed ${
-                isSubmitEnabled
-                  ? "bg-[#3D9EF2] hover:bg-[#4488D8]"
-                  : "bg-[#C6C8CF]"
-              }`}
-            >
-              저장하기
-            </button>
-          </div>
+          {isMobile ? (
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="flex h-[47px] w-[157.5px] items-center justify-center rounded-[12px] border border-[#DDDDDD] bg-white text-[14px] font-semibold text-[#333333]"
+              >
+                취소하기
+              </button>
+
+              <button
+                type="submit"
+                disabled={!isSubmitEnabled}
+                className={`flex h-[47px] w-[157.5px] items-center justify-center rounded-[12px] text-[14px] font-semibold text-white transition-all duration-200 ${
+                  isSubmitEnabled
+                    ? "bg-[#3D9EF2] hover:bg-[#4488D8]"
+                    : "cursor-not-allowed bg-[#C6C8CF]"
+                }`}
+              >
+                저장하기
+              </button>
+            </div>
+          ) : (
+            <div className="mt-6 flex justify-center">
+              <Button
+                type="submit"
+                variant={isSubmitEnabled ? "primary" : "secondary"}
+                rounded="2xl"
+                disabled={!isSubmitEnabled}
+                className="h-[41px] w-[120px] px-0 py-0 text-[14px] font-bold"
+              >
+                저장하기
+              </Button>
+            </div>
+          )}
         </form>
       </div>
 
