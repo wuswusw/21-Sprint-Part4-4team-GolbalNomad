@@ -182,7 +182,7 @@ export default function ActivityForm({ mode, initialData, activityId }: Activity
           .filter((id) => !currentSubImgIds.includes(id));
 
         const schedulesToAdd = state.schedules
-          .filter((s: any) => !s.id)
+          .filter((s: any) => typeof s.id === 'string')
           .map((s: any) => ({
             date: s.date,
             startTime: extractLabel(s.startTime),
