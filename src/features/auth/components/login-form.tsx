@@ -14,6 +14,7 @@ import { startKakaoAuth } from "../lib/kakao";
 import { clearAuthSession, setAuthSession } from "../lib/auth-storage";
 import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 import type { LoginResponse } from "../types/auth.type";
+import { setAuthMessage } from "@/features/auth/lib/auth-message";
 
 function clearAuthStorage() {
   localStorage.removeItem("accessToken");
@@ -61,15 +62,16 @@ export default function LoginForm() {
   const onSubmit = (values: LoginFormValues) => {
     mutate(values, {
       onSuccess: (data: LoginResponse) => {
-        setAuthSession({
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken,
-          nickname: data.user.nickname,
-          profileImage: data.user.profileImageUrl ?? "",
-        });
+          setAuthSession({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            nickname: data.user.nickname,
+            profileImage: data.user.profileImageUrl ?? "",
+          });
 
-        router.push("/");
-      },
+          setAuthMessage("로그인 되었습니다.");
+          router.push("/");
+        },
       onError: (error: Error) => {
         if (
           error.message === "UNAUTHORIZED" ||
