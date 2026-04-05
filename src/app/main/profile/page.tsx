@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import ProfileForm from "@/features/profile/components/profile-form";
+import ProfileFormSkeleton from "@/features/profile/components/profile-form-skeleton";
 import AlertModal from "@/components/common/modal/alert-modal";
 import { SIDE_MENU_ITEMS } from "@/constants/side-menu";
 import { useMyProfile } from "@/features/profile/hooks/use-my-profile";
@@ -88,7 +89,7 @@ function MobileProfileMenu({ onOpenProfileForm }: MobileProfileMenuProps) {
                 onClick={handleEditProfileIconClick}
                 className={`absolute bottom-[4px] right-[4px] h-[30px] w-[30px] ${
                   isPending
-                    ? "cursor-wait opacity-60 pointer-events-none"
+                    ? "pointer-events-none cursor-wait opacity-60"
                     : "cursor-pointer"
                 }`}
               />
@@ -124,7 +125,7 @@ function MobileProfileMenu({ onOpenProfileForm }: MobileProfileMenuProps) {
                       </button>
                     </li>
                   );
-}
+                }
 
                 return (
                   <li key={item.href}>
@@ -177,7 +178,17 @@ export default function ProfilePage() {
   const [showMobileForm, setShowMobileForm] = useState(false);
 
   if (isLoading) {
-    return <div className="pt-[40px]">불러오는 중...</div>;
+    return (
+      <>
+        <div className="px-6 pb-[163px] tablet:hidden">
+          <ProfileFormSkeleton isMobile />
+        </div>
+
+        <div className="hidden tablet:block ml-[20px] mb-[265px]">
+          <ProfileFormSkeleton />
+        </div>
+      </>
+    );
   }
 
   if (isError || !data) {
