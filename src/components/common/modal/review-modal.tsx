@@ -23,6 +23,7 @@ export default function ReviewModal({
   const [content, setContent] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const resetForm = () => {
     setRating('');
@@ -58,6 +59,22 @@ export default function ReviewModal({
     }
   };
 
+  const handleStarClick = (star: number) => {
+    setRating(star.toString());
+    setActiveIndex(star);
+    setTimeout(() => {
+      setActiveIndex(null);
+    }, 500);
+  };
+
+  const ratingText: Record<number, string> = {
+    1: '아쉬워요',
+    2: '조금 아쉬워요',
+    3: '괜찮았어요',
+    4: '만족스러웠어요',
+    5: '정말 좋았어요',
+  };
+
   return (
     <BaseModal
       onClose={onClose}
@@ -76,18 +93,27 @@ export default function ReviewModal({
         {/* 별점 */}
         <div className="tablet:gap-[18px] flex items-center justify-center gap-[11px]">
           {[1, 2, 3, 4, 5].map((star) => (
-            <button key={star} onClick={() => setRating(star.toString())}>
+            <button key={star} onClick={() => handleStarClick(star)}>
               <Image
                 src={`/assets/icons/star_${star <= Number(rating) ? 'on' : 'off'}.svg`}
                 width={35}
                 height={35}
-                className="tablet:w-[35px] tablet:h-[35px] h-[30px] w-[30px]"
+                className={`tablet:w-[35px] tablet:h-[35px] h-[30px] w-[30px] transition-transform duration-150 ease-in-out active:scale-95 ${activeIndex !== null && star <= activeIndex ? 'scale-130' : 'scale-100'} `}
                 alt={`별점 ${star}점`}
+                style={{
+                  transitionDelay:
+                    activeIndex !== null && star <= activeIndex ? `${(star - 1) * 80}ms` : '0ms',
+                }}
               />
               <input type="radio" name="rating" value={star} className="hidden" />
             </button>
           ))}
         </div>
+        {rating && (
+          <p className="text-14 text-center text-[var(--color-gray-600)]">
+            {ratingText[Number(rating)]}
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col">
@@ -109,7 +135,7 @@ export default function ReviewModal({
       <div className="flex items-center justify-center">
         <Button
           onClick={handleSubmit}
-          disabled={isLoading}
+          disabled={isLoading || !rating || content.trim().length < 5}
           size="full"
           // className="rounded-lg bg-[var(--color-primary-500)] px-4 py-2 text-white disabled:opacity-50"
         >
