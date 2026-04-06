@@ -117,7 +117,7 @@ export default function ReviewModal({
       </div>
 
       <div className="flex flex-col">
-        <p className="text-16 tablete:text-18 font-bold">소중한 경험을 들려주세요</p>
+        <p className="text-16 tablet:text-18 font-bold">소중한 경험을 들려주세요</p>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
