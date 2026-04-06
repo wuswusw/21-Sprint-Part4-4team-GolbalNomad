@@ -113,7 +113,8 @@ export default function HomePageClient() {
         ? "로그아웃 되었습니다."
         : "";
 
-  const isModalOpen = !!modalMessage;
+  const [modalClosed, setModalClosed] = useState(false);
+  const isModalOpen = !!modalMessage && !modalClosed;
 
   const handleLogout = () => {
     logout();
@@ -148,6 +149,7 @@ export default function HomePageClient() {
   };
 
   const closeModal = () => {
+    setModalClosed(true);
     router.replace("/");
   };
 
