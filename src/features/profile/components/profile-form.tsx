@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import Input from "@/components/ui/input";
-import Button from "@/components/common/Button";
-import AlertModal from "@/components/common/modal/alert-modal";
-import { useUpdateProfile } from "../hooks/use-update-profile";
-import type { MyProfile } from "../types/profile.type";
+import { useEffect, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import Input from '@/components/ui/input';
+import Button from '@/components/common/Button';
+import AlertModal from '@/components/common/modal/alert-modal';
+import { useUpdateProfile } from '../hooks/use-update-profile';
+import type { MyProfile } from '../types/profile.type';
+import PageHeader from '@/components/common/PageHeader';
 
 interface ProfileFormProps {
   initialData: MyProfile;
@@ -31,7 +32,7 @@ export default function ProfileForm({
   const { mutateAsync, isPending } = useUpdateProfile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
+  const [modalMessage, setModalMessage] = useState('');
 
   const {
     control,
@@ -42,12 +43,12 @@ export default function ProfileForm({
     reset,
     formState: { errors, touchedFields, isValid },
   } = useForm<ProfileFormValues>({
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues: {
       nickname: initialData.nickname,
       email: initialData.email,
-      newPassword: "",
-      newPasswordConfirm: "",
+      newPassword: '',
+      newPasswordConfirm: '',
     },
   });
 
@@ -55,14 +56,14 @@ export default function ProfileForm({
     reset({
       nickname: initialData.nickname,
       email: initialData.email,
-      newPassword: "",
-      newPasswordConfirm: "",
+      newPassword: '',
+      newPasswordConfirm: '',
     });
   }, [initialData, reset]);
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setModalMessage("");
+    setModalMessage('');
   };
 
   const openModal = (message: string) => {
@@ -70,37 +71,33 @@ export default function ProfileForm({
     setIsModalOpen(true);
   };
 
-  const nickname = useWatch({ control, name: "nickname" });
-  const newPassword = useWatch({ control, name: "newPassword" });
+  const nickname = useWatch({ control, name: 'nickname' });
+  const newPassword = useWatch({ control, name: 'newPassword' });
   const newPasswordConfirm = useWatch({
     control,
-    name: "newPasswordConfirm",
+    name: 'newPasswordConfirm',
   });
 
   const isNicknameChanged = nickname !== initialData.nickname;
-  const isPasswordChanged = (newPassword ?? "").trim().length > 0;
+  const isPasswordChanged = (newPassword ?? '').trim().length > 0;
 
   const inputClassName = isMobile
-    ? "h-[54px] w-[327px] rounded-[16px] border border-[#E0E0E5] bg-white pl-5 pr-12 text-[16px] font-medium text-black shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400"
-    : "h-[56px] w-[640px] tablet:w-[420px] desktop:w-[640px] rounded-[16px] border border-[#E0E0E5] bg-white pl-5 pr-12 text-[16px] font-medium text-black shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400";
+    ? 'h-[54px] w-[327px] rounded-[16px] border border-[#E0E0E5] bg-white pl-5 pr-12 text-[16px] font-medium text-black shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400'
+    : 'h-[56px] w-[640px] tablet:w-[420px] desktop:w-[640px] rounded-[16px] border border-[#E0E0E5] bg-white pl-5 pr-12 text-[16px] font-medium text-black shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400';
 
   const disabledInputClassName = isMobile
-    ? "h-[54px] w-[327px] rounded-[16px] border border-[#E0E0E5] bg-[#F7F8FA] pl-5 pr-12 text-[16px] font-medium text-gray-400 shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400 cursor-not-allowed"
-    : "h-[56px] w-[640px] tablet:w-[420px] desktop:w-[640px] rounded-[16px] border border-[#E0E0E5] bg-[#F7F8FA] pl-5 pr-12 text-[16px] font-medium text-gray-400 shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400 cursor-not-allowed";
+    ? 'h-[54px] w-[327px] rounded-[16px] border border-[#E0E0E5] bg-[#F7F8FA] pl-5 pr-12 text-[16px] font-medium text-gray-400 shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400 cursor-not-allowed'
+    : 'h-[56px] w-[640px] tablet:w-[420px] desktop:w-[640px] rounded-[16px] border border-[#E0E0E5] bg-[#F7F8FA] pl-5 pr-12 text-[16px] font-medium text-gray-400 shadow-[0_6px_6px_rgba(0,0,0,0.02)] outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-gray-400 cursor-not-allowed';
 
-  const labelClassName = "mb-[10px] text-[16px] font-medium text-black";
-  const errorClassName =
-    "mt-[6px] pl-1 text-[12px] font-medium leading-none text-red-500";
+  const labelClassName = 'mb-[10px] text-[16px] font-medium text-black';
+  const errorClassName = 'mt-[6px] pl-1 text-[12px] font-medium leading-none text-red-500';
 
-  const isNewPasswordTouched =
-    !!touchedFields.newPassword || (newPassword ?? "").length > 0;
+  const isNewPasswordTouched = !!touchedFields.newPassword || (newPassword ?? '').length > 0;
   const isNewPasswordValid =
-    isNewPasswordTouched &&
-    (newPassword ?? "").length >= 8 &&
-    !errors.newPassword;
+    isNewPasswordTouched && (newPassword ?? '').length >= 8 && !errors.newPassword;
 
   const isNewPasswordConfirmTouched =
-    !!touchedFields.newPasswordConfirm || (newPasswordConfirm ?? "").length > 0;
+    !!touchedFields.newPasswordConfirm || (newPasswordConfirm ?? '').length > 0;
   const isNewPasswordConfirmValid =
     isNewPasswordConfirmTouched &&
     !!newPassword &&
@@ -121,8 +118,7 @@ export default function ProfileForm({
 
   const getNewPasswordConfirmClassName = () => {
     if (errors.newPasswordConfirm) return `${inputClassName} border-red-500`;
-    if (isNewPasswordConfirmValid)
-      return `${inputClassName} border-primary-500`;
+    if (isNewPasswordConfirmValid) return `${inputClassName} border-primary-500`;
     return inputClassName;
   };
 
@@ -130,7 +126,7 @@ export default function ProfileForm({
     !isPending &&
     ((isNicknameChanged && !errors.nickname) ||
       (isPasswordChanged &&
-        (newPasswordConfirm ?? "").trim().length > 0 &&
+        (newPasswordConfirm ?? '').trim().length > 0 &&
         !errors.newPassword &&
         !errors.newPasswordConfirm &&
         isValid));
@@ -149,43 +145,40 @@ export default function ProfileForm({
     if (passwordChanged) payload.newPassword = values.newPassword;
 
     if (Object.keys(payload).length === 0) {
-      openModal("변경된 정보가 없습니다.");
+      openModal('변경된 정보가 없습니다.');
       return;
     }
 
     try {
       const updatedProfile = await mutateAsync(payload);
 
-      localStorage.setItem("nickname", updatedProfile.nickname);
-      localStorage.setItem("profileImage", updatedProfile.profileImageUrl ?? "");
-      window.dispatchEvent(new Event("auth-change"));
+      localStorage.setItem('nickname', updatedProfile.nickname);
+      localStorage.setItem('profileImage', updatedProfile.profileImageUrl ?? '');
+      window.dispatchEvent(new Event('auth-change'));
 
-      let successMessage = "내 정보가 수정되었습니다.";
+      let successMessage = '내 정보가 수정되었습니다.';
 
       if (nicknameChanged && passwordChanged) {
-        successMessage = "닉네임과 비밀번호가 수정되었습니다.";
+        successMessage = '닉네임과 비밀번호가 수정되었습니다.';
       } else if (nicknameChanged) {
-        successMessage = "닉네임이 변경되었습니다.";
+        successMessage = '닉네임이 변경되었습니다.';
       } else if (passwordChanged) {
-        successMessage = "비밀번호가 수정되었습니다.";
+        successMessage = '비밀번호가 수정되었습니다.';
       }
 
       reset({
         nickname: updatedProfile.nickname,
         email: updatedProfile.email,
-        newPassword: "",
-        newPasswordConfirm: "",
+        newPassword: '',
+        newPasswordConfirm: '',
       });
 
       openModal(successMessage);
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "내 정보 수정에 실패했습니다.";
+      const message = error instanceof Error ? error.message : '내 정보 수정에 실패했습니다.';
 
-      if (message === "UNAUTHORIZED" || message === "Unauthorized") {
-        router.push("/login");
+      if (message === 'UNAUTHORIZED' || message === 'Unauthorized') {
+        router.push('/login');
         return;
       }
 
@@ -202,36 +195,22 @@ export default function ProfileForm({
     reset({
       nickname: initialData.nickname,
       email: initialData.email,
-      newPassword: "",
-      newPasswordConfirm: "",
+      newPassword: '',
+      newPasswordConfirm: '',
     });
   };
 
   return (
     <>
-      <div
-        className={
-          isMobile
-            ? "w-[327px]"
-            : "w-[640px] tablet:w-[420px] desktop:w-[640px]"
-        }
-      >
-        <div className={isMobile ? "pt-[35px]" : ""}>
-          <h1 className="text-[18px] font-bold leading-none text-black">
-            내 정보
-          </h1>
-          <p className="mt-[8px] text-[14px] font-medium leading-none text-gray-400">
-            닉네임과 비밀번호를 수정하실 수 있습니다.
-          </p>
+      <div className={isMobile ? 'w-[327px]' : 'tablet:w-[420px] desktop:w-[640px] w-[640px]'}>
+        <div className={isMobile ? 'pt-[35px]' : ''}>
+          <div className="flex w-full flex-col items-start gap-3.5 py-2.5">
+            <PageHeader />
+          </div>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className={isMobile ? "mt-[20px]" : "mt-6"}
-        >
-          <div
-            className={isMobile ? "flex flex-col gap-[18px]" : "flex flex-col gap-6"}
-          >
+        <form onSubmit={handleSubmit(onSubmit)} className={isMobile ? 'mt-[20px]' : 'mt-6'}>
+          <div className={isMobile ? 'flex flex-col gap-[18px]' : 'flex flex-col gap-6'}>
             <Input
               label="닉네임"
               labelClassName={labelClassName}
@@ -239,11 +218,11 @@ export default function ProfileForm({
               className={getNicknameClassName()}
               error={errors.nickname?.message}
               containerClassName="gap-0"
-              {...register("nickname", {
-                required: "닉네임을 입력해 주세요.",
+              {...register('nickname', {
+                required: '닉네임을 입력해 주세요.',
                 maxLength: {
                   value: 10,
-                  message: "닉네임은 10자 이하로 작성해주세요.",
+                  message: '닉네임은 10자 이하로 작성해주세요.',
                 },
               })}
             />
@@ -254,7 +233,7 @@ export default function ProfileForm({
               className={disabledInputClassName}
               containerClassName="gap-0"
               disabled
-              {...register("email")}
+              {...register('email')}
             />
 
             <Input
@@ -266,17 +245,17 @@ export default function ProfileForm({
               containerClassName="gap-0"
               isPassword
               placeholder="8자 이상 입력해 주세요"
-              {...register("newPassword", {
+              {...register('newPassword', {
                 validate: (value) => {
-                  if (!value && !getValues("newPasswordConfirm")) return true;
+                  if (!value && !getValues('newPasswordConfirm')) return true;
                   if (value.length < 8) {
-                    return "비밀번호는 8자 이상 입력해 주세요.";
+                    return '비밀번호는 8자 이상 입력해 주세요.';
                   }
                   return true;
                 },
                 onChange: async () => {
-                  if (getValues("newPasswordConfirm")) {
-                    await trigger("newPasswordConfirm");
+                  if (getValues('newPasswordConfirm')) {
+                    await trigger('newPasswordConfirm');
                   }
                 },
               })}
@@ -291,18 +270,18 @@ export default function ProfileForm({
               containerClassName="gap-0"
               isPassword
               placeholder="비밀번호를 한 번 더 입력해 주세요"
-              {...register("newPasswordConfirm", {
+              {...register('newPasswordConfirm', {
                 validate: (value) => {
-                  const password = getValues("newPassword");
+                  const password = getValues('newPassword');
 
                   if (!password && !value) return true;
                   if (value !== password) {
-                    return "비밀번호가 일치하지 않습니다.";
+                    return '비밀번호가 일치하지 않습니다.';
                   }
                   return true;
                 },
                 onChange: async () => {
-                  await trigger("newPasswordConfirm");
+                  await trigger('newPasswordConfirm');
                 },
               })}
             />
@@ -323,8 +302,8 @@ export default function ProfileForm({
                 disabled={!isSubmitEnabled}
                 className={`flex h-[47px] w-[157.5px] items-center justify-center rounded-[12px] text-[14px] font-semibold text-white transition-all duration-200 ${
                   isSubmitEnabled
-                    ? "bg-[#3D9EF2] hover:bg-[#4488D8]"
-                    : "cursor-not-allowed bg-[#C6C8CF]"
+                    ? 'bg-[#3D9EF2] hover:bg-[#4488D8]'
+                    : 'cursor-not-allowed bg-[#C6C8CF]'
                 }`}
               >
                 저장하기
@@ -334,7 +313,7 @@ export default function ProfileForm({
             <div className="mt-6 flex justify-center">
               <Button
                 type="submit"
-                variant={isSubmitEnabled ? "primary" : "secondary"}
+                variant={isSubmitEnabled ? 'primary' : 'secondary'}
                 rounded="2xl"
                 disabled={!isSubmitEnabled}
                 className="h-[41px] w-[120px] px-0 py-0 text-[14px] font-bold"

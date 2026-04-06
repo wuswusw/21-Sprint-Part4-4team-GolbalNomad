@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useRef, useState } from "react";
-import ProfileForm from "@/features/profile/components/profile-form";
-import ProfileFormSkeleton from "@/features/profile/components/profile-form-skeleton";
-import AlertModal from "@/components/common/modal/alert-modal";
-import { SIDE_MENU_ITEMS } from "@/constants/side-menu";
-import { useMyProfile } from "@/features/profile/hooks/use-my-profile";
-import { useUpdateProfileImage } from "@/features/profile/hooks/use-update-profile-image";
-import { validateProfileImageFile } from "@/features/profile/utils/validate-profile-image-file";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRef, useState } from 'react';
+import ProfileForm from '@/features/profile/components/profile-form';
+import ProfileFormSkeleton from '@/features/profile/components/profile-form-skeleton';
+import AlertModal from '@/components/common/modal/alert-modal';
+import { SIDE_MENU_ITEMS } from '@/constants/side-menu';
+import { useMyProfile } from '@/features/profile/hooks/use-my-profile';
+import { useUpdateProfileImage } from '@/features/profile/hooks/use-update-profile-image';
+import { validateProfileImageFile } from '@/features/profile/utils/validate-profile-image-file';
 
-const DEFAULT_PROFILE_IMG = "/assets/images/default profile.png";
+const DEFAULT_PROFILE_IMG = '/assets/images/default profile.png';
 
 interface MobileProfileMenuProps {
   onOpenProfileForm: () => void;
@@ -38,9 +38,7 @@ function MobileProfileMenu({ onOpenProfileForm }: MobileProfileMenuProps) {
     imgInputRef.current?.click();
   };
 
-  const handleProfileImgChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleProfileImgChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const imgFile = e.target.files?.[0];
     const input = e.target;
 
@@ -49,7 +47,7 @@ function MobileProfileMenu({ onOpenProfileForm }: MobileProfileMenuProps) {
     const validationError = validateProfileImageFile(imgFile);
     if (validationError) {
       setErrorModalMessage(validationError);
-      input.value = "";
+      input.value = '';
       return;
     }
 
@@ -57,13 +55,10 @@ function MobileProfileMenu({ onOpenProfileForm }: MobileProfileMenuProps) {
       await uploadProfileImage(imgFile);
       setIsSuccessModalOpen(true);
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "프로필 이미지를 변경할 수 없습니다.";
+      const message = err instanceof Error ? err.message : '프로필 이미지를 변경할 수 없습니다.';
       setErrorModalMessage(message);
     } finally {
-      input.value = "";
+      input.value = '';
     }
   };
 
@@ -87,10 +82,8 @@ function MobileProfileMenu({ onOpenProfileForm }: MobileProfileMenuProps) {
                 width={30}
                 height={30}
                 onClick={handleEditProfileIconClick}
-                className={`absolute bottom-[4px] right-[4px] h-[30px] w-[30px] ${
-                  isPending
-                    ? "pointer-events-none cursor-wait opacity-60"
-                    : "cursor-pointer"
+                className={`absolute right-[4px] bottom-[4px] h-[30px] w-[30px] ${
+                  isPending ? 'pointer-events-none cursor-wait opacity-60' : 'cursor-pointer'
                 }`}
               />
               <input
@@ -104,7 +97,7 @@ function MobileProfileMenu({ onOpenProfileForm }: MobileProfileMenuProps) {
 
             <ul className="mt-6 flex w-full flex-col gap-2">
               {SIDE_MENU_ITEMS.map((item) => {
-                const isProfileItem = item.href === "/main/profile";
+                const isProfileItem = item.href === '/main/profile';
 
                 if (isProfileItem) {
                   return (
@@ -112,7 +105,7 @@ function MobileProfileMenu({ onOpenProfileForm }: MobileProfileMenuProps) {
                       <button
                         type="button"
                         onClick={onOpenProfileForm}
-                        className="flex h-[54px] w-[299px] items-center gap-2 rounded-xl pl-5 text-left text-[16px] font-medium text-gray-600 hover:ring-2 hover:ring-primary-100 hover:text-gray-950"
+                        className="hover:ring-primary-100 flex h-[54px] w-[299px] items-center gap-2 rounded-xl pl-5 text-left text-[16px] font-medium text-gray-600 hover:text-gray-950 hover:ring-2"
                       >
                         <Image
                           src={item.icon}
@@ -131,7 +124,7 @@ function MobileProfileMenu({ onOpenProfileForm }: MobileProfileMenuProps) {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="flex h-[54px] w-[299px] items-center gap-2 rounded-xl pl-5 text-[16px] font-medium text-gray-600 hover:ring-2 hover:ring-primary-100 hover:text-gray-950"
+                      className="hover:ring-primary-100 flex h-[54px] w-[299px] items-center gap-2 rounded-xl pl-5 text-[16px] font-medium text-gray-600 hover:text-gray-950 hover:ring-2"
                     >
                       <Image
                         src={item.icon}
@@ -180,11 +173,11 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <>
-        <div className="px-6 pb-[163px] tablet:hidden">
+        <div className="tablet:hidden px-6 pb-[163px]">
           <ProfileFormSkeleton isMobile />
         </div>
 
-        <div className="hidden tablet:block ml-[20px] mb-[265px]">
+        <div className="tablet:block mb-[265px] ml-[20px] hidden">
           <ProfileFormSkeleton />
         </div>
       </>
@@ -197,7 +190,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <div className="px-6 pb-[163px] tablet:hidden">
+      <div className="tablet:hidden px-6 pb-[163px]">
         {showMobileForm ? (
           <ProfileForm
             initialData={data}
@@ -205,13 +198,11 @@ export default function ProfilePage() {
             onMobileCancel={() => setShowMobileForm(false)}
           />
         ) : (
-          <MobileProfileMenu
-            onOpenProfileForm={() => setShowMobileForm(true)}
-          />
+          <MobileProfileMenu onOpenProfileForm={() => setShowMobileForm(true)} />
         )}
       </div>
 
-      <div className="hidden tablet:block ml-[20px] mb-[265px]">
+      <div className="tablet:block mb-[265px] hidden">
         <ProfileForm initialData={data} />
       </div>
     </>

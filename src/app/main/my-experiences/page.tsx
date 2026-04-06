@@ -88,7 +88,7 @@ export default function MyExperiencesPage() {
       </div>
 
       {/* 체험관리 리스트 */}
-      <div className="desktop:gap-6 flex w-full flex-col gap-[30px] px-6">
+      <div className="desktop:gap-6 tablet:px-0 flex w-full flex-col gap-[30px] px-6">
         {loading && items.length === 0 ? (
           <>
             {Array.from({ length: 5 }).map((_, index) => (
