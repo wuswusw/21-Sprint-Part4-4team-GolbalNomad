@@ -48,7 +48,7 @@ export default function PageHeader() {
   const config = pageHeaderConfig[pathname];
 
   return (
-    <div className="flex w-full justify-between gap-4 px-[24px]">
+    <div className="mobile:px-[24px] tablet:px-0 flex w-full items-center justify-between gap-4 px-6">
       <div className="flex flex-1 flex-col items-start gap-[10px]">
         <h3 className="text-18 font-bold">{config?.title}</h3>
         {config?.description && (
