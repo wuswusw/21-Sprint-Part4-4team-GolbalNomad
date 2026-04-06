@@ -56,7 +56,7 @@ export default function ScheduleSection({
     }
 
     setErrorMessage(""); 
-    const newScheduleWithId = { ...inputSchedule, id: Date.now() };
+    const newScheduleWithId = { ...inputSchedule, id: `new-${Date.now()}` };
     const currentValidSchedules = schedules.filter(s => s.date !== "");
     setSchedules([newScheduleWithId, ...currentValidSchedules]);
     
