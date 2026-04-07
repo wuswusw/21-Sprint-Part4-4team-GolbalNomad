@@ -25,8 +25,11 @@ export default function AlertModal({
   size = 'sm',
 }: Props) {
   const handleConfirm = async () => {
-    await onConfirm?.();
-    onClose();
+    try {
+      await onConfirm?.();
+    } finally {
+      onClose();
+    }
   };
 
   return (
